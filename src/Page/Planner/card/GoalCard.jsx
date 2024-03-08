@@ -10,7 +10,7 @@ import myCursor from '../../../assets/cursor/Labrador_Retriever.cur';
 
 
 const GoalCard = (p) => {
-    const { dataSection, setDateSection, dateZone } = p
+    const { dataSection, setDateSection } = p
     // const { task }  = useContext(TaskContext)
     const [dateType, setDateType] = useState({
         mustdo: [],

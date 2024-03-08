@@ -52,8 +52,9 @@ export const QuoteBlock = styled.div`
   `}
 `;
 
-export const CommunityBlockTitle = styled.div`
+export const CommunityBlockTitle = styled.h2`
   letter-spacing: calc((.1vw+.1vh)/2);
+  font-size: 2.5rem;
   ${props => props.device === "desktop" ? `
        b {
           height: 10%;
@@ -103,7 +104,8 @@ export const CommunityBlockContent = styled.div`
   margin-bottom: 4%;
 `;
 
-export const TipTitle = styled.div`
+export const TipTitle = styled.h2`
+  font-size: 2.5rem;
   letter-spacing: calc((.1vw+.1vh)/2);
   ${props => props.device === "desktop" ? `
     height: 11%;
@@ -192,7 +194,8 @@ export const TipImage = styled.div`
   border-bottom-right-radius: 25px;
 `;
 
-export const WisdomBlockTitle = styled.div`
+export const WisdomBlockTitle = styled.h2`
+  font-size: 2.5rem;
   letter-spacing: calc((.1vw+.1vh)/2);
   ${props => props.device === "desktop" ? `
     height: 9.5%;
@@ -247,8 +250,9 @@ export const WisdomBlockContent = styled.div`
 
 
 
-export const PodcastBlockTitle = styled.div`
+export const PodcastBlockTitle = styled.h1`
   --animate-duration: 1s;
+  font-size: 4rem;
   letter-spacing: calc((.1vw+.1vh)/2);
   ${props => props.device === "desktop" ? ` 
     height: 9%;
@@ -271,50 +275,31 @@ export const PodcastBlockTitle = styled.div`
 `;
 
 export const StyledPodcastCard = styled.div`
-  position: relative;
-  display: grid;
-  ${props => props.device === "desktop" ? `
-      height: 16%;
-      grid-template: 50% 50% / 4% 9% 72% auto;
-  ` : `
-      height: 17%;
-      grid-template: 50% 50% / 6% 15% 61% 18%;
-  `}
-  background-color: white;
-  border-radius: calc((1.5vw + 1.5vh)/2);
-  padding-right: calc((0.7vw + 0.7vh)/2);
-  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-  width: 100%;
-  margin-bottom: calc((0.7vw + 0.7vh)/2);
-  font-weight: 700; 
-  z-index: 0;
-  &:hover{
-    z-index: 1; 
-    background-color: black;
-  }
+    display: flex;
+    width: 48%;
+    height: 120px;
+    padding: 10px;
+    justify-content: space-between;
+    background-color: antiquewhite;
+    border-radius: 10px;
 `;
 
 export const PodcastCardId = styled.p`
-  grid-area: 1/1/3/2;
-  ${props => props.device === "desktop" ? `
-     font-size: calc((1.75vw + 1.75vh)/2);
-    ` : `
-    font-size: calc((2vw + 2vh)/2);
-   `
-  }
-  color: black;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  height: 100%;
-  width: 100%;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 10%;
 `;
 
 export const PodcastCardList = styled.div`
-  position: relative;
-  grid-area: 3/1/4/2;
   height: 100%;
   width: 100%;
+  gap:10px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
   border-radius: calc((2vw + 2vh)/2);
   border: 2px solid #cbcbcb;
   padding: calc((1vw + 1vh)/2);
@@ -325,8 +310,6 @@ export const PodcastCardList = styled.div`
 `;
 
 export const PodcastEmptyList = styled.p`
-  position: relative;
-  grid-area: 3/1/4/2;
   height: 100%;
   width: 100%;
   border-radius: calc((2vw + 2vh)/2);
@@ -339,40 +322,29 @@ export const PodcastEmptyList = styled.p`
   font-weight: bold;
 `
 
+
+
 export const PodcastThumbnails = styled.div`
-  grid-area: 1/2/3/3;
-  ${props => props.device === "desktop" ? `
-      img {
-        height: calc((5vh + 5vw)/2);
-        width: calc((5vh + 5vw)/2);
-        border-radius: calc((0.7vw + 0.7vh)/2);
-      }
-      svg {
-        font-size: calc((5vw + 5vh)/2);
-        color: white;
-      }
-    ` : `
-      img {
-        height: calc((6vh + 6vw)/2);
-        width: calc((6vh + 6vw)/2);
-        border-radius: calc((0.7vw + 0.7vh)/2);
-      }
-      svg {
-        font-size: calc((5vw + 5vh)/2);
-        color: white;
-      }
-   `}
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: no-wrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: no-wrap;
+    width: 20%;
+  
+    img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    svg {
+      width: 100%;
+      border-radius: 10px;
+    }
   &:hover {
     cursor: ${`url(${myCursor}), auto`}!important;
   }
 `;
 
 export const PodcastTitle = styled.div`
-  grid-area: 1/3/2/4;
   color: black;
   display: flex;
   justify-content: start;
@@ -381,11 +353,6 @@ export const PodcastTitle = styled.div`
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    ${props => props.device === "desktop" ? `
-      font-size: calc((1.3vw + 1.3vh)/2);
-    ` : `
-      font-size: calc((1.5vw + 1.5vh)/2);
-   `}
 
     cursor: ${`url(${myCursor}), auto`}!important;
   }
@@ -406,13 +373,11 @@ export const PodcastLength = styled.p`
 `;
 
 export const PodcastOption = styled.div`
-  grid-area: 1/4/3/5;
-  display: grid;
-  grid-template: 100% / 1fr 1fr 1fr;
+  display: flex;
+
 `;
 
 export const PodcastMore = styled.div`
-  grid-area: 1/3/2/4;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -430,7 +395,6 @@ export const PodcastDownload = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  grid-area: 1/1/2/2;
   svg{
     font-size: calc((2.25vw + 2.25vh)/2);
     color: black;
@@ -444,7 +408,6 @@ export const PodcastAdd = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  grid-area: 1/2/2/3;
   svg{
     font-size:  calc((2.25vw + 2.25vh)/2);
     &:hover{

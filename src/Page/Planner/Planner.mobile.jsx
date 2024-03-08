@@ -128,7 +128,13 @@ const TaskSectionMobile = (p) => {
                 tab === "goal" ?<GoalCard dataSection={data} setDateSection={setDateSection} dateZone={dateZone}/> 
                 :<Fragment>
                     <ImgMotivation>
-                        <img src={plannerData[tab]?.empty?.img} alt="" />
+                        <img src={plannerData[tab]?.empty?.img} 
+                            alt={
+                                tab === "task" ? "task-management" :
+                                tab === "routine" ? "routine-management" :
+                                tab === "goal" && "goal-management"
+                            } 
+                        />
                     </ImgMotivation> 
 
                     <TextMotivation>

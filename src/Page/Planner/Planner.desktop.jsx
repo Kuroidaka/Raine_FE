@@ -11,7 +11,6 @@ import RoutineCard from "./card/RoutineCard";
 import ModalContext from "../../Context/Modal.context";
 import GoalContext from "../../Context/Goal.context";
 import GoalCard from "./card/GoalCard";
-import Skeleton from "./card/Skeleton";
 
 import task from '../../assets/svg/task.svg'
 import routine from '../../assets/svg/routine.svg'
@@ -81,7 +80,13 @@ const SectionContent = (p) => {
                             sec === "task" ? task :
                             sec === "routine" ? routine :
                             sec === "goal" && goal
-                        } alt=""/>
+                        } 
+                        alt={
+                            sec === "task" ? "task-management" :
+                            sec === "routine" ? "routine-management" :
+                            sec === "goal" && "goal-management"
+                        } 
+                        />
                     </ImgMotivation> 
         
                     <TextMotivation>

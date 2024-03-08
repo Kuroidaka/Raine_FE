@@ -4,9 +4,16 @@ import Knowledge from '../Page/Knowledge/Knowledge'
 import NoPage from "../Page/NoPage"
 import paths from "./path"
 import Setting from "../Page/Setting/Setting"
+import { Navigate } from "react-router"
 
 
 export const routes = [
+    {
+        name: "default",
+        page:  <Navigate to={paths.planner} />,
+        path: "*",
+        exact: true,
+    },
     {
         name: "planner",
         page: <DefaultLayout><Planner /></DefaultLayout>,
@@ -17,18 +24,18 @@ export const routes = [
         name: "knowledge",
         page: <DefaultLayout><Knowledge /></DefaultLayout>,
         path: paths.knowledge,
-        exact: true,
+        exact: false,
     },
     {
         name: "setting",
         page: <DefaultLayout><Setting /></DefaultLayout>,
         path: paths.setting,
-        exact: true,
+        exact: false,
     },
     {
         name: "noPage",
         page: <NoPage />,
         path: paths.noPage,
-        exact: true,
+        exact: false,
     }
 ]

@@ -1,10 +1,10 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import DeviceContext from "../../Context/Device.context";
 import PlannerMobile from "./Planner.mobile";
 import PlannerDesktop from "./Planner.desktop";
-import ModalContext, { ModalProvider } from "../../Context/Modal.context";
+import { ModalProvider } from "../../Context/Modal.context";
 import TaskModal from "./modal/Modal";
 import { TaskProvider } from "../../Context/Task.context";
 import { RoutineProvider } from "../../Context/Routine.context";
@@ -24,10 +24,6 @@ const Planner = () => {
         const name = e.target.getAttribute("name")
         setTab(name)
     }
- 
-    // modal
-    console.log("rerender dfas dsad sad", tab)
-    
     
     const Mobile = () => {
         return (

@@ -62,7 +62,7 @@ const Tip = ({ device }) => {
   return (
     <Fragment>
       <TipTitle device={device}>
-        <b>tip</b>
+        tip
       </TipTitle>
       <TipBlock
         device={device}
@@ -82,7 +82,7 @@ const Tip = ({ device }) => {
           <p>{tip.content}</p>
         </TipParagraph>
         <TipImage>
-          <img src={tip.img} alt="" />
+          <img src={tip.img} alt="life tips" />
         </TipImage>
       </TipBlock>
     </Fragment>

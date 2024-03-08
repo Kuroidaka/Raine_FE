@@ -20,6 +20,7 @@ import PodcastCardMore from "./PodcastCardMore";
 import { Icon } from "../../../assets/icon";
 import { ANIMATIONS } from "../utils/animationConstants";
 import Tippy from "@tippyjs/react/headless";
+import styled from "styled-components";
 
 const PodcastCard = ({
   id,
@@ -161,15 +162,15 @@ const PodcastCard = ({
     cardId === id ? { border: "2px solid black", zIndex: 3 } : {}
 
   const optionIconStyled = isPlayingId.id === id ? { color: "white" } :
-    isHoverId === id ? { color: "rgb(122,122,122)" } : {};
+    isHoverId === id ? { color: "var(--second-color)" } : {};
 
   const podcastTitleStyled = isPlayingId.id === id ? { color: "rgb(30,215,96)" } :
-    isHoverId === id ? { color: "#d8d7d7" } : {};
+    isHoverId === id ? { color: "var(--second-color)" } : {};
 
   const podcastAuthorStyled = isPlayingId.id === id ? { color: "white" } : {};
 
   const podcastIdStyled = isPlayingId.id === id ? { color: "rgb(30,215,96)" } :
-    isHoverId === id ? { color: "#d8d7d7" } : {};
+    isHoverId === id ? { color: "var(--second-color)" } : {};
 
 
   return (
@@ -183,28 +184,34 @@ const PodcastCard = ({
         style={cardStyled}
         device={device}
       >
-        <PodcastCardId style={podcastIdStyled} device={device}>{order}</PodcastCardId>
-        <PodcastThumbnails onClick={handlePlaying} device={device}>
-          {isPlayingId.id === id ? (
-            isHoverId === id ? (
-              isPlayingId.isPlaying ? <Icon.pause /> : <Icon.play />
-            ) : isPlayingId.isPlaying ? (
-              <img src="https://i.gifer.com/Nt6v.gif" alt="playing" />
-            ) : (
+        <PodCastInfor>
+          <PodcastCardId style={podcastIdStyled} device={device}>{order}</PodcastCardId>
+          <PodcastThumbnails onClick={handlePlaying} device={device}>
+            {isPlayingId.id === id ? (
+              isHoverId === id ? (
+                isPlayingId.isPlaying ? <Icon.pause /> : <Icon.play />
+              ) : isPlayingId.isPlaying ? (
+                <img src="https://i.gifer.com/Nt6v.gif" alt="playing" />
+              ) : (
+                <Icon.play />
+              )
+            ) : isHoverId === id ? (
               <Icon.play />
-            )
-          ) : isHoverId === id ? (
-            <Icon.play />
-          ) : (
-            <img src={thumbnail} alt="thumbnail" />
-          )}
-        </PodcastThumbnails>
-        <PodcastTitle device={device} style={podcastTitleStyled} onClick={() => handleInfoClick(id, title, author, length, thumbnail, description, date, downloadUrl)}>
-          <p>{title}</p>
-        </PodcastTitle>
-        <PodcastLength style={podcastAuthorStyled} onClick={() => handleInfoClick(id, title, author, length, thumbnail, description, date, downloadUrl)}>
-          {`${author} | ${length}`}
-        </PodcastLength>
+            ) : (
+              <img src={thumbnail} alt="thumbnail" />
+            )}
+          </PodcastThumbnails>
+          <Information> 
+            <PodcastTitle device={device} style={podcastTitleStyled} onClick={() => handleInfoClick(id, title, author, length, thumbnail, description, date, downloadUrl)}>
+              <p>{title}</p>
+            </PodcastTitle>
+            <PodcastLength style={podcastAuthorStyled} onClick={() => handleInfoClick(id, title, author, length, thumbnail, description, date, downloadUrl)}>
+              {`${author} | ${length}`}
+            </PodcastLength>
+          </Information> 
+        </PodCastInfor>
+
+
         <PodcastOption>
           <PodcastDownload onClick={handlePodcastMoreDisplay} >
             <Icon.download style={optionIconStyled} onClick={handleDownloadClick}></Icon.download>
@@ -263,3 +270,16 @@ const PodcastCard = ({
 };
 
 export default PodcastCard;
+
+const PodCastInfor = styled.div `
+  width: 40%;
+  display: flex;
+  flex: 1;
+
+`
+
+const  Information = styled.div `
+  width: 50%;
+  flex: 1;
+  padding: 10px;
+`
