@@ -52,8 +52,9 @@ export const QuoteBlock = styled.div`
   `}
 `;
 
-export const CommunityBlockTitle = styled.div`
+export const CommunityBlockTitle = styled.h2`
   letter-spacing: calc((.1vw+.1vh)/2);
+  font-size: 2.5rem;
   ${props => props.device === "desktop" ? `
        b {
           height: 10%;
@@ -103,7 +104,8 @@ export const CommunityBlockContent = styled.div`
   margin-bottom: 4%;
 `;
 
-export const TipTitle = styled.div`
+export const TipTitle = styled.h2`
+  font-size: 2.5rem;
   letter-spacing: calc((.1vw+.1vh)/2);
   ${props => props.device === "desktop" ? `
     height: 11%;
@@ -192,7 +194,8 @@ export const TipImage = styled.div`
   border-bottom-right-radius: 25px;
 `;
 
-export const WisdomBlockTitle = styled.div`
+export const WisdomBlockTitle = styled.h2`
+  font-size: 2.5rem;
   letter-spacing: calc((.1vw+.1vh)/2);
   ${props => props.device === "desktop" ? `
     height: 9.5%;
@@ -247,8 +250,9 @@ export const WisdomBlockContent = styled.div`
 
 
 
-export const PodcastBlockTitle = styled.div`
+export const PodcastBlockTitle = styled.h1`
   --animate-duration: 1s;
+  font-size: 4rem;
   letter-spacing: calc((.1vw+.1vh)/2);
   ${props => props.device === "desktop" ? ` 
     height: 9%;

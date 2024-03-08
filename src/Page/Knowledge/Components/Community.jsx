@@ -52,7 +52,7 @@ const Community = ({ device }) => {
 
   return (
     <>
-      <CommunityBlockTitle device={device} className={``}><b>community</b></CommunityBlockTitle>
+      <CommunityBlockTitle device={device} className={``}>community</CommunityBlockTitle>
       <CommunityBlockContent device={device} className={`
         ${isFlipOutAnimated ? `${FLIP_OUT} animate__slow ` : ""} 
         ${isFlipInAnimated ? `${FLIP_IN} animate__slow` : ""}

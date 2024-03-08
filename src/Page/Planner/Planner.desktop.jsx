@@ -80,7 +80,13 @@ const SectionContent = (p) => {
                             sec === "task" ? task :
                             sec === "routine" ? routine :
                             sec === "goal" && goal
-                        } alt=""/>
+                        } 
+                        alt={
+                            sec === "task" ? "task-management" :
+                            sec === "routine" ? "routine-management" :
+                            sec === "goal" && "goal-management"
+                        } 
+                        />
                     </ImgMotivation> 
         
                     <TextMotivation>

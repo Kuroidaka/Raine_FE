@@ -21,7 +21,7 @@ const Wisdom = ({ device }) => {
   return (
     <>
       <WisdomBlockTitle device={device} className={``}>
-        <b>wisdom</b>
+        wisdom
       </WisdomBlockTitle>
       <WisdomBlockContent device={device} className={`${FADE_IN}`}>
         <blockquote>

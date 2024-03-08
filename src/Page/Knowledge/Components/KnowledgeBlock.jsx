@@ -20,7 +20,7 @@ const KnowLedgeBlock = ({
       device={device}
     >
       <PodcastBlock device={device}>
-        <PodcastBlockTitle device={device}><b>podcast series</b></PodcastBlockTitle>
+        <PodcastBlockTitle device={device}>podcast series</PodcastBlockTitle>
         <PodcastList />
       </PodcastBlock>
 
