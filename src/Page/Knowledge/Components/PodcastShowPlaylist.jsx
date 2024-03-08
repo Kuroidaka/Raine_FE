@@ -6,7 +6,7 @@ import PodcastShowPlayllistHeader from './PodcastShowPlaylistHeader';
 import { podcastsData, podcastsType, podcastsArrangeData } from "../Knowledge.data";
 import PodcastShowPlaylistCard from './PodcastShowPlaylistCard';
 import { ANIMATIONS } from "../utils/animationConstants";
-import { Icon } from '../../../Assets/icon';
+import { Icon } from '../../../assets/icon';
 const PodcastShowPlaylist = () => {
   const { FADE_IN } = ANIMATIONS;
   const {
