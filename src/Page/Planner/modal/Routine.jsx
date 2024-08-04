@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import ModalContext from "../../../Context/Modal.context";
 import DOMPurify from "dompurify";
-import { convertDates, isDateString } from "../../../Util/util";
+import { convertDates, isDateString } from "../../../Util";
 import { nanoid } from "nanoid";
 import { Img } from "../../../assets/svg";
 import Input from "../../../Component/Input";

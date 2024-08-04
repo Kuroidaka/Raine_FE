@@ -1,7 +1,7 @@
 const paths = {
     planner: "/planner",
-    knowledge: "/knowledge",
     setting: "/setting",
+    chat: "/chat",
     noPage: "*"
 }
 

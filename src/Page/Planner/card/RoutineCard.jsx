@@ -3,7 +3,7 @@ import Tippy from '@tippyjs/react/headless';
 import { Img } from "../../../assets/svg";
 import { Icon } from "../../../assets/icon";
 import { useState, useEffect, Fragment, useContext } from "react";
-import { getRecentSevenDates, updateRecentDates } from "../../../Util/util"
+import { getRecentSevenDates, updateRecentDates } from "../../../Util"
 import ModalContext from "../../../Context/Modal.context";
 import RoutineContext from "../../../Context/Routine.context";
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur"

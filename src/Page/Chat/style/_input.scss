@@ -1,0 +1,326 @@
+.Input {
+    display: flex;
+    align-items: end;
+    padding: 0.2em 10%;
+    height: 100%;
+    // justify-content: space-around;
+    color: white;
+
+    .File_uploaded {
+        height: 100%;
+        background-color: #2A2A38;    
+        margin-right: 1em;
+        border-radius: 10px;
+        .Content {
+            // height: fit-content;
+            width: 200px;
+            border: 1px solid white;
+            border-radius: 10px;
+            padding: 3px 9px 4px;
+
+            .Content_head {
+                display: flex;
+                justify-content: space-between;
+                padding-bottom: 2px;
+
+                .p1 {
+                    // border: 1px solid red;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: larger;
+                    font-size: 1rem;
+                    font-weight: 700;
+                }
+
+                .add_button {
+                    // border: 1px solid red;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: larger;
+
+
+                    label[for="fileInput"] {
+                        display: flex;
+                        justify-content: center;
+                        cursor: pointer;
+
+                        svg {
+                            width: 15px;
+                            transition: all 0.3s ease-in-out;
+                        }
+
+                        div {
+                            transition: all 0.3s ease-in-out;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            font-size: 1rem;
+                            font-weight: 700;
+                        }
+
+                        &:hover {
+                            svg {
+                                color: var(--second-color);
+                            }
+
+                            div {
+                                color: var(--second-color);
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            hr {
+                border: none;
+                height: 1px;
+                background-color: white;
+            }
+
+            .file_uploaded_area {
+                // border: 1px solid red;
+                margin-top: 5px;
+                max-height: 52px;
+                overflow-y: auto;
+
+                .file_uploaded_container {
+                    // border: 1px solid red;
+                    transition: all 0.3s ease-in-out;
+                    border-radius: 5px;
+                    background-color: #3E4165;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 0 5px;
+
+                    width: 100%;
+                    color: #BBBBBB;
+                    margin-bottom: 3px;
+
+                    .delete_button {
+                        display: flex;
+                        cursor: pointer;
+
+                        svg {
+                            width: 14px;
+                        }
+
+                        &:hover {
+                            color: white;
+                        }
+                    }
+
+                    .load_button {
+                        display: flex;
+                        cursor: pointer;
+                        width: 15px;
+
+                        svg {
+                            width: 14px;
+                        }
+
+                        &:hover {
+                            color: white;
+                        }
+                    }
+
+                    .file_name {
+                        font-size: 1.1rem;
+                        margin-left: 4px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        width: 100%;
+                        color: #ebebeb;
+                    }
+
+                    span {
+                        height: 100%;
+                        display: flex;
+
+                        svg {
+                            width: 9px;
+                        }
+                    }
+
+                    &:hover {
+                        .file_name {
+                            color: white;
+
+                            & {
+                              background-color: var(--second-color);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        #Icon_Upload {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid white;
+            border-radius: 10px;
+            padding: 10px;
+            margin-right: 1em;
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--second-color);
+                border-color: var(--second-color);
+            }
+        }
+
+
+    }
+
+    .Input_content {
+        width: 100%;
+        height: 100%;
+        border: 1px solid white;
+        border-radius: 20px;
+        position: relative;
+
+        .File_area {
+            // border: 1px solid red;
+            padding: 0 10px;
+            display: flex;
+            color: #292A38;
+
+            .file_container {
+                position: relative;
+                width: 110px;
+                // border: 1px solid red;
+                margin-right: 2px;
+                display: flex;
+                align-items: center;
+                border-radius: 5px;
+
+                .file_info {
+                    display: flex;
+                    align-items: center;
+                    margin-top: 7px;
+                    width: 100%;
+                    padding: 6px;
+                    border: none;
+                    border-radius: 10px;
+                    position: relative;
+                    background-color: #3E4165;
+
+                    svg {
+                        width: 15px;
+                        color: white;
+                    }
+
+                    .file_name {
+                        flex: 1;
+                        color: #BBBBBB;
+                        margin-left: 5px;
+                        font-size: 1rem;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                    }
+
+                }
+
+                #Delete_icon {
+                    cursor: pointer;
+                    position: absolute;
+                    top: 3px;
+                    right: -6px;
+                    color: #BBBBBB;
+                    transition: all 0.3s ease-in-out;
+
+                    &:hover {
+                        color: white;
+                    }
+
+                }
+
+            }
+        }
+
+        .Input_area {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            // border: 1px solid white;
+            border-radius: 20px;
+            padding: 9px 10px;
+            height: auto;
+            background-color: #2A2A38;
+
+            .attach-btn-wrapper {
+                display: flex;
+                cursor: pointer;
+                width: 30px;
+                height: 30px;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid white;
+                border-radius: 10px;
+                transition: all 0.3s ease-in-out;
+                // background-color: var(--second-color);
+
+                &>span {
+                    display: flex;
+                }
+
+                svg {
+                    width: 16px;
+                }
+
+                &:hover {
+                    background-color: var(--second-color);
+                    border-color: var(--second-color);
+                }
+            }
+
+            textarea {
+                // border: 2px solid red;
+                background-color: rgb(255, 255, 255, 0.0);
+                color: white;
+                padding: 3px 0px;
+                border: none;
+                width: 100%;
+                resize: none;
+                max-height: 300px;
+                overflow-y: auto;
+                font-family: sans-serif;
+            }
+
+            textarea:focus {
+                outline: none;
+                border: none;
+            }
+
+            #send_button {
+                transition: all 0.3s ease-in-out;
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+
+                &:hover {
+                    color: var(--second-color);
+                }
+            }
+        }
+
+        .typing {
+            position: absolute;
+            top: -42px;
+            left: 35px;
+            height: auto;
+        }
+    }
+
+    ;
+}

@@ -1,10 +1,12 @@
 import DefaultLayout from "../Layout/default"
 import Planner from "../Page/Planner/Planner"
-import Knowledge from '../Page/Knowledge/Knowledge'
 import NoPage from "../Page/NoPage"
 import paths from "./path"
 import Setting from "../Page/Setting/Setting"
+import ChatPage from "../Page/Chat"
 import { Navigate } from "react-router"
+
+
 
 
 export const routes = [
@@ -21,10 +23,10 @@ export const routes = [
         exact: true,
     },
     {
-        name: "knowledge",
-        page: <DefaultLayout><Knowledge /></DefaultLayout>,
-        path: paths.knowledge,
-        exact: false,
+        name: "planner",
+        page: <DefaultLayout><ChatPage /></DefaultLayout>,
+        path: paths.chat,
+        exact: true,
     },
     {
         name: "setting",

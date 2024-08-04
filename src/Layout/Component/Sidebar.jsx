@@ -9,14 +9,16 @@ import paths from "../../Routes/path";
 import Overlay from "./Overlay";
 import myCursor from "../../assets/cursor/Labrador_Retriever.cur";
 
+const menuItems = [
+    { name: "task", label: 'Tác vụ', icon: Icon.task, link: paths.planner },
+    { name: "setting", label: 'Cài đặt', icon: Icon.setting, link: paths.setting },
+    { name: "chat", label: 'Raine', icon: Icon.setting, link: paths.chat },
+];
+
 const Sidebar = (p) => {
     const { isopen, toggle, isOpenOvelay, setIsOpenOverlay } = p
 
-    const menuItems = [
-        { name: "task", label: 'Tác vụ', icon: Icon.task, link: paths.planner },
-        { name: "knowledge", label: 'Tri thức', icon: Icon.library, link: paths.knowledge },
-        { name: "setting", label: 'Cài đặt', icon: Icon.setting, link: paths.setting },
-    ];
+
 
     const menuSetting = menuItems.find(item => item.name === "setting")
 
