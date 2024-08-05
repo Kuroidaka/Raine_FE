@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import conversationApi from '../../api/conversation.api';
+import io from 'socket.io-client';
+import { API_BASE_URL } from '../../config';
 
 const AppContainer = styled.div`
   display: flex;
@@ -57,69 +59,77 @@ const Button = styled.button`
   }
 `;
 
-function App() {
+
+function StreamTest() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const chatWindowRef = useRef(null);
 
   const handleSendMessage = async () => {
     if (input.trim() !== '') {
-      const response = await conversationApi.createChat({
+      setInput('');
+      setMessages([...messages, {text: input, role: "user"}])
+      await conversationApi.createChat({
         prompt: input,
         conversationID: "c91b32b7-e69a-44d9-8d8c-42f771a959ea"
       }, 
       true);
-      setInput('');
 
-      console.log("body", response.body)
 
-      const reader = response.body
-      .pipeThrough(new TextDecoderStream())
-      .getReader()
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        const { value, done } = await reader.read()
-        if (done) {
-            break
-        }
-
-        console.log("value", value)
-
-      }
     }
   };
 
+  // useEffect(() => {
+  //   const socket = io('http://192.168.1.7:8001', {
+  //     transports: ['websocket', 'polling'],
+  //   });
+
+  //   socket.on('connect', () => {
+  //     console.log('Connected to server');
+  //   });
+
+  //   socket.on('disconnect', () => {
+  //     console.log('Disconnected from server');
+  //   });
+
+  //   // Clean up the connection on unmount
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
 
   useEffect(() => {
-    const eventSource = new EventSource('/api/streamMessages');
-    
-    eventSource.onmessage = (event) => {
-      setMessages((prevMessages) => [...prevMessages, event.data]);
-      scrollToBottom();
-    };
+    const socket = io('http://192.168.1.7:8001', {
+      transports: ['websocket', 'polling'],
+    });
 
-    eventSource.onerror = (error) => {
-      console.error('EventSource failed:', error);
-      eventSource.close();
-    };
+    socket.on('chatResChunk', ({ content }) => {
+      console.log(content);
+      setMessages(prev => {
+        if (prev[prev.length - 1]?.role === 'user') {
+          return [...prev, { role: 'assistant', text: content }];
+      }
+      return [...prev.slice(0, -1), { role: 'assistant', text: content }];
+      });
+    });
 
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+    });
+
+    // Clean up the connection on unmount
     return () => {
-      eventSource.close();
+      socket.disconnect();
     };
   }, []);
 
-  const scrollToBottom = () => {
-    if (chatWindowRef.current) {
-      chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
-    }
-  };
 
   return (
     <AppContainer>
       <ChatWindow ref={chatWindowRef}>
         {messages.map((message, index) => (
-          <Message key={index}>{message}</Message>
+          <Message key={index}>{message.text}</Message>
         ))}
       </ChatWindow>
       <InputContainer>
@@ -135,4 +145,4 @@ function App() {
   );
 }
 
-export default App;
+export default StreamTest;
