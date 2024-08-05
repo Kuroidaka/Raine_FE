@@ -16,30 +16,18 @@ const InputCom = (p) => {
     };
 
     const handleSendButtonClick = () => {
-        // if(inputValue !== '') {
-        //     if (!isWaiting.isWait) {
-
-        //         setInputValue('');
-        //         setIsWaiting({
-        //             isWait:true, 
-        //             conId: selectedCon.id
-        //         });
-        //         handleSend(inputValue, () => {
-        //             setIsWaiting({
-        //                 isWait:false,
-        //                 conId: ""
-        //             });
-        //         });
-        //         setInputValue('');
-        //     }
+        if(inputValue !== '') {
+            setInputValue('');
+            handleSend(inputValue)
+            setInputValue('');
+        }
+        // setFiles([]);
+        // if (uploadedFiles.length > 0) {
+        //     setShowContent(true);
         // }
-        // // setFiles([]);
-        // // if (uploadedFiles.length > 0) {
-        // //     setShowContent(true);
-        // // }
-        // // if (updatedFiles.length === 0) {
-        // //     setShowContent(false);
-        // // }
+        // if (updatedFiles.length === 0) {
+        //     setShowContent(false);
+        // }
 
 
     };

@@ -10,11 +10,15 @@ const GlobalStyles = createGlobalStyle`
         --header-ht: 60px;
         --main-gradient: linear-gradient(118deg,rgba(30, 30, 30 ,1),rgba(30, 30, 30 ,.7));
         --second-color: #FDBD3E;
+        --third-color: #ffde9b;
+
         --modal-header: 65px;
         --white-text: #ffff;
         --black-text: #1e1e1e;
         --skeleton-first: #FFFFFF;
         --skeleton-second: #E7EDF1;
+
+
     }
     
     *, *:before, *:after {

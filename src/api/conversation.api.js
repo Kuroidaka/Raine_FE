@@ -2,7 +2,7 @@ import axiosClient from "./axiosClient";
 
 const conversationApi = {
 
-    createChat: async ({inputValue, conversationId, uploadUrl}, isStream, isVision) => {
+    createChat: async ({prompt, conversationID, uploadUrl}, isStream=false, isVision=false) => {
         const url = `/brain/chat`;
 
         // Define query parameters
@@ -14,13 +14,15 @@ const conversationApi = {
 
         // Define data body
         const dataBody = {
-            prompt: inputValue,
-            conversationID: conversationId,
+            prompt: prompt,
+            conversationID: conversationID,
         };
 
         if (uploadUrl) {
             dataBody.imgURL = uploadUrl;
         }
+
+        console.log("dataBody",dataBody )
         // Send POST request with query parameters and data body
         return axiosClient.post(url, dataBody, { params });
     },
@@ -29,6 +31,12 @@ const conversationApi = {
 
         // Send POST request with query parameters and data body
         return axiosClient.get(url);
+    },
+    deleteConversation: async(id) => {
+        const url = `/conversation/delete/${id}`;
+
+        // Send POST request with query parameters and data body
+        return axiosClient.delete(url);
     }
 }
 

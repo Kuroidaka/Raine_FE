@@ -10,16 +10,13 @@ import { useState } from "react";
 
 
 const Sidebar = (p) => {
-    const { data } = p
-    const [selectedID, setSelect] = useState("")
-
-    const navigate = useNavigate()
+    const { data, setSelectConID, selectedConID } = p;
+    const navigate = useNavigate();
 
     const hdlSelCon = (id) => {
-        // selectCon({id, dayRef})
-        setSelect(id)
-        navigate('/chat')
-    }
+        setSelectConID(id);
+        navigate('/chat');
+    };
 
     return ( 
         <Container>
@@ -27,40 +24,30 @@ const Sidebar = (p) => {
                 <h2>History</h2>
 
                 <div className="conversation-list" aria-hidden="true">
-                {(data && data.length > 0 ) ?
-                (
-                    data.map((item, index) => (
-                    <div className="day-ref-section" key={index}>
-                        {item.messages.length > 0 && <h4 className="title">test</h4>}
-                        <ul >
-                            {item.messages && 
-                            item.messages.map((conversation, index) => {
-                              return (
+                    {data && data.length > 0 ? (
+                        <ul>
+                            {data.map((item, index) => (
                                 <SidebarNav
-                                    key={index} 
-                                    conversation={conversation}
-                                    selectedID={selectedID}
+                                    key={index}
+                                    conversation={item} // Assuming you need to pass the whole item
+                                    selectedID={selectedConID} // Adjust according to your SidebarNav props
                                     hdlSelCon={hdlSelCon}
-                                > </SidebarNav>
-                              )
-                            })}
+                                />
+                            ))}
                         </ul>
-                    </div>
-                ))
-                ) : (
-                    <div className="empty">
-                        <p>No conversation</p>
-                </div>)
-                }
-            </div>
+                    ) : (
+                        <div className="empty">
+                            <p>No conversation</p>
+                        </div>
+                    )}
+                </div>
 
-                <Team>
-                </Team>
-
+                <Team />
             </div>
         </Container>
-     );
-}
+    );
+};
+
 
 const Team = styled.div`
     width: 100%;
@@ -112,108 +99,6 @@ const Container = styled.div `
                 list-style: none;
             }
 
-            .conversation{
-                cursor: pointer;
-                display: flex;
-                position: relative;
-                margin: 7px 0;
-                height: 30px;
-                align-items: center;
-                justify-content: space-between;
-                border-radius: 5px;
-                transition: all 0.3s ease-in-out;
-                .setting{
-                    display: none;
-                    height: 100%;
-                    align-items: center;
-                    position: absolute;
-                    right: 0;
-                    justify-content: center;
-                    width: 34%;
-
-                    .icon-wrapper {
-                        height: 100%;
-                        display: flex;
-                        width: 100%;
-                        padding-right: 10px;
-                        border-bottom-right-radius: 5px;
-                        border-top-right-radius: 5px;
-                        align-items: center;
-                        justify-content: center;
-                        background: var(--selected-color);
-                        svg {
-                            background-color: white;
-                            font-size: 1.9rem;
-                            transition: all 0.3s ease-in-out;
-                        }
-                    }
-
-                    .gradient-overlay {
-                        background: linear-gradient(to right, transparent, var(--selected-color));
-                        width: 100%;
-                        height: 100%;
-                    }
-                }
-                .item {
-                    height: 100%;
-                    padding: 0px 10px;
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    p {
-                        font-size: 13px;
-                        transition: all 0.3s ease-in-out;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        width: 100%;
-                        color: #ebebeb;
-                    }
-                }
-
-                &.selected{
-                    background-color: var(--selected-color);
-                    .item p {
-                        font-weight: 700;
-                    }
-                    .setting{
-                        display: flex;
-                    }
-                }
-
-                &.hover-effect {
-                    background-color: var(--third-color);
-                    
-                    box-sizing: border-box;
-                    .setting{
-                        display: flex;
-                        cursor: pointer;
-                    }
-                }
-                
-                &:not(.selected):hover {
-                    background-color: var(--third-color);
-                    
-                    box-sizing: border-box;
-                    .setting{
-                        display: flex;
-                        cursor: pointer;
-
-                        .icon-wrapper {
-
-                            background: var(--third-color);
-                            svg {
-                                background-color: white;
-                            }
-                        }
-
-                        .gradient-overlay {
-                            background: linear-gradient(to right, transparent, var(--third-color));
-
-                        }
-                    }
-                }
-            }
 
 
             h4.title {

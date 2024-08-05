@@ -1,17 +1,18 @@
 import { useContext } from "react";
 import styled from "styled-components";
+import ConversationContext from "../../../Context/conversation.context";
 // import ConversationContext from "../../../context/Conversation.Context";
 
 const Menu = (p) => {
     const { conID, close } = p
 
-    // const { deleteCon } = useContext(ConversationContext);
+    const { deleteConversation } = useContext(ConversationContext);
 
-    const handleDelete = (e) => {
+    const handleDelete = async (e) => {
         e.stopPropagation();
         console.log('delete', conID);
         close()
-        // deleteCon({id: conID, dayRef: dayRef})
+        await deleteConversation(conID)
     }
 
     return(

@@ -3,33 +3,42 @@ import styled from 'styled-components';
 import UserMsg from './User_message';
 import BotMsg from './Bot_message';
 import EmptyBox from './EmptyBox';
-import { useRef } from 'react';
+import { useContext, useRef, useMemo } from 'react';
+import ConversationContext from '../../../Context/conversation.context';
 
-const currentMsgList = []
 
 const ChatBox = () => {
-    // const { currentMsgList } = useContext(ConversationContext);  
-    const pageRef = useRef(null); 
+    const { currentCon } = useContext(ConversationContext);
+    const pageRef = useRef(null);
 
+    const messages = currentCon?.messages || [];
+    
     return (
         <Conversation ref={pageRef} className='list-chat'>
-        {currentMsgList && currentMsgList.length > 0  ? (
-                currentMsgList.map((msg, index) => (
-                    msg.sender === "user" ? (
-                        <UserMsg pageRef={pageRef} key={index} text={msg.text} imgList={msg.imgList} />
+            {messages.length > 0 ? (
+                messages.map((msg, index) => (
+                    !msg.isBot ? (
+                        <UserMsg 
+                            pageRef={pageRef} 
+                            key={index} 
+                            text={msg.text} 
+                            imgList={msg.imgList} 
+                        />
                     ) : (
-                        <BotMsg key={index} text={msg.text} functionList={msg.functionList}/>
+                        <BotMsg 
+                            key={index} 
+                            text={msg.text} 
+                            functionList={msg.functionList} 
+                        />
                     )
                 ))
-
             ) : (
                 <EmptyBox />
-            )
-        }
-
+            )}
         </Conversation>
-     );
+    );
 }
+
  
 export default ChatBox;
 

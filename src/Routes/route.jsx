@@ -5,6 +5,7 @@ import paths from "./path"
 import Setting from "../Page/Setting/Setting"
 import ChatPage from "../Page/Chat"
 import { Navigate } from "react-router"
+import StreamTest from "../Page/Test/Stream"
 
 
 
@@ -32,6 +33,12 @@ export const routes = [
         name: "setting",
         page: <DefaultLayout><Setting /></DefaultLayout>,
         path: paths.setting,
+        exact: false,
+    },
+    {
+        name: "test",
+        page: <DefaultLayout><StreamTest /></DefaultLayout>,
+        path: paths.test,
         exact: false,
     },
     {

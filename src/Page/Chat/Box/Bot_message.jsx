@@ -57,7 +57,7 @@ const functionIcon = {
 }
 
 const BotMsg = (p) => {
-    const { text, className, functionList } = p
+    const { text, className, functionList=[] } = p
     const { imgPlaceHolder } = Img
 
     // const [isScroll, setIsScroll] = useState(false);

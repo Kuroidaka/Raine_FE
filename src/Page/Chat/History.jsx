@@ -11,7 +11,10 @@ import Loading from "../../Component/Loadding";
 const History = (p) => {
     const { children } = p
 
-    const { conversationList, error, isLoading } = useContext(ConversationContext)
+    const { conversationList, error, isLoading,
+        selectedConID, setSelectConID
+
+     } = useContext(ConversationContext)
 
     if(isLoading) {
         return <Loading></Loading>
@@ -20,13 +23,12 @@ const History = (p) => {
     if(error) {
         toast.error(error.message)
     }
-    console.log("conversationList", conversationList )
     return (
         <Container>
             <div className="content-ui">
                 {children}
             </div>
-            <Sidebar data={conversationList}/>
+            <Sidebar data={conversationList} setSelectConID={setSelectConID} selectedConID={selectedConID}/>
         </Container>
     )
 }
