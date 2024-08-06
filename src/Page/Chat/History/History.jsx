@@ -1,20 +1,21 @@
 import { Fragment, useContext, useState } from "react";
 import { ChevronRight, ChevronLeft } from 'react-feather';
 
-import Sidebar from "./History/Sidebar";
+import Sidebar from "./Sidebar";
 import styled from "styled-components";
-import ConversationContext from "../../Context/conversation.context";
+import ConversationContext from "../../../Context/conversation.context";
 import { toast } from "react-toastify";
-import Loading from "../../Component/Loadding";
+import Loading from "../../../Component/Loading";
 
 
 const History = (p) => {
     const { children } = p
 
     const { conversationList, error, isLoading,
-        selectedConID, setSelectConID
+        selectedConID
 
      } = useContext(ConversationContext)
+
 
     if(isLoading) {
         return <Loading></Loading>
@@ -28,7 +29,7 @@ const History = (p) => {
             <div className="content-ui">
                 {children}
             </div>
-            <Sidebar data={conversationList} setSelectConID={setSelectConID} selectedConID={selectedConID}/>
+            <Sidebar data={conversationList} selectedConID={selectedConID}/>
         </Container>
     )
 }

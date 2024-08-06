@@ -26,8 +26,10 @@ const conversationApi = {
         // Send POST request with query parameters and data body
         return axiosClient.post(url, dataBody, { params });
     },
-    getConversationHistory: async() => {
-        const url = `/conversation/get`;
+    getConversationHistory: async(id) => {
+        const url = id
+            ? `/conversation/get/${id}`
+            : `/conversation/get`;
 
         // Send POST request with query parameters and data body
         return axiosClient.get(url);

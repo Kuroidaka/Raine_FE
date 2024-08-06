@@ -10,12 +10,11 @@ import { useState } from "react";
 
 
 const Sidebar = (p) => {
-    const { data, setSelectConID, selectedConID } = p;
+    const { data, selectedConID } = p;
     const navigate = useNavigate();
 
     const hdlSelCon = (id) => {
-        setSelectConID(id);
-        navigate('/chat');
+        navigate(`/chat/${id}`);
     };
 
     return ( 

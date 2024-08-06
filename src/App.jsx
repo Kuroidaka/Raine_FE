@@ -2,7 +2,7 @@ import GlobalStyles from './GlobalStyle'
 import { Routes, Route } from "react-router-dom";
 import { routes } from './Routes/route';
 import { DeviceProvider } from "./Context/Device.context"
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 
 import 'react-quill/dist/quill.snow.css';
 import "flatpickr/dist/themes/light.css";
@@ -20,16 +20,16 @@ const App = () => {
   return (
     <DeviceProvider>
       <GlobalStyles />
-      <Routes>
-        {routes.map((route, idx) => {
-          return (<Route 
-                    key={idx}
-                    exact={route.exact}
-                    path={route.path}
-                    element={route.page}
-                  ></Route>
-                )})}
-      </Routes>
+        <Routes>
+          {routes.map((route, idx) => {
+            return (<Route 
+                      key={idx}
+                      exact={route.exact}
+                      path={route.path}
+                      element={route.page}
+                    ></Route>
+                  )})}
+        </Routes>
     </DeviceProvider>
   )
 }

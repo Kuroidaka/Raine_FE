@@ -7,7 +7,7 @@ import Button from "../../Component/Button";
 import { Img } from "../../assets/svg";
 import TaskCard from "./card/TaskCard";
 import TaskContext from "../../Context/Task.context";
-import Loading from "../../Component/Loadding";
+import Loading from "../../Component/Loading";
 import ModalContext from "../../Context/Modal.context";
 import RoutineContext from "../../Context/Routine.context";
 import RoutineCard from "./card/RoutineCard";

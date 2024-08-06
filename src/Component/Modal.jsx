@@ -4,7 +4,7 @@ import { Icon } from "/src/assets/icon.js";
 import React, { Fragment, useEffect, useState } from "react";
 import DeviceContext from "../Context/Device.context";
 import ModalContext from "../Context/Modal.context";
-import Loading from "./Loadding"
+import Loading from "./Loading"
 import Overlay from "../Layout/Component/Overlay";
 import myCursor from '../assets/cursor/Labrador_Retriever.cur';
 

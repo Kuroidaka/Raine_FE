@@ -5,25 +5,17 @@ import { motion } from "framer-motion";
 
 import ChatBox from "./Box";
 import InputBox from "./input/index";
-import ConversationContext from "../../Context/conversation.context";
-import { useContext } from "react";
+// import ConversationContext from "../../Context/conversation.context";
+// import { useContext } from "react";
 
 const Interact = () => {
-  const {
-    conversationList,
-    error,
-    isLoading,
-    selectedConID,
-    setSelectConID,
-    deleteConversation,
-    addMsg,
-  } = useContext(ConversationContext);
+  // const { } = useContext(ConversationContext);
 
   const navigate = useNavigate();
 
   const handleOpenNewChat = () => {
-    // createNewConversation()
-    setSelectConID(-1)
+    
+    navigate("/chat");
   };
   const handleSwitchVideoChat = () => {
     // createNewConversation()

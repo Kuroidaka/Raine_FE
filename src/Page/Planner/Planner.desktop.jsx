@@ -15,7 +15,7 @@ import GoalCard from "./card/GoalCard";
 import task from '../../assets/svg/task.svg'
 import routine from '../../assets/svg/routine.svg'
 import goal from '../../assets/svg/goal.svg'
-import Loading from "../../Component/Loadding";
+import Loading from "../../Component/Loading";
 
 const PlannerDesktop = () => {
     const [taskDateZone, setTaskDateZone] = useState("today")

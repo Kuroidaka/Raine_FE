@@ -3,16 +3,33 @@ import styled from 'styled-components';
 import UserMsg from './User_message';
 import BotMsg from './Bot_message';
 import EmptyBox from './EmptyBox';
-import { useContext, useRef, useMemo } from 'react';
+import { useContext, useRef } from 'react';
 import ConversationContext from '../../../Context/conversation.context';
+import Loading from '../../../Component/Loading';
+
+
 
 
 const ChatBox = () => {
-    const { currentCon } = useContext(ConversationContext);
-    const pageRef = useRef(null);
+    const { currentCon, currentConLoading, currenConError } = useContext(ConversationContext);
+    // const { id } = useParams();
+    // const { data: currentCon, error, isLoading } = useQuery({
+    //     queryKey: ['conversation', id],
+    //     queryFn: () => conversationApi.getConversationHistory(id)
+    // });
 
+    console.log("currentCon", currentCon)
+    const pageRef = useRef(null);
+  
+    // if (currentConLoading) {
+    //   return <Loading />;
+    // }
+  
+    if (currenConError) {
+      return <div>Some thing went wrong</div>;
+    }
+  
     const messages = currentCon?.messages || [];
-    
     return (
         <Conversation ref={pageRef} className='list-chat'>
             {messages.length > 0 ? (

@@ -49,7 +49,7 @@ const Sidebar = (p) => {
 
     // }
 
-    const [select, setSelect] = useState()
+    const [select, setSelect] = useState("")
 
     const handleSelect = (link) => {
         setSelect(link)
@@ -74,12 +74,12 @@ const Sidebar = (p) => {
 
                 <SidebarMenu>
                     {menuItems.map((menuItem, idx) => {
-
+                    const contained = select.includes(menuItem.link)
                     if(menuItem.name !== "setting")
                     return (
                         <SidebarMenuItem key={idx}
                             onClick={() => handleSelect(menuItem.link)}
-                            className={select === menuItem.link && 'active'}
+                            className={contained && 'active'}
                             whileHover={{
                                 x: "5px",
                                 transition: {
@@ -246,5 +246,6 @@ const SidebarLink = styled(Link)`
     span {
         display: flex;
         align-items: center;
+        user-select: none;
     }
 `;

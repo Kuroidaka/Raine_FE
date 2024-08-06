@@ -1,42 +1,47 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import conversationApi from "../api/conversation.api.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
+import { Navigate, useNavigate, useParams } from "react-router";
 
 const ConversationContext = createContext()
 
 export const ConversationProvider = (p) => {
     const { children } = p
-    const [selectedConID, setSelectConID] = useState(-1)
+    const { id:selectedConID } = useParams();
     const [conversation, setConversation] = useState([])
     const [currentCon, setCurrenConversation] = useState([])
+    const navigate = useNavigate()
 
     const queryClient = useQueryClient();
 
     const { data, error, isLoading } = useQuery({
         queryKey:['conversations'], 
-        queryFn: conversationApi.getConversationHistory,
+        queryFn: () => conversationApi.getConversationHistory(),
         cacheTime: 0,
+    });
+
+    const { data: currentConData, isLoading: currentConLoading, error:currenConError } = useQuery({
+        queryKey: ['conversation', selectedConID],
+        queryFn: () => selectedConID ? conversationApi.getConversationHistory(selectedConID) : Promise.resolve(null),
+        enabled: !!selectedConID 
     });
 
 
     useEffect(() => {
         if (data && data.length > 0) {
-            setSelectConID(data[0].id);
             setConversation(data)
         }
     }, [data]);
 
     useEffect(() => {
-        let newCon = []
-        if(data && data.length > 0) {
-            newCon = data.find(convo => convo.id === selectedConID)
-        }else {
-            newCon = []
+        if(!selectedConID) setCurrenConversation([])
+        else if (currentConData) {
+            console.log("currentConData", currentConData)
+            setCurrenConversation(currentConData)
         }
-        setCurrenConversation(newCon)
-    }, [selectedConID, data]);
+    }, [selectedConID, currentConData]);
 
  
     useEffect(() => {
@@ -64,9 +69,7 @@ export const ConversationProvider = (p) => {
             const newCon = conversation.filter(data => data.id !== id)
             setConversation(newCon)
         },
-        addMsg: async(params, isBot = false) => {
-            console.log(selectedConID, isBot);
-        
+        addMsg: async(params, isBot = false) => {       
             // Helper function to update messages
             const updateMessages = (prevMessages) => {
                 const newMessages = [...prevMessages];
@@ -105,7 +108,14 @@ export const ConversationProvider = (p) => {
             } else {
                 const index = conversation.findIndex(data => data.id === selectedConID);
                 if (index !== -1) {
-                    conversation[index].messages.push({ text: params.prompt, isBot: false });
+                    const newConversations = [...conversation];
+                    newConversations[index] = {
+                        ...newConversations[index],
+                        messages: [...newConversations[index].messages, { text: params.prompt, isBot: false }]
+                    };
+                
+                    setConversation(newConversations);
+                    setCurrenConversation(newConversations[index]);
                 }
             }
         }
@@ -118,7 +128,10 @@ export const ConversationProvider = (p) => {
             await conversationApi.deleteConversation(id)
             await cacheConversation.del(id)
         },
-        onSuccess: () => queryClient.invalidateQueries(['conversations']),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['conversations'])
+            navigate('/chat')
+        },
         onError: (error) => {
             console.error("Error deleting conversation:", error);
         }
@@ -128,10 +141,14 @@ export const ConversationProvider = (p) => {
     const addMutation = useMutation({
         mutationFn: async ({data, isStream, isVision}) => {
             await cacheConversation.addMsg(data)
-            await conversationApi.createChat(data, isStream, isVision)
-
+            const con = await conversationApi.createChat(data, isStream, isVision)
+            if(!selectedConID) {
+                setTimeout(() => {
+                    navigate(`/chat/${con.conversationID}`)
+                }, 1000);
+            } 
         },
-        onSuccess: () => queryClient.invalidateQueries(['conversations']),        
+        onSuccess: () => queryClient.invalidateQueries(['conversations', selectedConID]),        
         onError: (error) => {
             toast.error(`Something went wrong`)
             console.log(error)
@@ -145,18 +162,15 @@ export const ConversationProvider = (p) => {
 
     // Function to add a new conversation
     const addMsg = useCallback((data, isStream, isVision) => {
-        
         addMutation.mutate({data, isStream, isVision});
     }, [addMutation]);
 
 
-    
-
     const contextValue = {
         conversationList: conversation,
-        error,
-        isLoading,
-        selectedConID, setSelectConID,
+        error, currenConError,
+        isLoading, currentConLoading,
+        selectedConID,
         deleteConversation, addMsg,
         currentCon
     }
