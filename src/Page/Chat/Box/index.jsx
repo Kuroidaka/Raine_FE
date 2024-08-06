@@ -5,13 +5,12 @@ import BotMsg from './Bot_message';
 import EmptyBox from './EmptyBox';
 import { useContext, useRef } from 'react';
 import ConversationContext from '../../../Context/conversation.context';
-import Loading from '../../../Component/Loading';
 
 
 
 
 const ChatBox = () => {
-    const { currentCon, currentConLoading, currenConError } = useContext(ConversationContext);
+    const { currentCon, currenConError } = useContext(ConversationContext);
     // const { id } = useParams();
     // const { data: currentCon, error, isLoading } = useQuery({
     //     queryKey: ['conversation', id],

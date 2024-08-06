@@ -7,7 +7,7 @@ const Planner = lazy(() => import("../Page/Planner/Planner"));
 const NoPage = lazy(() => import("../Page/NoPage"));
 const Setting = lazy(() => import("../Page/Setting/Setting"));
 const ChatPage = lazy(() => import("../Page/Chat"));
-const CamChat = lazy(() => import("../Page/camChat/CamChat"));
+const VideoChat = lazy(() => import("../Page/VideoChat"));
 const StreamTest = lazy(() => import("../Page/Test/Stream"));
 
 import paths from "./path";
@@ -61,7 +61,7 @@ export const routes = [
     page: (
       <DefaultLayout>
         <Suspense fallback={<Loading />}>
-          <CamChat />
+          <VideoChat />
         </Suspense>
       </DefaultLayout>
     ),

@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 
-import Typing from '../../component/Typing'
-import EmptyBox from '../chat/chatbox/EmptyBox'
-import MarkDown from '../../component/MarkDownChat';
+import Typing from '../../Component/Typing'
+import EmptyBox from "../Chat/Box/EmptyBox" 
+import MarkDown from "../../Component/MarkDownChat" 
 
 const LogScreen = (p) => {
     const {

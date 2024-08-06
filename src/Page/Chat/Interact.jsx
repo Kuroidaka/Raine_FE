@@ -19,7 +19,7 @@ const Interact = () => {
   };
   const handleSwitchVideoChat = () => {
     // createNewConversation()
-    navigate("/cam-chat");
+    navigate("/chat/cam");
   };
 
   return (
