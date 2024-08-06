@@ -8,6 +8,8 @@ import useMediaRecorder from "@wmik/use-media-recorder";
 import { useLocation } from "react-router";
 import useSilenceAwareRecorder from "silence-aware-recorder/react";
 import { imagesGrid, playAudio } from "./helper";
+import conversationApi from "../../api/conversation.api";
+import { io } from "socket.io-client";
 
 const INTERVAL = 1000
 const SILENCE_DURATION = 2500
@@ -49,6 +51,9 @@ const VideoChat = () => {
     // const [lang] = useState("en");
     const [isWaiting, setIsWaiting] = useState(false);
   
+    const [audioQueue, setAudioQueue] = useState([]);
+    const [isPlaying, setIsPlaying] = useState(false);
+
     // Define recorder for video
     let screenObject = useMediaRecorder({
       recordScreen: true,
@@ -101,9 +106,9 @@ const VideoChat = () => {
     //     content: result.content
     //   };
     // };
-    const handleSendClient = async ({ inputValue, uploadUrl }) => {
+    const handleSendClient = async ({ inputValue, frameUrl }) => {
       let isVision = false
-      if(uploadUrl) isVision = true
+      if(frameUrl) isVision = true
       // Retrieve data conversation
       // const { data } = await camApi.getConversation()
       // // Append new message into conversation
@@ -126,23 +131,20 @@ const VideoChat = () => {
       // ];
   
       // console.log("messages", messages)
-      // // API CHAT
-      // const result = await func.sendChat({ messages, lang, setBotText, isScreenShare:isScreenShare.current });
-      // console.log("final response: ", result.data);
-      // await turnOffWait();
-      
-      // await camApi.storeConversation({prompt: content})
-  
-  
+      // API CHAT
+      const result = await conversationApi.createChat({
+        prompt: inputValue,
+        uploadUrl: frameUrl
+      }, true, isVision);
+      console.log("final response: ", result.content);
+      setBotText(result.content)
       // const result = await conversationApiV2.createChat(
       //   {inputValue, conversationId:"3cdae64f-b7f9-4326-b94d-3ee34a0af3f5" , base64Data: uploadUrl},
       //   false,
       //   isVision
       // )
-      // store conversation
       return {
-        // content: result.data
-        content: ""
+        content: result.content
       };
     };
   
@@ -216,33 +218,28 @@ const VideoChat = () => {
         setIsWaiting(true);
         setBotText("");
   
-        const speechtotextFormData = new FormData();
-        speechtotextFormData.append("file", data, "audio.webm");
-        // speechtotextFormData.append("language", lang);
+        const sttFromData = new FormData();
+        sttFromData.append("file", data, "audio.webm");
+        // sttFromData.append("language", lang);
   
+        const result = await conversationApi.stt(sttFromData);
+        console.log("transcript", result.content);
+
+        if (result.content.length > 0) {
+          setTranscription(result.content);
   
-        // const result = await groqSTT(speechtotextFormData);
-        const result ={
-            text: ''
-        }
-        console.log("transcript", result.text);
-        if (result.text.length > 0) {
-          setTranscription(result.text);
-  
-          const uploadUrls = videoRef.current.srcObject !== null ? await videoProcess() : [null]
+          const frameUrl = videoRef.current.srcObject !== null ? await videoProcess() : null
           setPhase("user: processing completion");
   
           // send chat
-          // const { content } = await handleSend({ uploadUrl: uploadUrls[0], inputValue: result.text, turnOffWait: () => {
+          // const { content } = await handleSend({ uploadUrl: frameUrl[0], inputValue: result.text, turnOffWait: () => {
           //   setIsWaiting(false)
           // } })
           const { content } = await handleSendClient({
-            uploadUrl: uploadUrls,
-            inputValue: result.text,
+            frameUrl: frameUrl,
+            inputValue: result.content,
           });
           setIsWaiting(false);
-          console.log("content", content)
-  
           // const AIresult = "Sure, boss! To return a blob URL from the blob object, you can use the URL.createObjectURL() method. This method creates a DOMString containing a URL representing the object given in the parameter. Here's your updated code:"
           if (content && typeof content === "string") {
             setPhase("assistant: processing text to speech");
@@ -250,13 +247,11 @@ const VideoChat = () => {
             const ttsFormData = new FormData();
             ttsFormData.append("input", content);
   
-            // const { blobURL } = await func.textToSpeech({ formData: ttsFormData });
-            
-            const blobURL = "" 
+            await conversationApi.tts(content);
 
             setPhase("assistant: playing audio");
   
-            await playAudio(blobURL);
+            // await playAudio(blobURL);
   
             voiceRecorder.start()
             isBusy.current = false;
@@ -305,6 +300,34 @@ const VideoChat = () => {
   
       return imageUrl
     }
+    // Socket for streaming response from AI
+    useEffect(() => {
+      const socket = io('http://192.168.1.7:8001', {
+        transports: ['websocket', 'polling'],
+      });
+  
+      socket.on('chatResChunk', ({ content }) => {
+          setBotText(content);
+      });
+
+      socket.on('audioFile', (filePath) => {
+        const audioUrl = URL.createObjectURL(new Blob([filePath], { type: 'audio/mpeg' }));
+        
+        console.log("audioUrl", audioUrl)
+        setAudioQueue((prevQueue) => [...prevQueue, audioUrl]);
+      });
+
+      socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+      });
+
+  
+      // Clean up the connection on unmount
+      return () => {
+        socket.disconnect();
+      };
+    }, []);
+
   
     useEffect(() => {
       // start record Video + voice
@@ -418,12 +441,31 @@ const VideoChat = () => {
       }
     }, [screenObject.liveStream]);
   
-
+    // Audio play
+    useEffect(() => {
+      if (!isPlaying && audioQueue.length > 0) {
+        playNextAudio();
+      }
+    }, [audioQueue, isPlaying]);
+  
+    const playNextAudio = async () => {
+      if (audioQueue.length === 0) {
+        setIsPlaying(false);
+        return;
+      }
+  
+      setIsPlaying(true);
+      const nextAudioUrl = audioQueue[0];
+  
+      await playAudio(nextAudioUrl);
+  
+      setAudioQueue((prevQueue) => prevQueue.slice(1));
+      setIsPlaying(false);
+    };
 
   const camScreenProp = {
     videoRef,
     screenRef,
-    // canvasRef,
     isScreenShare,
     videoRecorder,
     toggleScreenShare,
@@ -441,6 +483,12 @@ const VideoChat = () => {
     botText,
     setDisplayDebug,
   };
+  
+  const debugProp = {
+    displaydebug, setDisplayDebug,
+    imagesGridUrl, transcription,
+    phase
+  }
 
   return (
     <Container>
@@ -450,7 +498,7 @@ const VideoChat = () => {
         <LogScreen {...logScreenProp} />
       </div>
 
-      <DebugLog displaydebug={displaydebug} setDisplayDebug={setDisplayDebug} />
+      <DebugLog {...debugProp}/>
     </Container>
   );
 };

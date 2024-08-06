@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import Typing from '../../Component/Typing'
 import EmptyBox from "../Chat/Box/EmptyBox" 
 import MarkDown from "../../Component/MarkDownChat" 
+import Loading from "../../Component/Loading" 
 
 const LogScreen = (p) => {
     const {
@@ -22,9 +23,7 @@ const LogScreen = (p) => {
 
       <AiResponseContainer>
       <div className="ai-text">
-      {isWaiting &&
-        <Typing who="Raine" text="is thinking..." /> 
-      }
+      {isWaiting && <Loading />}
         <AiResponse>
           {botText.length === 0 && !isWaiting && <EmptyBox />}
           <MarkDown text={botText}/>

@@ -15,9 +15,10 @@ const conversationApi = {
         // Define data body
         const dataBody = {
             prompt: prompt,
-            conversationID: conversationID,
         };
-
+        if(conversationID) {
+            dataBody.conversationID = conversationID;
+        }
         if (uploadUrl) {
             dataBody.imgURL = uploadUrl;
         }
@@ -39,6 +40,22 @@ const conversationApi = {
 
         // Send POST request with query parameters and data body
         return axiosClient.delete(url);
+    },
+    stt: async (formData) => {
+        const url = `/brain/stt/`;
+
+        return axiosClient.post(url, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+    tts: async (text) => {
+        const url = `/brain/tts`;
+
+        return axiosClient.post(url, { text });
+
+        // return URL.createObjectURL(response);
     }
 }
 

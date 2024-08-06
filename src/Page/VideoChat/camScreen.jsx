@@ -22,7 +22,6 @@ const CamScreen = (p) => {
     recorder,
     isBusy
   } = p
-  console.log("audio.isRecording", audio.isRecording)
   
   const navigate = useNavigate();
   
@@ -75,7 +74,7 @@ const CamScreen = (p) => {
     // camApi.deleteCamChatStream();
     recorder.stop(video, videoRef);
     recorder.stop(screenObject, screenRef);
-    await navigate("/chat");
+    navigate("/chat");
   };
 
   return (
