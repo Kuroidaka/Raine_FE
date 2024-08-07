@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import conversationApi from '../../api/conversation.api';
 import io from 'socket.io-client';
-import { API_BASE_URL } from '../../config';
 
 const AppContainer = styled.div`
   display: flex;
@@ -100,7 +99,7 @@ function StreamTest() {
 
 
   useEffect(() => {
-    const socket = io('http://192.168.1.7:8001', {
+    const socket = io('https://192.168.1.7:8001', {
       transports: ['websocket', 'polling'],
     });
 

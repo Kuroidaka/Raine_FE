@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import { Icon } from "/src/assets/icon.js";
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useContext } from "react";
 import DeviceContext from "../Context/Device.context";
 import ModalContext from "../Context/Modal.context";
 import Loading from "./Loading"
@@ -11,9 +11,10 @@ import myCursor from '../assets/cursor/Labrador_Retriever.cur';
 const Modal = (p) => {
     const { children, data } = p
 
-    const { device } = React.useContext(DeviceContext)
-    const { modal, closeModal, isDataLoaded, setIsDataLoaded }  = React.useContext(ModalContext)
-    const [isOpenOverlay, setIsOpenOverlay] = useState(false)
+    const { device } = useContext(DeviceContext)
+
+    const { modal, closeModal, isDataLoaded, setIsDataLoaded } = useContext(ModalContext);
+    const [isOpenOverlay, setIsOpenOverlay] = useState(false);
     useEffect(() => {
         console.log("listen event opening modal")
         window.addEventListener('modalOpening', openingModal);
@@ -26,7 +27,7 @@ const Modal = (p) => {
         return () => {
           window.removeEventListener('modalOpening', openingModal);
         };
-      }, []);
+      }, [device]);
 
     const modalStyle = {
         open: () => ({

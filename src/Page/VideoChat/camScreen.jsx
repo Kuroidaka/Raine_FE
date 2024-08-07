@@ -1,74 +1,194 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useContext } from 'react'
 import { motion } from 'framer-motion'
 import styled, { css } from 'styled-components'
 import { Mic, MicOff, Video, VideoOff, Monitor, ArrowLeft, Phone } from 'react-feather'
-import { useLocation, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import useMediaRecorder from '@wmik/use-media-recorder';
-import { IMAGE_WIDTH, INTERVAL, SCREEN_IMAGE_WIDTH, SILENCE_DURATION, SILENT_THRESHOLD } from '.';
+
 import useSilenceAwareRecorder from 'silence-aware-recorder/react';
-import { playAudio } from './helper';
+import { imagesGrid, playAudio } from './helper';
+import conversationApi from '../../api/conversation.api';
+import { WebSocketContext } from "../../Context/socket.context";
+import { toast } from 'react-toastify';
 
-// import camApi from "../../api/v1/camConversation";
 
+const INTERVAL = 1000
+const SILENCE_DURATION = 1500
+const SILENT_THRESHOLD = -30
+
+const SCREEN_IMAGE_WIDTH = 512
+const SCREEN_MAX_SCREENSHOTS = 1
+const SCREEN_IMAGE_QUALITY = 1
+const SCREEN_COLUMNS = 1
+
+const IMAGE_WIDTH = 1080
+const MAX_SCREENSHOTS = 30
+const IMAGE_QUALITY = 1
+const COLUMNS = 4
 const CamScreen = (p) => {
   const {
     setPhase,
-    onSpeech,
-    socket,
-    setIsWaiting
+    setIsWaiting,
+    canvasRef,
+    setImagesGridUrl,
+    setBotText,
+    setTranscription,
+    isBusy,
+    videoRef
   } = p
-  
-  const [isOpenCamBtn, setIsOpenCamBtn] = useState(true)
-  const [isScreenBtn, setIsScreenBtn] = useState(false)
-  const [isOnMic, setIsOnMic] = useState(false);
 
-      const maxVolumeRef = useRef(0);
-      const minVolumeRef = useRef(-100);
-      const isBusy = useRef(false);
-      const isScreenShare = useRef(false);
-      const screenshotsRef = useRef([]);
-      const videoRef = useRef();
-      const screenRef = useRef();
-      const canvasRef = useRef();
+    const maxVolumeRef = useRef(0);
+    const minVolumeRef = useRef(-100);
+    const isScreenShare = useRef(false)
+    const screenshotsRef = useRef([]);
+    
+    const screenRef = useRef(null);
 
-      const location = useLocation();
+    const [currentVolume, setCurrentVolume] = useState(-50);
+    const [volumePercentage, setVolumePercentage] = useState(0);
 
-      // const { selectedCon, updateConUser } = useContext(ConversationContext);
-
-      const [currentVolume, setCurrentVolume] = useState(-50);
-      const [volumePercentage, setVolumePercentage] = useState(0);
-      // const [lang] = useState("en");
-      const [audioQueue, setAudioQueue] = useState([]);
-      const [isPlaying, setIsPlaying] = useState(false);
-
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
 
-   // Define recorder for video
-   let screenObject = useMediaRecorder({
-    recordScreen: true,
-    blobOptions: { type: "video/webm" },
-    mediaStreamConstraints: { audio: false, video: true },
-  });
+    // Define recorder for screen share
+    let screenObject = useMediaRecorder({
+      recordScreen: true,
+      blobOptions: { type: "video/webm" },
+      mediaStreamConstraints: { audio: false, video: true },
+    });
+    // Define recorder for video
+    let { liveStream, ...video } = useMediaRecorder({
+      recordScreen: false,
+      blobOptions: { type: "video/webm" },
+      mediaStreamConstraints: { audio: false, video: true },
+    });
 
-  let { liveStream, ...video } = useMediaRecorder({
-    recordScreen: false,
-    blobOptions: { type: "video/webm" },
-    mediaStreamConstraints: { audio: false, video: true },
-  });
+    const handleSendClient = async ({ inputValue, frameUrl }) => {
+      let isVision = false
+      let result 
+      if(frameUrl) isVision = true
+      // Retrieve data conversation
+      // const { data } = await camApi.getConversation()
+      // // Append new message into conversation
 
-  const handleOnSpeech = async (data) => {
-    try {
-      audio.stopRecording();
-      await onSpeech(data)
-    } catch (error) {
-      setIsWaiting(false);
-      setPhase("error occur");
-      console.log(error);
-      voiceRecorder.start();
+      // const content = [
+      //   { type: "text", text: inputValue },
+      //   {
+      //     type: "image_url",
+      //     image_url: {
+      //       "url": uploadUrl,
+      //     },
+      //   },
+      // ]
+      // const messages = [
+      //   ...data.data,
+      //   {
+      //     role: "user",
+      //     content: content
+      //   }
+      // ];
+
+      // API CHAT
+      try {
+        result = await conversationApi.createChat({
+          prompt: inputValue,
+          uploadUrl: frameUrl
+        }, true, isVision);
+        console.log("final response: ", result.content);
+        setBotText(result.content)
+        
+      } catch (error) {
+        // result.content = error.message
+        throw new Error
+      }
+
+      return result
+    };
+      
+    async function onSpeech(data) {
+      if (isBusy.current) return;
+      isBusy.current = true;
+      console.log("data", URL.createObjectURL(data))
+      // const audioUrl = URL.createObjectURL(new Blob([filePath], { type: 'audio/mpeg' }));
+      
+      const result = await handleSTT(data)
+
+      if (result.content.length > 0) {
+        setTranscription(result.content);
+
+        const frameUrl = videoRef.current.srcObject !== null ? await videoProcess() : null
+        setPhase("user: processing completion");
+
+        const { content } = await handleSendClient({
+          frameUrl: frameUrl,
+          inputValue: result.content,
+        });
+        setIsWaiting(false);
+
+        await handleTTS(content)
+      }
+      else { // continue recording
+        isBusy.current = false;
+        setIsWaiting(false);
+        recorder.voice.start();
+      }
     }
 
-  }
+    const handleOnSpeech = async (data) => {
+      try {
+        audio.stopRecording();
+        await onSpeech(data)        
+      } catch (error) {
+        console.log(error)
+        isBusy.current = false;
+        setIsWaiting(false);
+        // recorder.voice.start();
+        toast.error("error occur while chatting")
+      }
+    }
+
+    const handleSTT = async (data) => {
+      try {
+          // send audio to whisper
+          setPhase("user: processing speech to text");
+          setIsWaiting(true);
+          setBotText("");
+    
+          const sttFromData = new FormData();
+          sttFromData.append("file", data, "audio.webm");
+          // sttFromData.append("language", lang);
+    
+          const result = await conversationApi.stt(sttFromData);
+          console.log("transcript", result.content);
+
+          return result
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    }
+
+    const handleTTS = async (content) => {
+      try {
+
+        if (content && typeof content === "string") {
+
+          setPhase("assistant: processing text to speech");
+
+          const ttsFormData = new FormData();
+          ttsFormData.append("input", content);
+
+          await conversationApi.tts(content);
+
+          setPhase("assistant: playing audio");
+
+        }
+      
+      } catch (error) {
+        console.log(error)
+        throw new error
+      }
+    }
 
     // Define recorder for audio
     const audio = useSilenceAwareRecorder({
@@ -82,127 +202,89 @@ const CamScreen = (p) => {
 
     const handleClickBack = async () => {
       // camApi.deleteCamChatStream();
-        recorder.stop(video, videoRef);
-        recorder.stop(screenObject, screenRef);
+        recorder.hardStop(video, videoRef);
+        recorder.hardStop(screenObject, screenRef);
         navigate("/chat");
     };
   
-    const toggleScreenShare = (toggle) => {
-      isScreenShare.current = toggle;
-    };
-
-    const playNextAudio = async () => {
-      if (audioQueue.length === 0) {
-        setIsPlaying(false);
-        return;
-      }
+    const videoProcess = async () => {
+      setImagesGridUrl(null);
+      setPhase("user: uploading video captures");
   
-      setIsPlaying(true);
-      const nextAudioUrl = audioQueue[0];
+      // gen img grid
+      const maxScreenshots = isScreenShare.current ? SCREEN_MAX_SCREENSHOTS : MAX_SCREENSHOTS
+      console.log("MAX_SCREENSHOTS", isScreenShare.current)
   
-      await playAudio(nextAudioUrl);
+      screenshotsRef.current = screenshotsRef.current.slice(
+        -maxScreenshots
+      ); // Keep only the last XXX screenshots
   
-      setAudioQueue((prevQueue) => prevQueue.slice(1));
-      setIsPlaying(false);
-    };
-
-
-  const cam = {
-    open: () => {
-        const videoElm = document.querySelector('.video')
-        videoElm.style.display = 'block'
-        setIsOpenCamBtn(true)
-        videoRecorder.start(video, videoRef)
-    },
-    close: () => {
-        const videoElm = document.querySelector('.video')
-        videoElm.style.display = 'none'
-        setIsOpenCamBtn(false)
-        videoRecorder.stop(video, videoRef)
-    },
-  }
-
-  const screenHandle = {
-    open: () => {
-      setIsScreenBtn(true)
-      videoRecorder.start(screenObject, screenRef)
-      toggleScreenShare(true)
-    },
-    close: () => {
-      setIsScreenBtn(false)
-      videoRecorder.stop(screenObject, screenRef)
-      toggleScreenShare(false)
-    },
-  }
-
-  const micFunc = {
-    open: () => {
-      voiceRecorder.start()
-      isBusy.current = false
-      setIsOnMic(true)
-    },
-    close: () => {
-      voiceRecorder.stop()
-      isBusy.current = true
-      setIsOnMic(false)
-    },
-  }
-
-  const recorder = {
-    start: (vi, ref) => {
-      videoRecorder.start(vi, ref);
-      voiceRecorder.start();
-    },
-    stop: async (vi, ref) => {
-      videoRecorder.stop(vi, ref);
-      voiceRecorder.stop();
-      // video.clearMediaStream()
-      // document.location.reload();
+      const imageUrl = await imagesGrid({
+        base64Images: screenshotsRef.current,
+        columns: isScreenShare.current ? SCREEN_COLUMNS : COLUMNS,
+        gridImageWidth: isScreenShare.current ? SCREEN_IMAGE_WIDTH : IMAGE_WIDTH ,
+        quality: isScreenShare.current ? SCREEN_IMAGE_QUALITY : IMAGE_QUALITY,
+      });
+  
+      screenshotsRef.current = [];
+      // downloadImageFromBase64(imageUrl)
+      
+      // const uploadUrls = await hostImages([imageUrl]);
+  
+      setImagesGridUrl(imageUrl);
+  
+      return imageUrl
     }
-  };
 
-  const videoRecorder = {
-    start: async (vi, ref) => {
-      if(vi.status === "recording") return;
-      console.log("start: video", ref.current);
-      await vi.startRecording();
-    },
-    stop: (vi, ref) => {
-      if(vi.status === "idle") return;
-      vi.stopRecording();
-      videoRecorder.stopStreamedVideo(ref.current);
-    },
-    stopStreamedVideo(videoElem) {
-      if (videoElem) {
-        const stream = videoElem.srcObject;
-        const tracks = stream.getTracks();
-
-        tracks.forEach((track) => {
-          track.stop();
-        });
-
-        videoElem.srcObject = null;
+    const recorder = {
+      hartStart: (vi, ref) => {
+        recorder.video.start(vi, ref);
+        recorder.voice.start();
+      },
+      hardStop: async (vi, ref) => {
+        recorder.video.stop(vi, ref);
+        recorder.voice.stop();
+        // video.clearMediaStream();
+        // document.location.reload();
+      },
+      video: {
+        start: async (vi) => {
+          if (vi.status === "recording") return;
+          // console.log(ref.current);
+          await vi.startRecording();
+        },
+        stop: (vi, ref) => {
+          if (vi.status === "idle") return;
+          vi.stopRecording();
+          recorder.video.stopStreamedVideo(ref.current);
+        },
+        stopStreamedVideo: (videoElem) => {
+          console.log("videoElem?.srcObject", videoElem?.srcObject)
+          if (videoElem?.srcObject) {
+            const stream = videoElem.srcObject;
+            const tracks = stream.getTracks();
+    
+            tracks.forEach((track) => {
+              track.stop();
+            });
+            videoElem.srcObject = null;
+            // console.log("videoElem.srcObject", videoElem.srcObject)
+          }
+        }
+      },
+      voice: {
+        start: () => {
+          audio.startRecording();
+          setPhase("user: waiting for speech");
+        },
+        stop: () => {
+          audio.stopRecording();
+          setPhase("user: stop meeting");
+        }
       }
-    }
-  };
-
-  const voiceRecorder = {
-    start: () => {
-      console.log("start: voice");
-      audio.startRecording();
-      setPhase("user: waiting for speech");
-    },
-    stop: () => {
-      console.log("stop: voice");
-      audio.stopRecording();
-      setPhase("user: stop meeting");
-    },
-  };
-
-
-
-
-
+    };
+    
+  // Process frame capture
   useEffect(() => {
     const captureFrame = () => {
       if (video.status === "recording" || screenObject.status === "recording" && audio.isRecording) {
@@ -245,56 +327,40 @@ const CamScreen = (p) => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [video.status, screenObject.status, audio.isRecording, isScreenShare]);
+  }, [video.status, screenObject.status, audio.isRecording, isScreenShare, canvasRef, videoRef]);
 
+  // Initialize video and screen streams
   useEffect(() => {
-
-    // console.log("------------------------- VIDEO")
-    // console.log("ref:",videoRef.current)
-    // console.log("livestream", liveStream)
-    // console.log("object src: ", videoRef.current.srcObject)
-    // console.log("------------------------- END VIDEO")
     if (videoRef.current && liveStream && !videoRef.current.srcObject) {
       videoRef.current.srcObject = liveStream;
-      console.log("load video" )
+      console.log("load cam");
     }
 
-
-  }, [liveStream]);
-  useEffect(() => {
-
-    // console.log("------------------------- SCREEN")
-    // console.log("ref:",screenRef.current)
-    // console.log("livestream", screenObject.liveStream)
-    // console.log("object src: ", screenRef.current.srcObject)
-    // console.log("------------------------- END SCREEN")
     if (screenRef.current && screenObject.liveStream && !screenRef.current.srcObject) {
-      console.log("load screen")
       screenRef.current.srcObject = screenObject.liveStream;
+      console.log("load screen");
     }
-  }, [screenObject.liveStream]);
+  }, [liveStream, screenObject.liveStream, videoRef]);
 
-  // INIT CAM
-  useEffect(() => {
-    // start record Video + voice
-    const initCam = async () => {
-      if (location.pathname.includes("/cam")) {
-        await videoRecorder.start(video, videoRef);
-        console.log("init success")
-        // videoRecorder.start(screen, screenRef);
-      }
-      else {
-        recorder.stop(screenObject, screenRef);
-        recorder.stop(video, videoRef);
-      }
-      
-    }
-    initCam();
-    return () => {
-      recorder.stop(screenObject, screenRef);
-      recorder.stop(video, videoRef);
-    };
-  }, []);
+  // Start and stop recording based on the location
+  // useEffect(() => {
+  //   const initCam = async () => {
+  //     if (location.pathname.includes("/cam")) {
+  //       await recorder.video.start(video, videoRef);
+  //       console.log("init success");
+  //     }
+  //   };
+
+  //   initCam();
+
+  //   return () => {
+  //     recorder.hardStop(screenObject, screenRef);
+  //     recorder.hardStop(video, videoRef);
+  //   };
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [location.pathname, screenObject, video]);
+
+
   useEffect(() => {
     if (!audio.isRecording) {
       setVolumePercentage(0);
@@ -315,38 +381,16 @@ const CamScreen = (p) => {
     }
   }, [currentVolume, audio.isRecording]);
 
-  // Audio play
-  useEffect(() => {
-    if (!isPlaying && audioQueue.length > 0) {
-      playNextAudio();
-    }else if(!isPlaying && audioQueue.length === 0) {
-      voiceRecorder.start()
-      isBusy.current = false;
-      setIsWaiting(false);
-    }
-  }, [audioQueue, isPlaying]);
 
-
-    // Socket for streaming response from AI
-    useEffect(() => {
-
-      if(socket){
-        socket.on('audioFile', (filePath) => {
-          const audioUrl = URL.createObjectURL(new Blob([filePath], { type: 'audio/mpeg' }));
-          
-          console.log("audioUrl", audioUrl)
-          setAudioQueue((prevQueue) => [...prevQueue, audioUrl]);
-        });
-      }
-
-
-  
-      // Clean up the connection on unmount
-      return () => {
-        if(socket) socket.off('audioFile');
-      };
-    }, [socket]);
-  
+  const audioProps= {
+    recorder, isBusy, setIsWaiting
+  }
+  const actionProps= {
+    isBusy,
+    recorder,
+    video, videoRef,
+    screenObject, screenRef, isScreenShare
+  }
 
   return (
   <VideoSection>
@@ -360,56 +404,180 @@ const CamScreen = (p) => {
             </motion.div>
         </motion.div>
         <VideoContainer isScreenShare={isScreenShare.current}>
-    
           <video className="screen" ref={screenRef} autoPlay />
-    
           <video className="video" ref={videoRef} autoPlay />
-    
           <RecordDot
             isrecording={audio.isRecording.toString()}
             volumepercentage={volumePercentage}
           >
             <div>{audio.isRecording ? '' : '⏸'}</div>
           </RecordDot>
-          <ActionContainer>
-    
-            {(isOnMic && !isBusy.current) ? (
-                <BtnWrapper onClick={micFunc.close}>
-                    <Mic />
-                </BtnWrapper>
-            ) : (
-                <BtnWrapper onClick={micFunc.open} className='off'>
-                    <MicOff />
-                </BtnWrapper>
-            )}
-            
-            {isOpenCamBtn ? (
-            <BtnWrapper onClick={cam.close}>
-                <Video />
-            </BtnWrapper>
-            ) : (
-            <BtnWrapper onClick={cam.open} className='off'>
-                <VideoOff />
-            </BtnWrapper>
-            )}
-    
-            {isScreenBtn ? (
-            <BtnWrapper onClick={screenHandle.close} className="monitor">
-                <Monitor />
-            </BtnWrapper>
-            ) : (
-            <BtnWrapper onClick={screenHandle.open} >
-                <Monitor />
-            </BtnWrapper>
-            )}
-
-            <BtnWrapper onClick={handleClickBack} className="phone-off" >
-                <Phone />
-            </BtnWrapper>
-          </ActionContainer>
+          <ActionBox {...actionProps}/>
+          <AudioSpeak {...audioProps}/>
         </VideoContainer>
   </VideoSection>
   )
+}
+
+const ActionBox = (p) => {
+
+  const { 
+    isBusy,
+    recorder,
+    video, videoRef,
+    screenObject, screenRef, isScreenShare
+  } = p
+
+  const [isOpenCamBtn, setIsOpenCamBtn] = useState(false)
+  const [isScreenBtn, setIsScreenBtn] = useState(false)
+  const [isOnMic, setIsOnMic] = useState(false);
+
+  const navigate = useNavigate()
+
+  const toggleScreenShare = (toggle) => {
+    isScreenShare.current = toggle;
+  };
+
+  const handleEndCall = async () => {
+    // camApi.deleteCamChatStream();
+      recorder.hardStop(video, videoRef);
+      recorder.hardStop(screenObject, screenRef);
+      navigate("/chat");
+  };
+
+  const cam = {
+    open: () => {
+        const videoElm = document.querySelector('.video')
+        videoElm.style.display = 'block'
+        setIsOpenCamBtn(true)
+        recorder.video.start(video, videoRef)
+    },
+    close: () => {
+        const videoElm = document.querySelector('.video')
+        videoElm.style.display = 'none'
+        setIsOpenCamBtn(false)
+        console.log("videoRef", videoRef.current.srcObject)
+        recorder.video.stop(video, videoRef)
+    },
+  }
+
+  const screenHandle = {
+    open: () => {
+      setIsScreenBtn(true)
+      recorder.video.start(screenObject, screenRef)
+      toggleScreenShare(true)
+    },
+    close: () => {
+      setIsScreenBtn(false)
+      recorder.video.stop(screenObject, screenRef)
+      toggleScreenShare(false)
+    },
+  }
+
+  const micFunc = {
+    open: () => {
+      recorder.voice.start()
+      isBusy.current = false
+      setIsOnMic(true)
+    },
+    close: () => {
+      recorder.voice.stop()
+      isBusy.current = true
+      setIsOnMic(false)
+    },
+  }
+
+  return (
+    <ActionContainer>
+      {isOnMic ? (
+          <BtnWrapper onClick={micFunc.close}>
+              <Mic />
+          </BtnWrapper>
+      ) : (
+          <BtnWrapper onClick={micFunc.open} className='off'>
+              <MicOff />
+          </BtnWrapper>
+      )}
+      
+      {isOpenCamBtn ? (
+      <BtnWrapper onClick={cam.close}>
+          <Video />
+      </BtnWrapper>
+      ) : (
+      <BtnWrapper onClick={cam.open} className='off'>
+          <VideoOff />
+      </BtnWrapper>
+      )}
+
+      {isScreenBtn ? (
+      <BtnWrapper onClick={screenHandle.close} className="monitor">
+          <Monitor />
+      </BtnWrapper>
+      ) : (
+      <BtnWrapper onClick={screenHandle.open} >
+          <Monitor />
+      </BtnWrapper>
+      )}
+
+      <BtnWrapper onClick={handleEndCall} className="phone-off" >
+          <Phone />
+      </BtnWrapper>
+    </ActionContainer>
+  )
+}
+
+const AudioSpeak = (p) => {
+  const { recorder, isBusy, setIsWaiting } = p
+  const [audioQueue, setAudioQueue] = useState([]);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const socket = useContext(WebSocketContext);
+
+  const playNextAudio = async () => {
+    if (audioQueue.length === 0) {
+      setIsPlaying(false);
+      return;
+    }
+
+    setIsPlaying(true);
+    const nextAudioUrl = audioQueue[0];
+
+    await playAudio(nextAudioUrl);
+
+    setAudioQueue((prevQueue) => prevQueue.slice(1));
+    setIsPlaying(false);
+  };
+
+
+    // Audio play
+    useEffect(() => {
+      if (!isPlaying && audioQueue.length > 0) {
+        playNextAudio();
+      }else if(!isPlaying && audioQueue.length === 0) {
+        recorder.voice.start()
+        isBusy.current = false;
+        setIsWaiting(false);
+      }
+    }, [audioQueue, isPlaying]);
+
+    // Socket for streaming response from AI
+    useEffect(() => {
+      if(socket){
+        socket.on('audioFile', (filePath) => {
+          const audioUrl = URL.createObjectURL(new Blob([filePath], { type: 'audio/mpeg' }));
+          
+          console.log("audioUrl", audioUrl)
+          setAudioQueue((prevQueue) => [...prevQueue, audioUrl]);
+        });
+      }
+
+      // Clean up the connection on unmount
+      return () => {
+        if(socket) socket.off('audioFile');
+      };
+    }, [socket]);
+  
+
+  return <></>
 }
 
 export default CamScreen

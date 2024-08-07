@@ -4,7 +4,6 @@ const variants = [...Array(50).keys()].map(i => i + 1); // generates an array [1
 
 
 const GlobalStyles = createGlobalStyle`
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
     :root {
         --sidebar-wt: 60px;
         --header-ht: 60px;

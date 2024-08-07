@@ -9,7 +9,7 @@ const DebugLog = (p) => {
     displaydebug, setDisplayDebug
   } = p;
   return (
-    <DebugContainer displaydebug={displaydebug.toString()}>
+    <DebugContainer displayDebug={displaydebug.toString()}>
       <CloseButton onClick={() => setDisplayDebug(false)}>⛌</CloseButton>
       <div className="debug-content">
         <DebugItem>
@@ -58,8 +58,8 @@ const DebugContainer = styled.div`
   @media (min-width: 640px) {
     width: 33vw;
   }
-  ${(props) =>
-    props.displaydebug === "true"
+  ${({displayDebug}) =>
+    displayDebug === "true"
       ? css`
           transform: translateX(0);
         `

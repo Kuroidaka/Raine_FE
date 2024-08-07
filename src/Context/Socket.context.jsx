@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import io from "socket.io-client";
+import { API_BASE_URL } from "../config";
 
 export const WebSocketContext = createContext(null);
 
@@ -8,7 +9,7 @@ export const WebSocketProvider = (p) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("http://192.168.1.7:8001", {
+    const newSocket = io(API_BASE_URL, {
       transports: ["websocket", "polling"],
       timeout: 20000
     });

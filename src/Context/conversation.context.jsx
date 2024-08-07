@@ -2,8 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import conversationApi from "../api/conversation.api.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { io } from "socket.io-client";
-import { Navigate, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { WebSocketContext } from "./socket.context.jsx";
 
 const ConversationContext = createContext()
@@ -61,6 +60,9 @@ export const ConversationProvider = (p) => {
         };
       }, [socket]);
 
+    // useEffect(() => {
+    //     console.log("error", error)
+    // }, [error]);
 
     const cacheConversation = {
         del: async (id) => {
