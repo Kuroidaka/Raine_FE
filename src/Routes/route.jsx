@@ -12,6 +12,7 @@ const StreamTest = lazy(() => import("../Page/Test/Stream"));
 
 import paths from "./path";
 import Loading from "../Component/Loading";
+import { WebSocketProvider } from "../Context/socket.context";
 
 export const routes = [
   {
@@ -61,7 +62,7 @@ export const routes = [
     page: (
       <DefaultLayout>
         <Suspense fallback={<Loading />}>
-          <VideoChat />
+         <VideoChat />
         </Suspense>
       </DefaultLayout>
     ),

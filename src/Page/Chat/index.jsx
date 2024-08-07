@@ -6,7 +6,7 @@ import History from "./History/History";
 
 const ChatPage = () => {
     
-    return ( 
+return ( 
         <ConversationProvider>
             <ToastContainer />
             <History>

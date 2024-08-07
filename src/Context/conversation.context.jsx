@@ -1,9 +1,10 @@
-import { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import conversationApi from "../api/conversation.api.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 import { Navigate, useNavigate, useParams } from "react-router";
+import { WebSocketContext } from "./socket.context.jsx";
 
 const ConversationContext = createContext()
 
@@ -12,6 +13,9 @@ export const ConversationProvider = (p) => {
     const { id:selectedConID } = useParams();
     const [conversation, setConversation] = useState([])
     const [currentCon, setCurrenConversation] = useState([])
+
+    const socket =  useContext(WebSocketContext);
+
     const navigate = useNavigate()
 
     const queryClient = useQueryClient();
@@ -45,23 +49,17 @@ export const ConversationProvider = (p) => {
 
  
     useEffect(() => {
-        const socket = io('http://192.168.1.7:8001', {
-          transports: ['websocket', 'polling'],
-        });
-    
-        socket.on('chatResChunk', ({ content }) => {
-            cacheConversation.addMsg({prompt: content}, true)
-        });
-    
-        socket.on('disconnect', () => {
-          console.log('Disconnected from server');
-        });
+        if(socket) {
+            socket.on('chatResChunk', ({ content }) => {
+                cacheConversation.addMsg({prompt: content}, true)
+            });
+        }
     
         // Clean up the connection on unmount
         return () => {
-          socket.disconnect();
+            if(socket) socket.off('chatResChunk');
         };
-      }, []);
+      }, [socket]);
 
 
     const cacheConversation = {

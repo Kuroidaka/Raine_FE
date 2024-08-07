@@ -17,7 +17,6 @@ const ChatBox = () => {
     //     queryFn: () => conversationApi.getConversationHistory(id)
     // });
 
-    console.log("currentCon", currentCon)
     const pageRef = useRef(null);
   
     // if (currentConLoading) {

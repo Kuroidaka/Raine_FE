@@ -18,7 +18,11 @@ const GlobalStyles = createGlobalStyle`
         --skeleton-first: #FFFFFF;
         --skeleton-second: #E7EDF1;
 
-
+        /* size */
+        --16px: 1rem;
+        --24px: 1.5rem;
+        --32px: 2rem;
+        --300px: 18.75rem;
     }
     
     *, *:before, *:after {
@@ -38,7 +42,6 @@ const GlobalStyles = createGlobalStyle`
     }
     html {
         font-size: 62.5%;
-        font-size: 10px;
         width: 100%;
         line-height: 1.5;
         letter-spacing: .01rem;
