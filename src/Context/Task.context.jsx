@@ -1,73 +1,92 @@
+ 
 import { nanoid } from "nanoid";
-import React, { createContext } from "react";
+import React, { createContext, useCallback, useEffect, useState } from "react";
+import reminderApi from "../api/reminder.api"
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { isObject } from "../Util";
 
 const TaskContext = createContext()
 
-const mockData = [
-    // {   
-    //     "id": nanoid(),
-    //     "title": "Đánh răng",
-    //     "color": "#4caf50",
-    //     "area": [],
-    //     "deadline": "Thu Oct 09 2023 17:23:12 GMT+0700 (Indochina Time)",
-    //     "note": "<p>Đánh kĩ</p>",
-    //     "sub": [
-    //         {   
-    //             "id": nanoid(),
-    //             "title": "rửa mặt",
-    //             "done": false
-    //         },
-    //         {
-    //             "id": nanoid(),
-    //             "title": "tắm",
-    //             "done": true
-    //         },
-    //     ]
-    // },
-    // {
-    //     "id": nanoid(),
-    //     "title": "Chơi bóng rổ",
-    //     "color": "#ff9800",
-    //     "area": [
-    //         "health",
-    //         "growth"
-    //     ],
-    //     "deadline": "Thu Oct 12 2023 17:23:12 GMT+0700 (Indochina Time)",
-    //     "note": "\n<p>Chơi với bạn bè</p>\n",
-    // },
-    // {
-    //     "id": nanoid(),
-    //     "title": "test",
-    //     "color": "#844f00",
-    //     "area": [
-    //         "health",
-    //         "growth"
-    //     ],
-    //     "deadline": "Thu Oct 12 2023 17:23:12 GMT+0700 (Indochina Time)",
-    //     "note": "\n<p>Chơi với bạn bè</p>\n",
-    // }
-]
 
 export const TaskProvider = (p) => {
     const { children } = p
 
 
-    const [task, setTask] = React.useState([]);
-    const [loading, setLoading] = React.useState(true)
+    const [task, setTask] = useState([]);
 
-    React.useEffect(() => {
-        setLoading(true)
-        const taskData = setTimeout(() => {
-            setTask(mockData)
-            setLoading(false)
-        }, 0)
+    const queryClient = useQueryClient();
 
-        return () => clearTimeout(taskData)
+    const { data, error, isLoading } = useQuery({
+        queryKey:['tasks'], 
+        queryFn: () => reminderApi.getTasks(),
+        cacheTime: 0,
+    });
+
+    const handleDeleteTask = async (id) => {
+        try {
+            reminderApi.deleteTask(id)
+        } catch (error) {
+            console.log(error)
+            toast.error("something went wrong")
+        }
+    }
+
+    const addMutation = useMutation({
+        mutationFn: async ({data}) => await reminderApi.createTask(data),
+        onSuccess: () => queryClient.invalidateQueries(['task']),        
+        onError: (error) => {
+            toast.error(`Something went wrong`)
+            console.log(error)
+        },
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: async ({taskId, data}) => {
+            await reminderApi.updateTask(taskId, data)
+
+        },
+        onSuccess: () => queryClient.invalidateQueries(['task']),        
+        onError: (error) => {
+            toast.error(`Something went wrong`)
+            console.log(error)
+        },
+    });
+
+
+    // Function to add a new conversation
+    const handleAddTask = useCallback((data) => {
+        if(typeof(data.deadline) === "undefined") {
+            const today = new Date()
+            today.setHours(23,59,59,0)
+
+            data.deadline = today
+        }
         
-    }, [])
+        console.log("dataInput", data)
+        addMutation.mutate({data});
+    }, [addMutation]);
+
+       
+    const handleUpdateTask = async (taskId, data = {}) => {
+        if (Array.isArray(data.area) && isObject(data.area[0])) {
+          data.area = data.area.map(item => item.area);
+        }
+        
+        updateMutation.mutate({ taskId, data });
+    };
+
+    useEffect(() => {
+        if(data) {
+            setTask(data)
+        }
+    }, [data])
 
     const valueContext = {
-        task, setTask, loading, setLoading
+        task, setTask, 
+        handleAddTask, handleDeleteTask, handleUpdateTask, 
+        loading: isLoading
     }
 
     return (

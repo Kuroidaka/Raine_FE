@@ -1,4 +1,8 @@
+import pako from 'pako';
+import base64js from 'base64-js';
+
 export const dateConvert = (dateMilli) => {
+  console.log("dateMilli", dateMilli)
 
     const valid = isDateString(dateMilli)
     // console.log("dateMilli", dateMilli, valid)
@@ -13,16 +17,34 @@ export const dateConvert = (dateMilli) => {
     
 }
 
+export const dateConvertForModal = (dateMilli) => {
+
+  const date = new Date(dateMilli);
+  
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+      console.error("Invalid date input");
+      return dateMilli;  // Return the original input if it's not a valid date
+  }
+
+  const d = date.toUTCString().split(' ');
+  return [d[1], d[2]].join(' ');
+}
+
 
 export function isDateString(dateString) {
-    const validFormat = /^\w{3} \w{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[+-]\d{4} \(.+\)$/;
-
-    if (validFormat.test(dateString)) {
-      return true;
-    } else {
-      return false;
-    }
+  const validFormat = /^\w{3} \w{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[+-]\d{4} \(.+\)$/;
+  if (validFormat.test(dateString)) {
+    return true;
+  } else {
+    return false;
   }
+}
+
+export const isISODateString = (dateString) => {
+  const isoDatePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+  return isoDatePattern.test(dateString);
+};
 
 export function compareDates(date1, date2) {
   // Set time to zero for both dates
@@ -195,3 +217,19 @@ export const checkIsImgLink = (input) => {
 export function isObject(value) {
   return value && typeof value === 'object' && value.constructor === Object;
 }
+
+export const compressBase64Data = (base64Data) => {
+  // Ensure Base64 string length is a multiple of 4 by padding with '='
+  const paddedBase64Data = base64Data.padEnd(Math.ceil(base64Data.length / 4) * 4, '=');
+
+  // Decode Base64 data to binary
+  const binaryData = base64js.toByteArray(paddedBase64Data);
+
+  // Compress binary data using pako
+  const compressedData = pako.gzip(binaryData);
+
+  // Encode compressed data back to Base64
+  const compressedBase64Data = base64js.fromByteArray(compressedData);
+
+  return compressedBase64Data;
+};

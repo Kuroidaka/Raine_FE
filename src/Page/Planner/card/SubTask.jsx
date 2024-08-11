@@ -58,7 +58,7 @@ const SubTask = (p) => {
     }
     
     return (
-    <SubTaskContainer className={`item ${color ?"text-white" : ""}`}>
+    <SubTaskContainer className={`item ${color === "" ? "text-white" : ""}`}>
         <div className="title-wrapper">
         <span id={id} onClick={handleCheck} className={`${checked ? "blur" : ""}`}>{checked ? <Img.checkboxChecked /> : <Img.checkbox/>}</span>
             <div className={`title ${checked ? "line-through" : ""}`}>
@@ -70,9 +70,9 @@ const SubTask = (p) => {
                     onKeyDown={handleKeyDown}
                     autoFocus={true}
                     name="title"
-                    className={`${color ? "text-white" : ""}`}
+                    className={`${color === "" ? "text-white" : "text-black"}`}
                     inputStyle={inputStyle}
-                    plhdercolor={`${color ? "var(--white-text)": "var(--black-text)"}`}
+                    plhdercolor={`${color === "" ? "var(--white-text)": "var(--black-text)"}`}
                     focusborder="false"
                     onBlur={() => { 
                         closeEdit()

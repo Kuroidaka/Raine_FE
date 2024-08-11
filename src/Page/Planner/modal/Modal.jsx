@@ -13,12 +13,12 @@ const TaskModal = () => {
     const [areaData, setArea] = useState({
         health: false,
         play: false,
-        spirit: false,
+        spirituality: false,
         environment: false,
         work: false,
-        wealth: false,
-        growth: false,
-        relationship: false,
+        finance: false,
+        development: false,
+        relationships: false,
     })
 
     useEffect(() => {
@@ -32,12 +32,12 @@ const TaskModal = () => {
         const area = {
             health: false,
             play: false,
-            spirit: false,
+            spirituality: false,
             environment: false,
             work: false,
-            wealth: false,
-            growth: false,
-            relationship: false,
+            finance: false,
+            development: false,
+            relationships: false,
         }
         
         console.log("modal", modal)
@@ -57,8 +57,9 @@ const TaskModal = () => {
 
 
             const relate = modal.content.area.reduce((prev, next) => {
-                return {...prev, [next]: true}
+                return {...prev, [next.area]: true}
             }, area)
+            console.log("relate", relate)
             setArea(relate)
         } else {
             setDataInput({

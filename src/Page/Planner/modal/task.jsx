@@ -3,7 +3,7 @@ import styled from "styled-components";
 import ModalContext from "../../../Context/Modal.context";
 import TaskContext from "../../../Context/Task.context";
 import DOMPurify from "dompurify";
-import { dateConvert, isDateString } from "../../../Util";
+import { dateConvert, dateConvertForModal, isDateString, isISODateString } from "../../../Util";
 import { nanoid } from "nanoid";
 import { Img } from "../../../assets/svg";
 import Input from "../../../Component/Input";
@@ -13,6 +13,7 @@ import { CirclePicker } from "react-color";
 import Button from "../../../Component/Button";
 
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur"
+import { toast } from "react-toastify";
 
 const relatedArea = [
     {
@@ -26,9 +27,9 @@ const relatedArea = [
         icon: Img.play
     },
     {
-        name: "spirit",
+        name: "spirituality",
         value: "Tâm linh",
-        icon: Img.spirit
+        icon: Img.spirituality
     },
     {
         name: "environment",
@@ -41,19 +42,19 @@ const relatedArea = [
         icon: Img.work
     },
     {
-        name: "wealth",
+        name: "finance",
         value: "Tài chính",
-        icon: Img.wealth
+        icon: Img.finance
     },
     {
-        name: "growth",
+        name: "development",
         value: "Phát triển",
-        icon: Img.growth
+        icon: Img.development
     },
     {
-        name: "relationship",
+        name: "relationships",
         value: "Quan hệ",
-        icon: Img.relationship
+        icon: Img.relationships
     },
 
 ]
@@ -63,7 +64,7 @@ const Task = (p) => {
     const { dataInput, setDataInput, mode, areaData } = p
     
     const { modal, closeModal }  = useContext(ModalContext)
-    const { task, setTask, loading }  = useContext(TaskContext)
+    const { task, setTask, handleAddTask, handleUpdateTask }  = useContext(TaskContext)
     const [valid, setValid] = useState(true)
     const fp = useRef(null);
 
@@ -184,7 +185,6 @@ const Task = (p) => {
         const name = from || e.target.name
         const value = e.target.value
 
-        console.log(name, value)
         setDataInput({...dataInput, [name]: value })
     }
 
@@ -207,43 +207,33 @@ const Task = (p) => {
 
     // submit
     const handleSave = async () => {
-        console.log("dataInput", dataInput)
-        const valid = checkValid()
-
-        console.log(valid)
-
-        if(valid){
-            setValid(true)
-            await setTask(prevData => {
-                if(mode === "edit") {
-                    const newData = prevData.map(data => {
-                        if(data.id === modal.content.id) {
-                            return {...dataInput, id: data.id, sub: data.sub }
-                        } else {
-                            return data
-                        }
-                    })
-                    return newData
+        const valid = checkValid();
+    
+        try {
+            if (valid) {
+                setValid(true);
+    
+                if (mode === "edit") {
+                    const taskId = modal.content.id
+                    console.log("dataInput", dataInput)
+                    await handleUpdateTask(taskId, dataInput);
                 } else {
-                    const newData = {...dataInput}
-                    if(typeof(newData.deadline) === "undefined") {
-                        const today = new Date()
-                        today.setHours(23,59,59,0)
-
-                        newData.deadline = today.toString()
-                    }
-                    return [...prevData, {...newData, id: nanoid(), sub: [] }]
+                   await handleAddTask(dataInput);
                 }
-            })
-
-            closeModal()
+    
+                closeModal();
+            }
+        } catch (error) {
+            console.error(error); // Using console.error for logging errors
+            toast.error("An error occurred");
         }
-    }
+    };
+    
 
     const Area = (p) => {
         const { data } = p
         const Image = Img[data]
-        return <Image/>
+        if(Image) return <Image/>
     }
 
     const checkValid = () => {
@@ -312,6 +302,7 @@ const Task = (p) => {
             <EditSection name="area" onClick={openSec} isedit={secOpen.area}>
                 <div className="area-wrapper">
                 {area && Object.keys(area).map((data, idx) => {
+
                     if(area[data])
                     return (
                         <Area key={idx} data={data}/>
@@ -339,7 +330,7 @@ const Task = (p) => {
             {mode === "edit" && secOpen.deadline 
                 ? (
                     <EditSection name="deadline" onClick={openSec} isedit={secOpen.deadline}>
-                    {isDateString(dataInput.deadline) 
+                    {isISODateString(dataInput.deadline) 
                         ? dateConvert(dataInput.deadline)
                         : radioData.find(radio => radio.id === dataInput.deadline)?.value ?? "Chọn thời hạn"}
                     </EditSection>
@@ -587,7 +578,7 @@ const Label = styled.div`
 
 const RelateAres = styled.div `
     text-align: center;
-    color: #b8c2cc!important;
+    color: #b8c2cc;
     cursor: url(${myCursor}), auto;
     width: 25%;
 

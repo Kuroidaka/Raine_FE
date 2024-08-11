@@ -9,6 +9,7 @@ const Setting = lazy(() => import("../Page/Setting/Setting"));
 const ChatPage = lazy(() => import("../Page/Chat"));
 const VideoChat = lazy(() => import("../Page/VideoChat"));
 const StreamTest = lazy(() => import("../Page/Test/Stream"));
+const PhotoCapture = lazy(() => import("../Page/Test/Video"));
 
 import paths from "./path";
 import Loading from "../Component/Loading";
@@ -91,6 +92,18 @@ export const routes = [
       </DefaultLayout>
     ),
     path: paths.test,
+    exact: false,
+  },
+  {
+    name: "test_cam",
+    page: (
+      <DefaultLayout>
+        <Suspense fallback={<Loading />}>
+          <PhotoCapture />
+        </Suspense>
+      </DefaultLayout>
+    ),
+    path: paths.testCam,
     exact: false,
   },
   {

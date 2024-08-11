@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Tippy from '@tippyjs/react/headless';
 import { Img } from "../../../assets/svg";
 import Input from "../../../Component/Input"
-import { useState, useEffect, Fragment, useContext, useMemo } from "react";
+import { useState, useEffect, Fragment, useContext, useMemo, useRef } from "react";
 import {  convertDates, dateConvert } from "../../../Util"
 import { nanoid } from 'nanoid'
 import ModalContext from "../../../Context/Modal.context";
@@ -38,8 +38,10 @@ const TaskCard = (p) => {
         const setupDate = () => {
             const today = new Date();
             const overDueTasks = dataSection.filter((task) => {
-                const deadline = new Date(task.deadline);
-                return convertDates([deadline])[0] < convertDates([today])[0]
+                if(task.deadline !== null){
+                    const deadline = new Date(task.deadline);
+                    return convertDates([deadline])[0] < convertDates([today])[0] 
+                }
             });
     
             const todayTasks = filterTasksByDeadline(dataSection, today);
@@ -64,7 +66,7 @@ const TaskCard = (p) => {
     
             const someDayTasks = dataSection.filter((task) => {
                 
-                return task.deadline === "someday";
+                return task.deadline === null;
             });
     
             setDateType({
@@ -88,14 +90,15 @@ const TaskCard = (p) => {
                                     {dateType.overdue.map((data, idx) => {
                                         return (
                                             <Card 
-                                                key={idx} 
+                                                key={idx}
+                                                status={data.status} 
                                                 id={data.id}
                                                 title={data?.title}
                                                 color={data?.color}
                                                 deadline={data?.deadline}
                                                 area={data.area}
                                                 note={data.note}
-                                                subTask={data.sub}
+                                                subTask={data.subTask}
                                                 dataSection={dataSection}
                                                 setDateSection={setDateSection}
                                                 />
@@ -110,14 +113,15 @@ const TaskCard = (p) => {
                                 {dateType.today && dateType.today.map((data, idx) => {
                                     return (
                                         <Card 
-                                            key={idx} 
+                                            key={idx}
+                                            status={data.status} 
                                             id={data.id}
                                             title={data?.title}
                                             color={data?.color}
                                             deadline={data?.deadline}
                                             area={data.area}
                                             note={data.note}
-                                            subTask={data.sub}
+                                            subTask={data.subTask}
                                             dataSection={dataSection}
                                             setDateSection={setDateSection}
                                             />
@@ -133,14 +137,15 @@ const TaskCard = (p) => {
                             {dateType.tomorrow && dateType.tomorrow.map((data, idx) => {
                                 return (
                                     <Card 
-                                        key={idx} 
+                                        key={idx}
+                                        status={data.status} 
                                         id={data.id}
                                         title={data?.title}
                                         color={data?.color}
                                         deadline={data?.deadline}
                                         area={data.area}
                                         note={data.note}
-                                        subTask={data.sub}
+                                        subTask={data.subTask}
                                         />
                             )})}
 
@@ -152,14 +157,15 @@ const TaskCard = (p) => {
                                             {date.map((data, idx) => {
                                                 return (
                                                     <Card 
-                                                        key={idx} 
+                                                        key={idx}
+                                                        status={data.status} 
                                                         id={data.id}
                                                         title={data?.title}
                                                         color={data?.color}
                                                         deadline={data?.deadline}
                                                         area={data.area}
                                                         note={data.note}
-                                                        subTask={data.sub}
+                                                        subTask={data.subTask}
                                                         />
                                                 )
                                             })}
@@ -175,14 +181,15 @@ const TaskCard = (p) => {
                             {dateType.tomorrow && dateType.tomorrow.map((data, idx) => {
                                 return (
                                     <Card 
-                                        key={idx} 
+                                        key={idx}
+                                        status={data.status} 
                                         id={data.id}
                                         title={data?.title}
                                         color={data?.color}
                                         deadline={data?.deadline}
                                         area={data.area}
                                         note={data.note}
-                                        subTask={data.sub}
+                                        subTask={data.subTask}
                                         dataSection={dataSection}
                                         setDateSection={setDateSection}
                                         />
@@ -194,14 +201,15 @@ const TaskCard = (p) => {
                             {dateType.dateAfterTomorrow && dateType.dateAfterTomorrow.map((data, idx) => {
                                 return (
                                     <Card 
-                                        key={idx} 
+                                        key={idx}
+                                        status={data.status} 
                                         id={data.id}
                                         title={data?.title}
                                         color={data?.color}
                                         deadline={data?.deadline}
                                         area={data.area}
                                         note={data.note}
-                                        subTask={data.sub}
+                                        subTask={data.subTask}
                                         dataSection={dataSection}
                                         setDateSection={setDateSection}
                                         />
@@ -213,14 +221,15 @@ const TaskCard = (p) => {
                             {dateType.someDay && dateType.someDay.map((data, idx) => {
                                 return (
                                     <Card 
-                                        key={idx} 
+                                        key={idx}
+                                        status={data.status} 
                                         id={data.id}
                                         title={data?.title}
                                         color={data?.color}
                                         deadline={data?.deadline}
                                         area={data.area}
                                         note={data.note}
-                                        subTask={data.sub}
+                                        subTask={data.subTask}
                                         dataSection={dataSection}
                                         setDateSection={setDateSection}
                                         />
@@ -265,14 +274,15 @@ const Card = (p) => {
         subTask = [],
         id,
         dataSection,
-        setDateSection
+        setDateSection,
+        status
         } = p
-    // const { task, setTask }  = useContext(TaskContext)
+    const { handleUpdateTask }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
 
-    const [checked, setChecked] = useState(false)
+    const [checked, setChecked] = useState(status)
     const [subOpen, setSubOpen] = useState(false)
-    const [sub, setSub] = useState(subTask)
+    const [subs, setSubs] = useState(subTask)
     const [subDone, setSubDone] = useState(0)
     const [option, setOption] = useState(false)
 
@@ -286,7 +296,7 @@ const Card = (p) => {
         }, 0);
     };
       
-    const memoizedCount = useMemo(() => countCurrSub(sub), [sub]);
+    const memoizedCount = useMemo(() => countCurrSub(subs), [subs]);
       
     useEffect(() => {
         let isMounted = true;
@@ -312,7 +322,10 @@ const Card = (p) => {
             }
             openModal(title, data, "task")
         },
-        check: () => { // Check task
+        check: async () => { // Check task
+            await handleUpdateTask(id, {
+                status: !checked
+            })
             setChecked(!checked)
         },
         option: { //handle option
@@ -343,39 +356,39 @@ const Card = (p) => {
 
     const subTaskHandle = {
         delete: (id) => { // Delete subtask
-            let newSub = [...sub]; //prevent mutating
+            let newSub = [...subs]; //prevent mutating
             newSub = newSub.filter(data => data.id !== id)
-            setSub(newSub); 
+            setSubs(newSub); 
         },
         add: (data) => { // Add new subtask
-            const newData = [...sub, data]
-            setSub(newData)
+            const newData = [...subs, data]
+            setSubs(newData)
         },
         open: () => { // Open list subtask
             setSubOpen(!subOpen)
         },
         check: (id, check) => { // check subtask
-            const newSub = [...sub]; //prevent mutating
+            const newSub = [...subs]; //prevent mutating
             const index = newSub.map(e => e.id).indexOf(id);
             newSub[index].done = check;
-            setSub(newSub); 
+            setSubs(newSub); 
         }
     }
     
     const Area = (p) => {
         const {data} = p
-        const Image = Img[data]
-        return <Image/>
+        const Image = Img[data.area]
+        if(Image) return <Image/>
     }
     
   
     return (
         <TaskCardContainer 
                 // onClick={() => taskHandle.selectWhenClick(id)} 
-                name={id} style={color != null ? {backgroundColor: color} : {backgroundColor: "#FFFFF"}} 
+                name={id} style={color !== "" ? {backgroundColor: color} : {backgroundColor: "#FFFFF"}} 
                 className={`task-card text-dark `}>
             <MainTask>
-                <div className={`card-title ${color ?"text-white" : ""}  ${checked ? "blur" : ""}`}>
+                <div className={`card-title ${color === "" ?"text-white" : "text-dark"}  ${checked ? "blur" : ""}`}>
                     <Title>
                         <span onClick={taskHandle.check}>{checked ? <Img.checkboxChecked /> : <Img.checkbox/>}</span>
                         <div className={`title ${checked ? "line-through" : ""}`}>{title}</div>
@@ -387,16 +400,16 @@ const Card = (p) => {
                     </Deadline>
                     
                     <RelateArea>
-                        {area && area.map((item, idx) => <Area key={idx} data={item}/>)}
+                        {area.length > 0 && area.map((item, idx) => <Area key={idx} data={item}/>)}
                     </RelateArea>
                 </div>
 
-                <div className={`card-sub ${color ?"text-white" : ""}`} onClick={subTaskHandle.open}>
-                    {sub.length > 0 && <span>({subDone}/{sub.length})</span>}
+                <div className={`card-sub ${color === "" ?"text-white" : ""}`} onClick={subTaskHandle.open}>
+                    {subs.length > 0 && <span>({subDone}/{subs.length})</span>}
                     <span><Img.subTask/></span>
                 </div>
                 
-                <div className={`card-option ${color ?"text-white" : ""}`}>
+                <div className={`card-option ${color==="" ?"text-white" : ""}`}>
                     <Tippy
                         interactive
                         content="Tooltip"
@@ -423,12 +436,12 @@ const Card = (p) => {
             {subOpen && 
             <Fragment>
                 <SubTaskList>
-                {sub && sub.map((sub, idx) => {
+                {subs.length > 0 && subs.map((sub, idx) => {
                     return <SubTask key={idx} id={sub.id} color={color} title={sub.title} done={sub.done} updateSubCheck={subTaskHandle.check} deleteSubTask={subTaskHandle.delete}/> 
                 })}
                 </SubTaskList>
 
-                <AddSubTask id={id} color={color} AddSub={subTaskHandle.add} placeholder={sub.length > 0 ? "": "Thêm subtask"}/>    
+                <AddSubTask id={id} color={color} AddSub={subTaskHandle.add} placeholder={subs.length > 0 ? "": "Thêm subtask"}/>    
             </Fragment>}
 
         </TaskCardContainer>
@@ -437,8 +450,11 @@ const Card = (p) => {
 
 const AddSubTask = (p) => {
     const { id, color, AddSub, placeholder } = p
+    console.log("p", p)
 
     const [value, setValue] = useState("")
+
+    const inputRef = useRef(null)
 
     const inputStyle = {
         width:"80%",
@@ -468,19 +484,26 @@ const AddSubTask = (p) => {
         }
     }
 
-    useEffect(() => {
-        const plusIcon = document.querySelector(`.${id}.plus`)
-        const input = document.querySelector(`.subtask-input.${id}`)
+    
 
-        plusIcon.addEventListener("click", () => {
-            input.focus()
-        })
-    }, []);
+    // useEffect(() => {
+    //     if(id){
+    //         const plusIcon = document.querySelector(`.${id}.plus`)
+    //         if(plusIcon) {
+    //             const input = document.querySelector(`.subtask-input.${id}`)
+        
+    //             plusIcon.addEventListener("click", () => {
+    //                 input.focus()
+    //             })
+    //         }
+
+    //     }
+    // }, [id]);
 
     return (
-        <AddSubTaskContainer className={`${color ? "text-white" : ""}`}>
+        <AddSubTaskContainer className={`${color === "" ? "text-white" : ""}`}>
             { value ==="" 
-                ? <span className={`${id} plus`}><Img.plus/></span>
+                ? <span className={`${id} plus`} ><Img.plus/></span>
                 : <span onClick={saveSubTask}><Img.plusCircle/></span>
             }
             <Input 
@@ -488,11 +511,12 @@ const AddSubTask = (p) => {
                 value={value}
                 onInput={handleInput}
                 onKeyDown={handleAddSubTask}
+                ref={inputRef}
                 name="title"
-                className={`${color ? "text-white" : ""} subtask-input ${id}`}
+                className={`${color !== "" ? "text-white" : ""} subtask-input ${id}`}
                 inputStyle={inputStyle}
                 placeholder={placeholder}
-                plhdercolor={`${color ? "var(--white-text)": "var(--black-text)"}`}
+                plhdercolor={`${color !== "" ? "var(--white-text)": "var(--black-text)"}`}
                 focusborder="false"
                />
         </AddSubTaskContainer>
@@ -502,19 +526,16 @@ const AddSubTask = (p) => {
 
 const Option = (p) => {
     const { openDetail, deleteTask, taskId, deadline, setOption } = p
-    const { setTask }  = useContext(TaskContext)
+    const { setTask, handleDeleteTask, handleUpdateTask }  = useContext(TaskContext)
 
     const listOption = [
         {
             name: "today",
             value: "Hôm nay",
             icon: "deadline",
-            handleClick: () => {
-                setTask(prev => {
-                    const newRoutine = [...prev]
-                    const index = newRoutine.map(e => e.id).indexOf(taskId);
-                    newRoutine[index].deadline = new Date();
-                    return newRoutine
+            handleClick: async () => {
+                await handleUpdateTask(taskId, {
+                    deadline: new Date()
                 })
             }
         },
@@ -522,29 +543,22 @@ const Option = (p) => {
             name: "tomorrow",
             value: "Mai",
             icon: "deadline",
-            handleClick: () => {
-                setTask(prev => {
-                    const newRoutine = [...prev]
-                    const index = newRoutine.map(e => e.id).indexOf(taskId);
-                    const tomorrow = new Date();
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    newRoutine[index].deadline = tomorrow;
-                    return newRoutine
-                })
-                
+            handleClick: async () => {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                await handleUpdateTask(taskId, {
+                    deadline: tomorrow
+                })                
             }
         },
         {
             name: "someDay",
             value: "Ngày nào đó",
             icon: "deadline",
-            handleClick: () => {
-                setTask(prev => {
-                    const newRoutine = [...prev]
-                    const index = newRoutine.map(e => e.id).indexOf(taskId);
-                    newRoutine[index].deadline = "someday";
-                    return newRoutine
-                })
+            handleClick: async () => {
+                await handleUpdateTask(taskId, {
+                    deadline: "someday"
+                })                
             }
         },
         {
@@ -560,18 +574,18 @@ const Option = (p) => {
             name: "delete",
             value: "Xóa",
             icon: "deleteIcon",
-            handleClick: () => {
+            handleClick: async () => {
+                await handleDeleteTask(taskId)
                 deleteTask(taskId)
             }
         },
     ]
     
     const Icon = (p) => {
-        const {icon} = p
+        const { icon } = p
         const Image = Img[icon]
 
-        if(Image)
-        return <Image/>
+        if(Image) return <Image/>
     }
 
     return (

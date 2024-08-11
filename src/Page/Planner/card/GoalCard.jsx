@@ -148,7 +148,7 @@ const Card = (p) => {
     const Area = (p) => {
         const {data} = p
         const Image = Img[data]
-        return <Image/>
+        if(Image) return <Image/>
     }
 
  

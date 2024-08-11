@@ -78,12 +78,11 @@ const GlobalStyles = createGlobalStyle`
     }
     
     .text-dark {
-        color: rgba(30,30,30,1)!important;
+        color: var(--black-text)!important;
     }
 
     .text-white {
         color: var(--white-text)!important;
-        color: rgba(255,255,255,1)!important;
     }
 
     .line-through {

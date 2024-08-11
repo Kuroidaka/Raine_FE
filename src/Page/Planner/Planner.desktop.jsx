@@ -16,6 +16,7 @@ import task from '../../assets/svg/task.svg'
 import routine from '../../assets/svg/routine.svg'
 import goal from '../../assets/svg/goal.svg'
 import Loading from "../../Component/Loading";
+import { ToastContainer } from "react-toastify";
 
 const PlannerDesktop = () => {
     const [taskDateZone, setTaskDateZone] = useState("today")
@@ -31,6 +32,7 @@ const PlannerDesktop = () => {
 
     return ( 
         <>
+            <ToastContainer/>
             <SectionContent sec="task" loading={taskLoad} 
                             dataSection={task} setDateSection={setTask} 
                             setDateZone={setTaskDateZone}>

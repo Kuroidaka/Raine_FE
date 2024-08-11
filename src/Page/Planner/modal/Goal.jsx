@@ -243,7 +243,7 @@ const Goal = (p) => {
         const Area = (p) => {
             const { data } = p
             const Image = Img[data]
-            return <Image />
+            if(Image) return <Image />
         }
 
         const checkValid = () => {
@@ -587,7 +587,7 @@ const Label = styled.div`
 
 const RelateAres = styled.div `
     text-align: center;
-    color: #b8c2cc!important;
+    color: #b8c2cc;
     cursor: url(${myCursor}), auto;
     width: 25%;
 

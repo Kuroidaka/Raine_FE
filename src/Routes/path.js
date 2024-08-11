@@ -4,6 +4,7 @@ const paths = {
     chat: "/chat",
     videoChat: "/chat/cam",
     test: "/test",
+    testCam: "/test/cam",
     noPage: "*"
 }
 
