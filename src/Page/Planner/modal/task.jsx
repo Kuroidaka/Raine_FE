@@ -3,8 +3,7 @@ import styled from "styled-components";
 import ModalContext from "../../../Context/Modal.context";
 import TaskContext from "../../../Context/Task.context";
 import DOMPurify from "dompurify";
-import { dateConvert, dateConvertForModal, isDateString, isISODateString } from "../../../Util";
-import { nanoid } from "nanoid";
+import { dateConvert, isDateString, isISODateString } from "../../../Util";
 import { Img } from "../../../assets/svg";
 import Input from "../../../Component/Input";
 import Flatpickr from "react-flatpickr";
@@ -64,7 +63,7 @@ const Task = (p) => {
     const { dataInput, setDataInput, mode, areaData } = p
     
     const { modal, closeModal }  = useContext(ModalContext)
-    const { task, setTask, handleAddTask, handleUpdateTask }  = useContext(TaskContext)
+    const { handleAddTask, handleUpdateTask }  = useContext(TaskContext)
     const [valid, setValid] = useState(true)
     const fp = useRef(null);
 

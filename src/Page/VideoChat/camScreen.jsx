@@ -10,10 +10,11 @@ import { imagesGrid, playAudio } from './helper';
 import conversationApi from '../../api/conversation.api';
 import { WebSocketContext } from "../../Context/socket.context";
 import { toast } from 'react-toastify';
+import { base64ToFile } from '../../Util';
 
 
 const INTERVAL = 1000
-const SILENCE_DURATION = 1500
+const SILENCE_DURATION = 2500
 const SILENT_THRESHOLD = -30
 
 const SCREEN_IMAGE_WIDTH = 512
@@ -63,37 +64,15 @@ const CamScreen = (p) => {
       mediaStreamConstraints: { audio: false, video: true },
     });
 
-    const handleSendClient = async ({ inputValue, frameUrl }) => {
-      let isVision = false
+    const handleSendClient = async ({ inputValue, file }) => {
       let result 
-      if(frameUrl) isVision = true
-      // Retrieve data conversation
-      // const { data } = await camApi.getConversation()
-      // // Append new message into conversation
-
-      // const content = [
-      //   { type: "text", text: inputValue },
-      //   {
-      //     type: "image_url",
-      //     image_url: {
-      //       "url": uploadUrl,
-      //     },
-      //   },
-      // ]
-      // const messages = [
-      //   ...data.data,
-      //   {
-      //     role: "user",
-      //     content: content
-      //   }
-      // ];
 
       // API CHAT
       try {
-        result = await conversationApi.createChat({
+        result = await conversationApi.createChatVideo({
           prompt: inputValue,
-          uploadUrl: frameUrl
-        }, true, isVision);
+          file: file
+        }, true);
         console.log("final response: ", result.content);
         setBotText(result.content)
         
@@ -116,11 +95,11 @@ const CamScreen = (p) => {
       if (result.content.length > 0) {
         setTranscription(result.content);
 
-        const frameUrl = videoRef.current.srcObject !== null ? await videoProcess() : null
+        const FrameFile = videoRef.current.srcObject !== null ? await videoProcess() : null
         setPhase("user: processing completion");
 
         const { content } = await handleSendClient({
-          frameUrl: frameUrl,
+          file: FrameFile,
           inputValue: result.content,
         });
         setIsWaiting(false);
@@ -228,12 +207,12 @@ const CamScreen = (p) => {
   
       screenshotsRef.current = [];
       // downloadImageFromBase64(imageUrl)
-      
+      const file = base64ToFile(imageUrl)
       // const uploadUrls = await hostImages([imageUrl]);
   
       setImagesGridUrl(imageUrl);
   
-      return imageUrl
+      return file
     }
 
     const recorder = {

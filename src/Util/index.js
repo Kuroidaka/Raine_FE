@@ -233,3 +233,31 @@ export const compressBase64Data = (base64Data) => {
 
   return compressedBase64Data;
 };
+
+
+/**
+ * Converts a base64 string into a File object with a date string as the file name
+ * and uses a smaller image type (JPEG) by default.
+ * @param {string} base64String - The base64 encoded string
+ * @returns {File} - The resulting File object
+ */
+export function base64ToFile(base64String) {
+  // Decode base64 string
+  const byteString = atob(base64String.split(',')[1]);
+
+  // Convert to byte array
+  const byteNumbers = new Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+      byteNumbers[i] = byteString.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+
+  // Create the file name using the current date string
+  const fileName = `${new Date().toISOString().replace(/[:.-]/g, '')}.jpeg`;
+
+  // Create the File object, defaulting to JPEG for smaller file size
+  return new File([byteArray], fileName, { type: 'image/jpeg' });
+}
+
+// Example usage:
+// const file = base64ToFile(base64String);

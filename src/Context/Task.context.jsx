@@ -1,6 +1,4 @@
- 
-import { nanoid } from "nanoid";
-import React, { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import reminderApi from "../api/reminder.api"
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,7 +16,7 @@ export const TaskProvider = (p) => {
 
     const queryClient = useQueryClient();
 
-    const { data, error, isLoading } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey:['tasks'], 
         queryFn: () => reminderApi.getTasks(),
         cacheTime: 0,

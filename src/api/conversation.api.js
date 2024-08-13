@@ -2,14 +2,12 @@ import axiosClient from "./axiosClient";
 
 const conversationApi = {
 
-    createChat: async ({prompt, conversationID, uploadUrl}, isStream=false, isVision=false) => {
+    createChat: async ({prompt, conversationID, uploadUrl}, isStream=false) => {
         const url = `/brain/chat`;
 
         // Define query parameters
         const params = {
             isStream: isStream,
-            isLTMemo: true,
-            isVision: isVision,
         };
 
         // Define data body
@@ -26,6 +24,35 @@ const conversationApi = {
         console.log("dataBody",dataBody )
         // Send POST request with query parameters and data body
         return axiosClient.post(url, dataBody, { params });
+    },
+    createChatVideo: async ({ prompt, conversationID, file }, isStream = false) => {
+        const url = `/brain/chat/video`;
+    
+        // Define query parameters
+        const params = {
+            isStream: isStream,
+        };
+    
+        // Create a FormData object
+        const formData = new FormData();
+        formData.append('prompt', prompt);
+    
+        if (conversationID) {
+            formData.append('conversationID', conversationID);
+        }
+        if (file) {
+            formData.append('file', file);  // Assuming 'file' is a File object
+        }
+    
+        console.log("FormData", formData);
+    
+        // Send POST request with query parameters and form-data body
+        return axiosClient.post(url, formData, {
+            params,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
     },
     getConversationHistory: async(id) => {
         const url = id

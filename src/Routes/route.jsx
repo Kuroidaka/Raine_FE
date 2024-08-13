@@ -10,6 +10,7 @@ const ChatPage = lazy(() => import("../Page/Chat"));
 const VideoChat = lazy(() => import("../Page/VideoChat"));
 const StreamTest = lazy(() => import("../Page/Test/Stream"));
 const PhotoCapture = lazy(() => import("../Page/Test/Video"));
+const AudioPreview = lazy(() => import("../Page/Test/PreviewAudio"));
 
 import paths from "./path";
 import Loading from "../Component/Loading";
@@ -104,6 +105,18 @@ export const routes = [
       </DefaultLayout>
     ),
     path: paths.testCam,
+    exact: false,
+  },
+  {
+    name: "test_audio",
+    page: (
+      <DefaultLayout>
+        <Suspense fallback={<Loading />}>
+          <AudioPreview />
+        </Suspense>
+      </DefaultLayout>
+    ),
+    path: paths.testAudio,
     exact: false,
   },
   {
