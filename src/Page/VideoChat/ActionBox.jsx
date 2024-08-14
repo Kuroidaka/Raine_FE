@@ -10,13 +10,12 @@ const ActionBox = (p) => {
       isBusy,
       recorder,
       video, videoRef,
-      screenObject, screenRef, isScreenShare
+      screenObject, screenRef, isScreenShare,
+      isOnMic, setIsOnMic
     } = p
   
     const [isOpenCamBtn, setIsOpenCamBtn] = useState(false)
     const [isScreenBtn, setIsScreenBtn] = useState(false)
-    const [isOnMic, setIsOnMic] = useState(false);
-  
     const navigate = useNavigate()
   
     const toggleScreenShare = (toggle) => {

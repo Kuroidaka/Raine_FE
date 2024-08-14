@@ -49,6 +49,8 @@ const CamScreen = (p) => {
 
     const [currentVolume, setCurrentVolume] = useState(-50);
     const [volumePercentage, setVolumePercentage] = useState(0);
+    const [isOnMic, setIsOnMic] = useState(false);
+  
 
     const navigate = useNavigate();
 
@@ -106,6 +108,7 @@ const CamScreen = (p) => {
           inputValue: result.content,
           conversationID: conID
         });
+        console.log("returnedConID", returnedConID)
         setIsWaiting(false);
         if(!conID) setConID(returnedConID) 
 
@@ -367,14 +370,17 @@ const CamScreen = (p) => {
 
 
   const audioProps= {
-    recorder, isBusy, setIsWaiting
+    recorder, isBusy, setIsWaiting, isOnMic
   }
   const actionProps= {
     isBusy,
     recorder,
     video, videoRef,
-    screenObject, screenRef, isScreenShare
+    screenObject, screenRef, isScreenShare,
+    isOnMic, setIsOnMic
   }
+
+  console.log("audio.isRecording", audio.isRecording, isBusy.current)
 
   return (
   <VideoSection>

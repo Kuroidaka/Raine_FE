@@ -21,6 +21,7 @@ const GlobalStyles = createGlobalStyle`
         --16px: 1rem;
         --24px: 1.5rem;
         --32px: 2rem;
+        --250px: 16.6rem;
         --300px: 18.75rem;
     }
     

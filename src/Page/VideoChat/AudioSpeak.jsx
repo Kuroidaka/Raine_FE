@@ -3,7 +3,7 @@ import { WebSocketContext } from "../../Context/socket.context";
 import { playAudio } from "./helper";
 
 const AudioSpeak = (p) => {
-    const { recorder, isBusy, setIsWaiting } = p
+    const { recorder, isBusy, setIsWaiting, isOnMic } = p
     const [audioQueue, setAudioQueue] = useState([]);
     const [isPlaying, setIsPlaying] = useState(false);
     const socket = useContext(WebSocketContext);
@@ -29,11 +29,15 @@ const AudioSpeak = (p) => {
         if (!isPlaying && audioQueue.length > 0) {
           playNextAudio();
         }else if(!isPlaying && audioQueue.length === 0) {
-          recorder.voice.start()
+          if(isOnMic) {
+            setTimeout(() => {
+              recorder.voice.start()
+            }, 2000)
+          }
           isBusy.current = false;
           setIsWaiting(false);
         }
-      }, [audioQueue, isPlaying]);
+      }, [audioQueue, isPlaying, isBusy]);
   
       // Socket for streaming response from AI
       useEffect(() => {

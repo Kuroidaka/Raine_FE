@@ -27,7 +27,7 @@ const Sidebar = (p) => {
 
     const SideStyle = {
         open: () => ({
-            width: device === "desktop" ? "300px" : "250px",
+            width: device === "desktop" ? "var(--300px)" : "var(--250px)",
             transition: {
                 type: 'spring',
             }
