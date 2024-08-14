@@ -43,7 +43,7 @@ const DefaultLayoutComponent = (p) => {
     return (
        <Fragment>
             <Background background={appearance.url}/>
-            <DftLaySty device={device} > 
+            <DftLaySty $device={device} > 
                 {device === "mobile" && <Header toggleSideBar={openSideBar}/>}
                 
                 <div className="body">
@@ -74,7 +74,7 @@ const DftLaySty = styled.div`
 
         .page-content {
             overflow-y: scroll;
-            margin-left: ${({device}) => device === "desktop" ? "var(--sidebar-wt)" : "0px" };
+            margin-left: ${({$device}) => $device === "desktop" ? "var(--sidebar-wt)" : "0px" };
             width: 100%;
 
             @media (max-width: 768px) {

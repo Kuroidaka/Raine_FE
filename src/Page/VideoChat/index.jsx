@@ -15,11 +15,12 @@ const VideoChat = () => {
   const videoRef = useRef(null);
 
   const [botText, setBotText] = useState("");
-  const [displaydebug, setDisplayDebug] = useState(false);
+  const [displayDebug, setDisplayDebug] = useState(false);
   const [phase, setPhase] = useState("not inited");
   const [transcription, setTranscription] = useState("");
   const [imagesGridUrl, setImagesGridUrl] = useState(null);
   const [isWaiting, setIsWaiting] = useState(false);
+  const [conID, setConID] = useState(null);
   const socket = useContext(WebSocketContext);
   // Socket for streaming response from AI
   useEffect(() => {
@@ -45,6 +46,7 @@ const VideoChat = () => {
     setBotText,
     setTranscription,
     isBusy,
+    conID, setConID
 
   };
 
@@ -55,7 +57,7 @@ const VideoChat = () => {
   };
 
   const debugProp = {
-    displaydebug,
+    displayDebug,
     setDisplayDebug,
     imagesGridUrl,
     transcription,

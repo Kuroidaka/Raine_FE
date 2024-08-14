@@ -6,10 +6,10 @@ const DebugLog = (p) => {
     imagesGridUrl,
     transcription,
     phase,
-    displaydebug, setDisplayDebug
+    displayDebug, setDisplayDebug
   } = p;
   return (
-    <DebugContainer displayDebug={displaydebug.toString()}>
+    <DebugContainer $displayDebug={displayDebug.toString()}>
       <CloseButton onClick={() => setDisplayDebug(false)}>⛌</CloseButton>
       <div className="debug-content">
         <DebugItem>
@@ -58,8 +58,8 @@ const DebugContainer = styled.div`
   @media (min-width: 640px) {
     width: 33vw;
   }
-  ${({displayDebug}) =>
-    displayDebug === "true"
+  ${({ $displayDebug }) =>
+    $displayDebug === "true"
       ? css`
           transform: translateX(0);
         `

@@ -1,16 +1,17 @@
-import { useEffect, useRef, useState, useContext } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import styled, { css } from 'styled-components'
-import { Mic, MicOff, Video, VideoOff, Monitor, ArrowLeft, Phone } from 'react-feather'
+import { ArrowLeft } from 'react-feather'
 import {  useNavigate } from "react-router-dom";
 import useMediaRecorder from '@wmik/use-media-recorder';
 
 import useSilenceAwareRecorder from 'silence-aware-recorder/react';
-import { imagesGrid, playAudio } from './helper';
+import { imagesGrid } from './helper';
 import conversationApi from '../../api/conversation.api';
-import { WebSocketContext } from "../../Context/socket.context";
 import { toast } from 'react-toastify';
 import { base64ToFile } from '../../Util';
+import ActionBox from './ActionBox';
+import AudioSpeak from './AudioSpeak';
 
 
 const INTERVAL = 1000
@@ -35,7 +36,8 @@ const CamScreen = (p) => {
     setBotText,
     setTranscription,
     isBusy,
-    videoRef
+    videoRef,
+    conID, setConID
   } = p
 
     const maxVolumeRef = useRef(0);
@@ -64,14 +66,15 @@ const CamScreen = (p) => {
       mediaStreamConstraints: { audio: false, video: true },
     });
 
-    const handleSendClient = async ({ inputValue, file }) => {
+    const handleSendClient = async ({ inputValue, file, conversationID }) => {
       let result 
 
       // API CHAT
       try {
         result = await conversationApi.createChatVideo({
           prompt: inputValue,
-          file: file
+          file,
+          conversationID
         }, true);
         console.log("final response: ", result.content);
         setBotText(result.content)
@@ -98,11 +101,13 @@ const CamScreen = (p) => {
         const FrameFile = videoRef.current.srcObject !== null ? await videoProcess() : null
         setPhase("user: processing completion");
 
-        const { content } = await handleSendClient({
+        const { content, conversationID: returnedConID } = await handleSendClient({
           file: FrameFile,
           inputValue: result.content,
+          conversationID: conID
         });
         setIsWaiting(false);
+        if(!conID) setConID(returnedConID) 
 
         await handleTTS(content)
       }
@@ -382,12 +387,12 @@ const CamScreen = (p) => {
             <ArrowLeft />
             </motion.div>
         </motion.div>
-        <VideoContainer isScreenShare={isScreenShare.current}>
+        <VideoContainer $isScreenShare={isScreenShare.current.toString()}>
           <video className="screen" ref={screenRef} autoPlay />
           <video className="video" ref={videoRef} autoPlay />
           <RecordDot
-            isrecording={audio.isRecording.toString()}
-            volumepercentage={volumePercentage}
+            $isRecording={audio.isRecording.toString()}
+            $volumePercentage={volumePercentage}
           >
             <div>{audio.isRecording ? '' : '⏸'}</div>
           </RecordDot>
@@ -396,167 +401,6 @@ const CamScreen = (p) => {
         </VideoContainer>
   </VideoSection>
   )
-}
-
-const ActionBox = (p) => {
-
-  const { 
-    isBusy,
-    recorder,
-    video, videoRef,
-    screenObject, screenRef, isScreenShare
-  } = p
-
-  const [isOpenCamBtn, setIsOpenCamBtn] = useState(false)
-  const [isScreenBtn, setIsScreenBtn] = useState(false)
-  const [isOnMic, setIsOnMic] = useState(false);
-
-  const navigate = useNavigate()
-
-  const toggleScreenShare = (toggle) => {
-    isScreenShare.current = toggle;
-  };
-
-  const handleEndCall = async () => {
-    // camApi.deleteCamChatStream();
-      recorder.hardStop(video, videoRef);
-      recorder.hardStop(screenObject, screenRef);
-      navigate("/chat");
-  };
-
-  const cam = {
-    open: () => {
-        const videoElm = document.querySelector('.video')
-        videoElm.style.display = 'block'
-        setIsOpenCamBtn(true)
-        recorder.video.start(video, videoRef)
-    },
-    close: () => {
-        const videoElm = document.querySelector('.video')
-        videoElm.style.display = 'none'
-        setIsOpenCamBtn(false)
-        console.log("videoRef", videoRef.current.srcObject)
-        recorder.video.stop(video, videoRef)
-    },
-  }
-
-  const screenHandle = {
-    open: () => {
-      setIsScreenBtn(true)
-      recorder.video.start(screenObject, screenRef)
-      toggleScreenShare(true)
-    },
-    close: () => {
-      setIsScreenBtn(false)
-      recorder.video.stop(screenObject, screenRef)
-      toggleScreenShare(false)
-    },
-  }
-
-  const micFunc = {
-    open: () => {
-      recorder.voice.start()
-      isBusy.current = false
-      setIsOnMic(true)
-    },
-    close: () => {
-      recorder.voice.stop()
-      isBusy.current = true
-      setIsOnMic(false)
-    },
-  }
-
-  return (
-    <ActionContainer>
-      {isOnMic ? (
-          <BtnWrapper onClick={micFunc.close}>
-              <Mic />
-          </BtnWrapper>
-      ) : (
-          <BtnWrapper onClick={micFunc.open} className='off'>
-              <MicOff />
-          </BtnWrapper>
-      )}
-      
-      {isOpenCamBtn ? (
-      <BtnWrapper onClick={cam.close}>
-          <Video />
-      </BtnWrapper>
-      ) : (
-      <BtnWrapper onClick={cam.open} className='off'>
-          <VideoOff />
-      </BtnWrapper>
-      )}
-
-      {isScreenBtn ? (
-      <BtnWrapper onClick={screenHandle.close} className="monitor">
-          <Monitor />
-      </BtnWrapper>
-      ) : (
-      <BtnWrapper onClick={screenHandle.open} >
-          <Monitor />
-      </BtnWrapper>
-      )}
-
-      <BtnWrapper onClick={handleEndCall} className="phone-off" >
-          <Phone />
-      </BtnWrapper>
-    </ActionContainer>
-  )
-}
-
-const AudioSpeak = (p) => {
-  const { recorder, isBusy, setIsWaiting } = p
-  const [audioQueue, setAudioQueue] = useState([]);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const socket = useContext(WebSocketContext);
-
-  const playNextAudio = async () => {
-    if (audioQueue.length === 0) {
-      setIsPlaying(false);
-      return;
-    }
-
-    setIsPlaying(true);
-    const nextAudioUrl = audioQueue[0];
-
-    await playAudio(nextAudioUrl);
-
-    setAudioQueue((prevQueue) => prevQueue.slice(1));
-    setIsPlaying(false);
-  };
-
-
-    // Audio play
-    useEffect(() => {
-      if (!isPlaying && audioQueue.length > 0) {
-        playNextAudio();
-      }else if(!isPlaying && audioQueue.length === 0) {
-        recorder.voice.start()
-        isBusy.current = false;
-        setIsWaiting(false);
-      }
-    }, [audioQueue, isPlaying]);
-
-    // Socket for streaming response from AI
-    useEffect(() => {
-      if(socket){
-        socket.on('audioFile', (filePath) => {
-          const audioUrl = URL.createObjectURL(new Blob([filePath], { type: 'audio/mpeg' }));
-          
-          console.log("audioUrl", audioUrl)
-          setAudioQueue((prevQueue) => [...prevQueue, audioUrl]);
-        });
-      }
-
-      // Clean up the connection on unmount
-      return () => {
-        if(socket) socket.off('audioFile');
-      };
-    }, [socket]);
-  
-
-  return <></>
 }
 
 export default CamScreen
@@ -587,8 +431,8 @@ const VideoContainer = styled.div`
     display: none;
   }
 
-  ${(props) =>
-    props.isScreenShare &&
+  ${({ $isScreenShare }) =>
+    $isScreenShare === 'true' &&
     css`
       .screen {
         width: 100%;
@@ -606,8 +450,8 @@ const VideoContainer = styled.div`
       }
     `}
 
-  ${(props) =>
-    !props.isScreenShare &&
+  ${({ $isScreenShare }) =>
+    $isScreenShare === 'false' &&
     css`
       .video {
         width: 100%;
@@ -626,10 +470,10 @@ const RecordDot = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 99999;
-  cursor: ${(props) => (props.isrecording === 'true' ? 'default' : 'pointer')};
+  cursor: ${({ $isRecording }) => ($isRecording === 'true' ? 'default' : 'pointer')};
 
-  ${(props) =>
-    props.isrecording &&
+  ${({ $isRecording, $volumePercentage }) =>
+    $isRecording === 'true' &&
     css`
       div {
         width: 4rem;
@@ -637,12 +481,12 @@ const RecordDot = styled.div`
         background-color: #f56565;
         opacity: 0.5;
         border-radius: 50%;
-        transform: scale(${Math.pow(props.volumepercentage, 4).toFixed(4)});
+        transform: scale(${Math.pow($volumePercentage, 4).toFixed(4)});
       }
     `}
 
-  ${(props) =>
-    props.isrecording === 'false' &&
+  ${({ $isRecording }) =>
+    $isRecording === 'false' &&
     css`
       div {
         font-size: 3.125rem;
@@ -652,53 +496,3 @@ const RecordDot = styled.div`
     `}
 `
 
-const ActionContainer = styled.div`
-    width: 100%;
-    height: 100px;
-    position: absolute;
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    align-items: center;
-    bottom: 0;
-`
-
-const BtnWrapper = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    height: 50px;
-    width: 50px;
-    background-color: #6a6a6a;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-
-    &:hover {
-        background-color: #898181; 
-    }
-
-    &.off {
-        background-color: #e95353;
-        &:hover {
-            background-color: #f56565; 
-        }
-    }
-
-    &.monitor {
-        background-color: #3b82f6;
-        &:hover {
-            background-color: #2563eb; 
-        }
-    }
-
-    &.phone-off {
-        background-color: #EA4335;
-        width: 70px;
-        border-radius: 27px;
-        svg {
-            rotate: 135deg;
-        }
-    }
-`
