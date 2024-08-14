@@ -37,7 +37,7 @@ const CamScreen = (p) => {
     setTranscription,
     isBusy,
     videoRef,
-    conID, setConID
+    conID,
   } = p
 
     const maxVolumeRef = useRef(0);
@@ -103,14 +103,15 @@ const CamScreen = (p) => {
         const FrameFile = videoRef.current.srcObject !== null ? await videoProcess() : null
         setPhase("user: processing completion");
 
+        console.log("conID", conID)
         const { content, conversationID: returnedConID } = await handleSendClient({
           file: FrameFile,
           inputValue: result.content,
-          conversationID: conID
+          conversationID: conID.current
         });
         console.log("returnedConID", returnedConID)
         setIsWaiting(false);
-        if(!conID) setConID(returnedConID) 
+        if(conID.current === null) conID.current = returnedConID 
 
         await handleTTS(content)
       }
@@ -142,8 +143,7 @@ const CamScreen = (p) => {
           setBotText("");
     
           const sttFromData = new FormData();
-          sttFromData.append("file", data, "audio.webm");
-          // sttFromData.append("language", lang);
+          sttFromData.append("file", data, "audio.mp3");
     
           const result = await conversationApi.stt(sttFromData);
           console.log("transcript", result.content);
@@ -380,7 +380,6 @@ const CamScreen = (p) => {
     isOnMic, setIsOnMic
   }
 
-  console.log("audio.isRecording", audio.isRecording, isBusy.current)
 
   return (
   <VideoSection>

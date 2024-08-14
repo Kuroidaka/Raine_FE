@@ -20,7 +20,7 @@ const VideoChat = () => {
   const [transcription, setTranscription] = useState("");
   const [imagesGridUrl, setImagesGridUrl] = useState(null);
   const [isWaiting, setIsWaiting] = useState(false);
-  const [conID, setConID] = useState(null);
+  const conID = useRef(null);
   const socket = useContext(WebSocketContext);
   // Socket for streaming response from AI
   useEffect(() => {
@@ -46,8 +46,7 @@ const VideoChat = () => {
     setBotText,
     setTranscription,
     isBusy,
-    conID, setConID
-
+    conID
   };
 
   const logScreenProp = {
