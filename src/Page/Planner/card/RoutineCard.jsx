@@ -3,7 +3,7 @@ import Tippy from '@tippyjs/react/headless';
 import { Img } from "../../../assets/svg";
 import { Icon } from "../../../assets/icon";
 import { useState, useEffect, Fragment, useContext } from "react";
-import { getRecentSevenDates, updateRecentDates } from "../../../Util"
+import { updateRecentDates } from "../../../Util"
 import ModalContext from "../../../Context/Modal.context";
 import RoutineContext from "../../../Context/Routine.context";
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur"
@@ -13,8 +13,11 @@ const RoutineCard = (p) => {
     // const { task }  = useContext(TaskContext)
     const [dateType, setDateType] = useState({
         mustdo: [],
+        doNotNeed: [],
         all: []
     })
+
+    console.log("dataSection", dataSection)
 
     useEffect(() => {
     
@@ -22,13 +25,13 @@ const RoutineCard = (p) => {
             
             const filterRoutineDo = (routine) => {
                 return routine.filter((data) => {
-                    return data.active === true
+                    return data.isActive === true
                 });
             };
 
             const filterRoutineDontNeed = (routine) => {
                 return routine.filter((data) => {
-                    return data.active === false
+                    return data.isActive === false
                 });
             };
 
@@ -51,21 +54,19 @@ const RoutineCard = (p) => {
                                     {/* Must Do */}
                                     <DateZoneLabel name="must-do" className="mb-10" title="Phải Làm" num={dateType.mustdo.length} />
                                     <TaskCardList className="mb-30">
-                                    {dateType.mustdo.map((data, idx) => {
+                                    {dateType.mustdo.length >0 && dateType.mustdo.map((data, idx) => {
                                         return (
                                             <Card 
                                                 key={idx} 
                                                 id={data.id}
-                                                title={data?.title}
+                                                title={data.title}
                                                 color={data?.color}
-                                                deadline={data?.deadline}
                                                 area={data.area}
                                                 note={data.note}
-                                                subTask={data.sub}
                                                 dataSection={dataSection}
                                                 setDateSection={setDateSection}
-                                                dateDone={data?.dateDone}
-                                                active={data?.active}
+                                                routineDate={data.routineDate}
+                                                isActive={data.isActive}
                                                 />
                                         )
                                     })}
@@ -78,43 +79,39 @@ const RoutineCard = (p) => {
                             {/* Must Do */}
                             <DateZoneLabel name="must-do" className="mb-10" title="Phải Làm" num={dateType.mustdo.length} />
                             <TaskCardList className="mb-30">
-                            {dateType.mustdo.map((data, idx) => {
+                            {dateType.mustdo > 0 && dateType.mustdo.map((data, idx) => {
                                 return (
                                     <Card 
                                         key={idx} 
                                         id={data.id}
-                                        title={data?.title}
+                                        title={data.title}
                                         color={data?.color}
-                                        deadline={data?.deadline}
                                         area={data.area}
                                         note={data.note}
-                                        subTask={data.sub}
                                         dataSection={dataSection}
                                         setDateSection={setDateSection}
-                                        dateDone={data?.dateDone}
-                                        active={data?.active}
+                                        routineDate={data.routineDate}
+                                        isActive={data.isActive}
                                         />
                                 )
                             })}
                             </TaskCardList>
                             {/* Do Not Need */}
-                            <DateZoneLabel name="must-do" className="mb-10" title="Không cần phải làm" num={dateType.doNotNeed.length} />
+                            <DateZoneLabel name="must-do" className="mb-10" title="Không cần phải làm" num={dateType?.doNotNeed?.length ?? 0} />
                             <TaskCardList className="mb-30">
-                            {dateType.doNotNeed.map((data, idx) => {
+                            {dateType.doNotNeed.length > 0 && dateType.doNotNeed.map((data, idx) => {
                                 return (
                                     <Card 
                                         key={idx} 
                                         id={data.id}
-                                        title={data?.title}
+                                        title={data.title}
                                         color={data?.color}
-                                        deadline={data?.deadline}
                                         area={data.area}
                                         note={data.note}
-                                        subTask={data.sub}
                                         dataSection={dataSection}
                                         setDateSection={setDateSection}
-                                        dateDone={data?.dateDone}
-                                        active={data?.active}
+                                        routineDate={data.routineDate}
+                                        isActive={data.isActive}
                                         />
                                 )
                             })}
@@ -150,16 +147,17 @@ const Card = (p) => {
     const { 
         title,
         color = null,
-        deadline = "",
         area = [],
         note = "",
         id,
         dataSection,
         setDateSection,
-        dateDone,
-        active } = p
+        routineDate,
+        isActive } = p
     // const { task, setTask }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
+    
+    const { handleUpdateRoutine, handleDeleteRoutine }  = useContext(RoutineContext)
 
     const [checked, setChecked] = useState(false)
     const [option, setOption] = useState(false)
@@ -169,12 +167,11 @@ const Card = (p) => {
             const data = {
                 title,
                 color,
-                deadline,
                 area,
                 note,
                 id,
-                dateDone,
-                active
+                routineDate,
+                isActive
             }
             openModal(title, data, "routine")
         },
@@ -199,7 +196,7 @@ const Card = (p) => {
                     let newTask = [...dataSection]; //prevent mutating
                     newTask = newTask.filter(data => data.id !== id)
                     setDateSection(newTask);
-                    taskHandle.option.close()
+                    taskHandle.option.close()                    
                 }, 500)
             }
         }
@@ -211,37 +208,41 @@ const Card = (p) => {
         if(Image) return <Image/>
     }
     
-    const handleClickUnCheckDate = (date) => {
-
+    const handleClickUnCheckDate = async (date) => {
         const isSameDate = (date1, date2) => {
             return date1.getFullYear() === date2.getFullYear() &&
                    date1.getMonth() === date2.getMonth() &&
                    date1.getDate() === date2.getDate();
           };
 
-        setDateSection(prev => {
-            const newRoutine = [...prev]
-            const index = newRoutine.map(e => e.id).indexOf(id);
-            // console.log(newRoutine[index].dateDone)
-            newRoutine[index].dateDone = newRoutine[index].dateDone.filter(d => {
-
-                return !isSameDate(new Date(d), new Date(date))
-            })
-            // console.log(newRoutine[index].dateDone)
-            return newRoutine
+        let dateList = dataSection[0].routineDate.map(({completion_date}) => ({ completion_date: new Date(completion_date).toString() }))
+        dateList = dateList.filter(d => {
+            return !isSameDate(new Date(d.completion_date), new Date(date))
         })
+
+        const routineId = dataSection[0].id
+        await handleUpdateRoutine(routineId, { routineDate: dateList })
     }
 
-    const handleClickCheckDate = (date) => {
-        console.log(date)
-        setDateSection(prev => {
-            const newRoutine = [...prev]
-            const index = newRoutine.map(e => e.id).indexOf(id);
-            console.log(date)
-            newRoutine[index].dateDone.push(date)
-            console.log(newRoutine[index])
-            return newRoutine
+    const handleClickCheckDate = async (date) => {
+        console.log(dataSection)
+
+        const dates = dataSection[0].routineDate.map(({completion_date}) => ({ completion_date }))
+        dates.push({
+            completion_date: date
         })
+
+        const routineId = dataSection[0].id
+
+        await handleUpdateRoutine(routineId, { routineDate: dates })
+        // setDateSection(prev => {
+        //     const newRoutine = [...prev]
+        //     const index = newRoutine.map(e => e.id).indexOf(id);
+        //     console.log(date)
+        //     newRoutine[index].routineDate.push({completion_date:date})
+        //     console.log(newRoutine[index])
+        //     return newRoutine
+        // })
     }
 
     return (
@@ -250,17 +251,17 @@ const Card = (p) => {
                 <div className={`card-title ${color ?"text-white" : ""}  ${checked ? "blur" : ""}`}>
                     <Title>
                         <RoutineChecked>
-                        {dateDone && updateRecentDates(dateDone).reverse().map((date, idx) => {
+                        {routineDate && updateRecentDates(routineDate).reverse().map((date) => {
                             if(date.check)
-                                return <span key={idx} onClick={() => handleClickUnCheckDate(date.value)}><Img.routineDone /></span>
-                            else return <span key={idx} onClick={() => handleClickCheckDate(date.value)}><Img.routineMiss /></span>
+                                return <span key={date.id} onClick={() => handleClickUnCheckDate(date.value)}><Img.routineDone /></span>
+                            else return <span key={date.id} onClick={() => handleClickCheckDate(date.value)}><Img.routineMiss /></span>
                         })}
                         </RoutineChecked>
                         <div className={`title ${checked ? "line-through" : ""}`}>{title}</div>
                     </Title>
                     
                     <RelateArea>
-                        {area && area.map((item, idx) => <Area key={idx} data={item}/>)}
+                        {area.length > 0 && area.map((item, idx) => <Area key={idx} data={item.area}/>)}
                     </RelateArea>
                 </div>
 
@@ -272,8 +273,7 @@ const Card = (p) => {
                                 taskId={id} 
                                 openDetail={taskHandle.open} 
                                 deleteTask={taskHandle.option.delete}
-                                deadline={deadline}
-                                active={active}
+                                isActive={isActive}
                                 setOption={setOption}/>
                         )}
                         visible={option}
@@ -294,21 +294,22 @@ const Card = (p) => {
 }
 
 const Option = (p) => {
-    const { openDetail, deleteTask, taskId, active, setOption } = p
-    const { setRoutine }  = useContext(RoutineContext)
+    const { openDetail, deleteTask, taskId, isActive, setOption } = p
+    const { setRoutine, handleDeleteRoutine, handleUpdateRoutine }  = useContext(RoutineContext)
     
     const listOption = [
         {
-            name: active ? "pause" : "continue",
-            value: active ? "Dừng lại" : "Tiếp tục",
-            icon: active ? "pause2" : "play2",
-            handleClick: () => {
-                setRoutine(prev => {
-                    const newRoutine = [...prev]
-                    const index = newRoutine.map(e => e.id).indexOf(taskId);
-                    newRoutine[index].active = !active;
-                    return newRoutine
-                })
+            name: isActive ? "pause" : "continue",
+            value: isActive ? "Dừng lại" : "Tiếp tục",
+            icon: isActive ? "pause2" : "play2",
+            handleClick: async () => {
+                // setRoutine(prev => {
+                //     const newRoutine = [...prev]
+                //     const index = newRoutine.map(e => e.id).indexOf(taskId);
+                //     newRoutine[index].isActive = !isActive;
+                //     return newRoutine
+                // })
+                await handleUpdateRoutine(taskId, {isActive: !isActive})
             }
         },
         {
@@ -324,8 +325,9 @@ const Option = (p) => {
             name: "delete",
             value: "Xóa",
             icon: "deleteIcon",
-            handleClick: () => {
+            handleClick: async () => {
                 deleteTask(taskId)
+                await handleDeleteRoutine(taskId)
             }
         },
     ]
@@ -489,19 +491,7 @@ const Title = styled.div `
         margin-left: 6px;
     }
 `
-const Deadline = styled.div `
-    display: flex;
-    align-items: center;
-    
-    svg {
-        width: 12px;
-    }
 
-    span {
-        margin-left: 6px;
-        font-size: 1.2rem;
-    }
-`
 const RelateArea = styled.div `
     display: flex;
     gap: 6px;
@@ -509,15 +499,7 @@ const RelateArea = styled.div `
         width: 12px;
     }
 `
-const AddSubTaskContainer = styled.div `
-    display: flex;
-    align-items: center;
-    gap: 8px;
 
-    svg {
-        width: 18px;
-    }
-`
 const OptionContainer = styled.ul `
     position: absolute;
     top: 0;

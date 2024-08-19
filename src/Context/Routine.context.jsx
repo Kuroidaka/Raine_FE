@@ -1,79 +1,99 @@
-import { nanoid } from "nanoid";
-import React, { createContext } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
+import routineApi from "../api/routine.api";
 
-const RoutineContext = createContext()
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { isObject } from "../Util";
 
-const mockData = [
-    // {   
-    //     "id": nanoid(),
-    //     "active": true,
-    //     "title": "Đánh Cờ",
-    //     "color": "#3c2eff",
-    //     "area": [],
-    //     "dateDone": [
-    //         "Thu Nov 09 2023 17:23:12 GMT+0700 (Indochina Time)",
-    //         "Tue Nov 07 2023 17:23:12 GMT+0700 (Indochina Time)",
-    //     ],
-    //     "note": "<p>Đánh kĩ</p>"
-    // },
-    // {
-    //     "id": nanoid(),
-    //     "active": false,
-    //     "title": "Chơi game",
-    //     "color": "#372408",
-    //     "area": [
-    //         "health",
-    //         "growth"
-    //     ],
-    //     "dateDone": [
-    //         "Fri Nov 10 2023 17:23:12 GMT+0700 (Indochina Time)",
-    //         "Tue Nov 07 2023 17:23:12 GMT+0700 (Indochina Time)",
-    //     ],
-    //     "note": "\n<p>Chơi với bạn bè</p>\n",
-    // },
-    // {
-    //     "id": nanoid(),
-    //     "active": true,
-    //     "title": "test",
-    //     "color": "#cb18a7",
-    //     "area": [
-    //         "health",
-    //         "growth"
-    //     ],
-    //     "dateDone": [
-    //         "Tue Nov 07 2023 17:23:12 GMT+0700 (Indochina Time)",
-    //     ],
-    //     "note": "\n<p>Chơi với bạn bè</p>\n",
-    // }
-]
+const RoutineContext = createContext();
 
 export const RoutineProvider = (p) => {
-    const { children } = p
+    const { children } = p;
 
+    const [routine, setRoutine] = useState([]);
 
-    const [routine, setRoutine] = React.useState([]);
-    const [loading, setLoading] = React.useState(false)
+    const queryClient = useQueryClient();
 
-    React.useEffect(() => {
-        setLoading(true)
-        const routineData = setTimeout(() => {
-            setRoutine(mockData)
-            setLoading(false)
-        }, 0)
+    const { data, isLoading } = useQuery({
+        queryKey: ['routines'],
+        queryFn: () => routineApi.getRoutines(),
+        cacheTime: 0,
+    });
 
-        return () => clearTimeout(routineData)
+    const handleDeleteRoutine = async (id) => {
+        try {
+            await routineApi.deleteRoutine(id);
+        } catch (error) {
+            console.log(error);
+            toast.error("Something went wrong");
+        }
+    };
+
+    const addMutation = useMutation({
+        mutationFn: async ({ data }) => await routineApi.createRoutine(data),
+        onSuccess: () => queryClient.invalidateQueries(['routines']),
+        onError: (error) => {
+            toast.error("Something went wrong");
+            console.log(error);
+        },
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: async ({ routineId, data }) => {
+            await routineApi.updateRoutine(routineId, data);
+        },
+        onSuccess: () => queryClient.invalidateQueries(['routines']),
+        onError: (error) => {
+            toast.error("Something went wrong");
+            console.log(error);
+        },
+    });
+
+    const toggleStatusMutation = useMutation({
+        mutationFn: async ({ routineId }) => {
+            await routineApi.toggleRoutineStatus(routineId);
+        },
+        onSuccess: () => queryClient.invalidateQueries(['routines']),
+        onError: (error) => {
+            toast.error("Something went wrong");
+            console.log(error);
+        },
+    });
+
+    const handleAddRoutine = useCallback((data) => {
+        console.log("dataInput", data);
+        addMutation.mutate({ data });
+    }, [addMutation]);
+
+    const handleUpdateRoutine = async (routineId, data = {}) => {
+        if (Array.isArray(data.area) && isObject(data.area[0])) {
+            data.area = data.area.map(item => item.area);
+        }
         
-    }, [])
+        updateMutation.mutate({ routineId, data });
+    };
+
+    const handleToggleRoutineStatus = async (routineId) => {
+        toggleStatusMutation.mutate({ routineId });
+    };
+
+    useEffect(() => {
+        if (data) {
+            setRoutine(data);
+        }
+    }, [data]);
 
     const valueContext = {
-        routine, setRoutine, loading, setLoading
-    }
+        routine, setRoutine,
+        handleAddRoutine, handleDeleteRoutine, handleUpdateRoutine, handleToggleRoutineStatus,
+        loading: isLoading
+    };
 
     return (
         <RoutineContext.Provider value={valueContext}>
             {children}
         </RoutineContext.Provider>
-    )
-}
+    );
+};
 
-export default RoutineContext
+export default RoutineContext;

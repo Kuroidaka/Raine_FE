@@ -6,18 +6,23 @@ import DeviceContext from "../Context/Device.context";
 import Header from "./Component/Header";
 import { OverlayProvider } from "../Context/Overlay.context";
 import AppearanceContext, { AppearanceProvider } from "../Context/Appearance.context";
+import { WebSocketProvider } from "../Context/socket.context";
+import { AuthContext, AuthProvider } from "../Context/Auth.context";
+import Loading from "../Component/Loading";
 
 const DefaultLayout = ( p ) => {
     const { children } = p
 
     return (
-    <AppearanceProvider>
-        <OverlayProvider>
-            {/* <ModalProvider> */}
-                <DefaultLayoutComponent>{children}</DefaultLayoutComponent>
-            {/* </ModalProvider> */}
-        </OverlayProvider>
-    </AppearanceProvider>
+      <AuthProvider>
+        <AppearanceProvider>
+            <OverlayProvider>
+                <WebSocketProvider>
+                    <DefaultLayoutComponent>{children}</DefaultLayoutComponent>
+                </WebSocketProvider>
+            </OverlayProvider>
+        </AppearanceProvider>
+      </AuthProvider>
     )
 }
 
@@ -26,6 +31,7 @@ const DefaultLayoutComponent = (p) => {
 
     const { device } = useContext(DeviceContext)
     const { appearance } = useContext(AppearanceContext)
+    const { isLoad } = useContext(AuthContext)
 
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenOvelay, setIsOpenOverlay] = useState(false)
@@ -48,11 +54,15 @@ const DefaultLayoutComponent = (p) => {
                 
                 <div className="body">
                     <Sidebar
-                            isopen={isOpenMenu} toggle={toggleSideBar}
-                            isOpenOvelay={isOpenOvelay} setIsOpenOverlay={setIsOpenOverlay}/>
-                    <div className="page-content">
-                        {children}
-                    </div>
+                        isopen={isOpenMenu} toggle={toggleSideBar}
+                        isOpenOvelay={isOpenOvelay} setIsOpenOverlay={setIsOpenOverlay}/>
+                    {isLoad ? (
+                        <Loading></Loading>
+                    ): (
+                        <div className="page-content">
+                            {children}
+                        </div>
+                    )}
                 </div>
             </DftLaySty>
        </Fragment>

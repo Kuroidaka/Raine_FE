@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import ModalContext from "../../../Context/Modal.context";
 import DOMPurify from "dompurify";
-import { convertDates, isDateString } from "../../../Util";
+import { convertDates, convertDatesRoutine, isDateString } from "../../../Util";
 import { nanoid } from "nanoid";
 import { Img } from "../../../assets/svg";
 import Input from "../../../Component/Input";
@@ -10,63 +10,20 @@ import Flatpickr from "react-flatpickr";
 import ReactQuill from 'react-quill';
 import { CirclePicker } from "react-color";
 import Button from "../../../Component/Button";
-import 'react-quill/dist/quill.snow.css';
-import "flatpickr/dist/themes/light.css";
-import "flatpickr/dist/flatpickr.css";
+
 import RoutineContext from "../../../Context/Routine.context";
 import SwitchButton from "../../../Component/SwitchButton";
 import myCursor from '../../../assets/cursor/Labrador_Retriever.cur';
 
-const relatedArea = [
-    {
-        name: "health",
-        value: "Sức khỏe",
-        icon: Img.health
-    },
-    {
-        name: "play",
-        value: "Vui chơi",
-        icon: Img.play
-    },
-    {
-        name: "spirit",
-        value: "Tâm linh",
-        icon: Img.spirit
-    },
-    {
-        name: "environment",
-        value: "Môi trường",
-        icon: Img.environment
-    },
-    {
-        name: "work",
-        value: "Công việc",
-        icon: Img.work
-    },
-    {
-        name: "wealth",
-        value: "Tài chính",
-        icon: Img.wealth
-    },
-    {
-        name: "growth",
-        value: "Phát triển",
-        icon: Img.growth
-    },
-    {
-        name: "relationship",
-        value: "Quan hệ",
-        icon: Img.relationship
-    },
-
-]
+import { relatedArea } from "./constants";
+import { toast } from "react-toastify";
 
 const Routine = (p) => {
 
     const { dataInput, setDataInput, mode, areaData } = p
     
     const { modal, closeModal }  = useContext(ModalContext)
-    const { setRoutine }  = useContext(RoutineContext)
+    const { setRoutine, handleAddRoutine, handleUpdateRoutine, handleToggleRoutineStatus } = useContext(RoutineContext)
     const [valid, setValid] = useState(true)
     const fp = useRef(null);
 
@@ -113,7 +70,10 @@ const Routine = (p) => {
     }
 
     const handleChooseDateRoutine = (date) => {
-        setDataInput({...dataInput, dateDone: date.map(date => date.toString()) })
+    
+        const dates = date.map(data => ({ completion_date: data.toString()}))
+       
+        setDataInput({...dataInput, routineDate: dates })
     }
 
     const deadlineHdle = {
@@ -123,38 +83,38 @@ const Routine = (p) => {
         closeFP: () => { // close flatpicker
             document.querySelector(".flat-picker-wrapper").style.display = "none"
         },
-        choseType: (e, mode) => { //handle Choose type of deadline
+        // choseType: (e, mode) => { //handle Choose type of deadline
 
-            console.log(e.target.id)
-            const id = e.target.id
-            let dateStr = id
-            if(id === "") return 
-            if(id === "today") {
-                const today = new Date()
-                today.setHours(23,59,59,0)
-                dateStr = today
-            }else if(id === "tomorrow") {
-                const today = new Date()
-                const tomorrow = new Date(today.setHours(0,0,0,0))
-                tomorrow.setDate(tomorrow.getDate() + 1)
+        //     console.log(e.target.id)
+        //     const id = e.target.id
+        //     let dateStr = id
+        //     if(id === "") return 
+        //     if(id === "today") {
+        //         const today = new Date()
+        //         today.setHours(23,59,59,0)
+        //         dateStr = today
+        //     }else if(id === "tomorrow") {
+        //         const today = new Date()
+        //         const tomorrow = new Date(today.setHours(0,0,0,0))
+        //         tomorrow.setDate(tomorrow.getDate() + 1)
     
-                dateStr = tomorrow
-            }
-            else if(id === "specific-day") {
-                deadlineHdle.openFP()
-            } else {
-                deadlineHdle.closeFP()
-                if(mode === "edit") setSecOpen({...secOpen, deadline: !secOpen.deadline })
-            }
+        //         dateStr = tomorrow
+        //     }
+        //     else if(id === "specific-day") {
+        //         deadlineHdle.openFP()
+        //     } else {
+        //         deadlineHdle.closeFP()
+        //         if(mode === "edit") setSecOpen({...secOpen, deadline: !secOpen.deadline })
+        //     }
     
-            console.log(dateStr)
-            setDataInput({...dataInput, deadline: dateStr.toString() })
-        },
-        choseDateFP: (date) => { // handle choose date from flatpicker
-            setDataInput(prevData => ({ ...prevData, deadline: date[0].toString() }));
-            console.log(date[0].toString())
-            fp.current.flatpickr.close();
-        }
+        //     console.log(dateStr)
+        //     // setDataInput({...dataInput, deadline: dateStr.toString() })
+        // },
+        // choseDateFP: (date) => { // handle choose date from flatpicker
+        //     // setDataInput(prevData => ({ ...prevData, deadline: date[0].toString() }));
+        //     console.log(date[0].toString())
+        //     fp.current.flatpickr.close();
+        // }
     }
 
     const openSec = async (e) => {
@@ -194,38 +154,63 @@ const Routine = (p) => {
     }
 
         // submit
+        // const handleSave = async () => {
+        //     console.log("dataInput", dataInput)
+        //     const valid = checkValid()
+    
+        //     console.log(valid)
+    
+        //     if(valid){
+        //         setValid(true)
+        //         await setRoutine(prevData => {
+        //             if(mode === "edit") {
+        //                 const newData = prevData.map(data => {
+        //                     if(data.id === modal.content.id) {
+        //                         return {...dataInput, id: data.id}
+        //                     } else {
+        //                         return data
+        //                     }
+        //                 })
+        //                 return newData
+        //             } else {
+        //                 const newData = {...dataInput}
+        //                 if(typeof(newData.deadline) === "undefined") {
+        //                     const today = new Date()
+        //                     today.setHours(23,59,59,0)
+    
+        //                     newData.deadline = today.toString()
+        //                 }
+        //                 return [...prevData, {...newData, id: nanoid(), active: true}]
+        //             }
+        //         })
+        //         closeModal()
+        //     }
+        // }
+
         const handleSave = async () => {
-            console.log("dataInput", dataInput)
-            const valid = checkValid()
-    
-            console.log(valid)
-    
-            if(valid){
-                setValid(true)
-                await setRoutine(prevData => {
-                    if(mode === "edit") {
-                        const newData = prevData.map(data => {
-                            if(data.id === modal.content.id) {
-                                return {...dataInput, id: data.id}
-                            } else {
-                                return data
-                            }
-                        })
-                        return newData
+            const valid = checkValid();
+        
+            try {
+                if (valid) {
+                    setValid(true);
+        
+                    if (mode === "edit") {
+                        const taskId = modal.content.id
+                        console.log("dataInput", dataInput)
+  
+                        await handleUpdateRoutine(taskId, dataInput);
                     } else {
-                        const newData = {...dataInput}
-                        if(typeof(newData.deadline) === "undefined") {
-                            const today = new Date()
-                            today.setHours(23,59,59,0)
-    
-                            newData.deadline = today.toString()
-                        }
-                        return [...prevData, {...newData, id: nanoid(), active: true}]
+                       await handleAddRoutine(dataInput);
                     }
-                })
-                closeModal()
+        
+                    closeModal();
+                }
+            } catch (error) {
+                console.error(error); // Using console.error for logging errors
+                toast.error("An error occurred");
             }
-        }
+        };
+
     
         const Area = (p) => {
             const { data } = p
@@ -234,7 +219,7 @@ const Routine = (p) => {
         }
 
         const handleCheckStatus = () => {
-            setDataInput({...dataInput, active: !dataInput.active })
+            setDataInput({...dataInput, isActive: !dataInput.isActive })
         }
 
         const checkValid = () => {
@@ -333,13 +318,13 @@ const Routine = (p) => {
             openSec={openSec}>
             
             <div className="status-wrapper">
-               {dataInput.active 
+               {!dataInput.isActive 
                 ? <p style={{color: "red"}}>Dừng Hoạt Động</p>    
-                : <p style={{color: "green"}}>Tiếp tục Hoạt Động</p>
+                : <p style={{color: "green"}}>Hoạt Động</p>
                 }
                 <SwitchButton
                     handleCheckStatus={handleCheckStatus}
-                    defaultValue={dataInput.active}
+                    defaultValue={dataInput.isActive}
                 />
             </div>
             
@@ -347,7 +332,7 @@ const Routine = (p) => {
 
         {/* date DONE */}
         {
-        dataInput.dateDone && 
+        mode === "edit" && 
         <ModalSectionContent title="Ngày hoàn thành" Icon={Img.deadline} >
             <DateDone>
                 <Fragment>
@@ -359,7 +344,7 @@ const Routine = (p) => {
                         inline: true,
                         maxDate: "today",
                     }}
-                    value={convertDates(dataInput.dateDone)}
+                    value={dataInput.routineDate?.length > 0 && convertDatesRoutine(dataInput.routineDate)}
                     onChange={handleChooseDateRoutine}
                     />
                 </div>

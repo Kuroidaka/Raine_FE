@@ -14,6 +14,7 @@ import RoutineCard from "./card/RoutineCard";
 import GoalContext from "../../Context/Goal.context";
 import GoalCard from "./card/GoalCard";
 import Skeleton from "./card/Skeleton";
+import { ToastContainer } from "react-toastify";
 
 const PlannerMobile = (p) => {
     const { selectTab, tab } = p
@@ -47,6 +48,8 @@ const PlannerMobile = (p) => {
                 })}
                 </TabList> 
             </Header>
+            
+            <ToastContainer/>
             { 
                 tab === "task" ? taskLoad ? <Loading /> :
                     <TaskSectionMobile 
@@ -61,7 +64,7 @@ const PlannerMobile = (p) => {
                         data={routine}
                         setDateSection={setRoutine}
                     />:
-                tab === "goa" && goalLoad ? <Loading /> :
+                tab === "goal" && goalLoad ? <Loading /> :
                     <TaskSectionMobile 
                         tab={tab} 
                         data={goal}
@@ -75,8 +78,8 @@ const PlannerMobile = (p) => {
 
 
 const TaskSectionMobile = (p) => {
-    const { tab, data, setDateSection } = p
-    const [dateZone, setDateZone] = useState("today")
+    const { tab, data, setDateSection,  } = p
+    const [dateZone, setDateZone] = useState('task')
     const { openModal }  = useContext(ModalContext)
 
     const tabStyle = {
@@ -121,11 +124,12 @@ const TaskSectionMobile = (p) => {
                 className="col3" 
                 data={tab} // task, routine, goal
                 setDateZone={setDateZone}
+                dateZone={dateZone}
                 >
             {data && data.length > 0 &&
-                tab === "task" ?<TaskCard dataSection={data} setDateSection={setDateSection} dateZone={dateZone}/> :
-                tab === "routine" ?<RoutineCard dataSection={data} setDateSection={setDateSection} dateZone={dateZone}/> :
-                tab === "goal" ?<GoalCard dataSection={data} setDateSection={setDateSection} dateZone={dateZone}/> 
+                tab === "task" ?<TaskCard dataSection={data} setDateSection={setDateSection} dateZone={dateZone} setDateZone={setDateZone}/> :
+                tab === "routine" ?<RoutineCard dataSection={data} setDateSection={setDateSection} dateZone={dateZone} setDateZone={setDateZone}/> :
+                tab === "goal" ?<GoalCard dataSection={data} setDateSection={setDateSection} dateZone={dateZone} setDateZone={setDateZone}/> 
                 :<Fragment>
                     <ImgMotivation>
                         <img src={plannerData[tab]?.empty?.img} 

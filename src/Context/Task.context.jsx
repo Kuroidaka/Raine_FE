@@ -40,9 +40,30 @@ export const TaskProvider = (p) => {
         },
     });
 
+    // const addSubTaskMutation = useMutation({
+    //     mutationFn: async ({taskId, data}) => await reminderApi.addSubTask(taskId, data),
+    //     onSuccess: () => queryClient.invalidateQueries(['task']),        
+    //     onError: (error) => {
+    //         toast.error(`Something went wrong`)
+    //         console.log(error)
+    //     },
+    // });
+
     const updateMutation = useMutation({
         mutationFn: async ({taskId, data}) => {
             await reminderApi.updateTask(taskId, data)
+
+        },
+        onSuccess: () => queryClient.invalidateQueries(['task']),        
+        onError: (error) => {
+            toast.error(`Something went wrong`)
+            console.log(error)
+        },
+    });
+
+    const checkMutation = useMutation({
+        mutationFn: async ({taskId}) => {
+            await reminderApi.check(taskId)
 
         },
         onSuccess: () => queryClient.invalidateQueries(['task']),        
@@ -75,6 +96,10 @@ export const TaskProvider = (p) => {
         updateMutation.mutate({ taskId, data });
     };
 
+    const handleCheckTask = async (taskId) => {       
+        checkMutation.mutate({ taskId });
+    };
+
     useEffect(() => {
         if(data) {
             setTask(data)
@@ -83,7 +108,7 @@ export const TaskProvider = (p) => {
 
     const valueContext = {
         task, setTask, 
-        handleAddTask, handleDeleteTask, handleUpdateTask, 
+        handleAddTask, handleDeleteTask, handleUpdateTask, handleCheckTask,
         loading: isLoading
     }
 

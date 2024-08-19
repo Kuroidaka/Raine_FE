@@ -4,6 +4,8 @@ import { Img } from "../../../assets/svg";
 import Input from "../../../Component/Input"
 import { useState, useEffect, Fragment, useContext, useMemo, useRef } from "react";
 import {  convertDates, dateConvert } from "../../../Util"
+
+import plannerData from "../Planner.json";
 import { nanoid } from 'nanoid'
 import ModalContext from "../../../Context/Modal.context";
 import TaskContext from "../../../Context/Task.context";
@@ -11,9 +13,11 @@ import SubTask from "./SubTask";
 import language from "../../../Util/language"
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur"
 import { motion } from "framer-motion";
+import reminderApi from "../../../api/reminder.api";
+import { toast } from "react-toastify";
 
 const TaskCard = (p) => {
-    const { dataSection, setDateSection, dateZone } = p
+    const { dataSection, setDateSection, dateZone, setDateZone } = p
     // const { task }  = useContext(TaskContext)
     const [dateType, setDateType] = useState({
         overdue: [],
@@ -76,6 +80,14 @@ const TaskCard = (p) => {
                 datesAfterTomorrow: dATTasksArr,
                 someDay: someDayTasks,
             });
+            console.log(tomorrowTasks.length, dATTasksArr.length)
+            if(overDueTasks.length + todayTasks.length === 0 && tomorrowTasks.length + dATTasksArr.length > 0) {
+                const zone = 'week' || plannerData['task'].dateZone[1].name
+                setDateZone(zone)
+            } else if(tomorrowTasks.length + dATTasksArr.length === 0 && someDayTasks.length > 0) {
+                const zone = 'all' || plannerData['task'].dateZone[2].name
+                setDateZone(zone)
+            }
         };
     
         setupDate();
@@ -277,10 +289,10 @@ const Card = (p) => {
         setDateSection,
         status
         } = p
-    const { handleUpdateTask }  = useContext(TaskContext)
+    const { handleCheckTask,  }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
 
-    const [checked, setChecked] = useState(status)
+    const [checked] = useState(status)
     const [subOpen, setSubOpen] = useState(false)
     const [subs, setSubs] = useState(subTask)
     const [subDone, setSubDone] = useState(0)
@@ -288,7 +300,7 @@ const Card = (p) => {
 
     const countCurrSub = (dataSub) => {
         return dataSub.reduce((total, curr) => {
-            if (curr.done === true) {
+            if (curr.status === true) {
                 return total + 1;
             } else {
                 return total;
@@ -323,10 +335,8 @@ const Card = (p) => {
             openModal(title, data, "task")
         },
         check: async () => { // Check task
-            await handleUpdateTask(id, {
-                status: !checked
-            })
-            setChecked(!checked)
+            await handleCheckTask(id)
+            // setChecked(!checked)
         },
         option: { //handle option
             open: () => {
@@ -355,23 +365,52 @@ const Card = (p) => {
     }
 
     const subTaskHandle = {
-        delete: (id) => { // Delete subtask
-            let newSub = [...subs]; //prevent mutating
-            newSub = newSub.filter(data => data.id !== id)
-            setSubs(newSub); 
+        delete: async (id) => { // Delete subtask
+            try {
+                let newSub = [...subs]; //prevent mutating
+                
+                await reminderApi.deleteSubTask(id)
+                newSub = newSub.filter(data => data.id !== id)
+                setSubs(newSub); 
+            } catch (error) {
+                toast.error(error.message)
+            }
         },
-        add: (data) => { // Add new subtask
-            const newData = [...subs, data]
-            setSubs(newData)
+        add: async (data) => { // Add new subtask
+            try {
+                
+                const subData = await reminderApi.addSubTask(id, data)
+                const newData = [...subs, subData] 
+                setSubs(newData)
+            } catch (error) {
+                toast.error(error.message)
+            }
         },
         open: () => { // Open list subtask
             setSubOpen(!subOpen)
         },
-        check: (id, check) => { // check subtask
-            const newSub = [...subs]; //prevent mutating
-            const index = newSub.map(e => e.id).indexOf(id);
-            newSub[index].done = check;
-            setSubs(newSub); 
+        async updateSubtask(id, updates) {
+            try {
+                const newSub = [...subs]; // Prevent mutating
+    
+                await reminderApi.updateSubTask(id, updates);
+                const index = newSub.findIndex(e => e.id === id);
+                
+                if (index !== -1) {
+                    newSub[index] = { ...newSub[index], ...updates };
+                    setSubs(newSub);
+                }
+            } catch (error) {
+                toast.error(error.message);
+            }
+        },
+    
+        async check(id, check) {
+            await subTaskHandle.updateSubtask(id, { status: check });
+        },
+    
+        async update(id, title) {
+            await subTaskHandle.updateSubtask(id, { title: title });
         }
     }
     
@@ -437,7 +476,9 @@ const Card = (p) => {
             <Fragment>
                 <SubTaskList>
                 {subs.length > 0 && subs.map((sub, idx) => {
-                    return <SubTask key={idx} id={sub.id} color={color} title={sub.title} done={sub.done} updateSubCheck={subTaskHandle.check} deleteSubTask={subTaskHandle.delete}/> 
+                    return <SubTask key={idx} id={sub.id} color={color} title={sub.title} done={sub.status} 
+                    updateSubTitle={subTaskHandle.update}
+                    updateSubCheck={subTaskHandle.check} deleteSubTask={subTaskHandle.delete}/> 
                 })}
                 </SubTaskList>
 
@@ -468,14 +509,17 @@ const AddSubTask = (p) => {
         setValue(value)
     }
 
-    const saveSubTask = () => {
-        const newData = {
-            "id": nanoid(),
-            "title": value,
-            "done": false
+    const saveSubTask = async () => {
+        try {
+            const newData = {
+                "title": value,
+            }
+            AddSub(newData)
+            setValue("")
+        } catch (error) {
+            toast.error(error.message)
         }
-        AddSub(newData)
-        setValue("")
+      
     }
 
     const handleAddSubTask = (event) => {

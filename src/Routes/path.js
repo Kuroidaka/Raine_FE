@@ -1,4 +1,5 @@
 const paths = {
+    login: "/login",
     planner: "/planner",
     setting: "/setting",
     chat: "/chat",

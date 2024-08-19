@@ -9,7 +9,7 @@ const GlobalStyles = createGlobalStyle`
         --header-ht: 60px;
         --main-gradient: linear-gradient(118deg,rgba(30, 30, 30 ,1),rgba(30, 30, 30 ,.7));
         --second-color: #FDBD3E;
-        --third-color: #ffde9b;
+        --third-color: #9c9c9c;
 
         --modal-header: 65px;
         --white-text: #ffff;

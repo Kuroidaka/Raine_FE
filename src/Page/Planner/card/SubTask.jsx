@@ -5,7 +5,7 @@ import { Img } from "../../../assets/svg";
 import myCursor from '../../../assets/cursor/Labrador_Retriever.cur';
 
 const SubTask = (p) => {
-    const { color, title, done, updateSubCheck, id, deleteSubTask } = p
+    const { color, title, done, updateSubCheck, updateSubTitle, id, deleteSubTask } = p
 
     const [checked, setChecked] = useState(done)
     const [edit, setEdit] = useState(false)
@@ -36,8 +36,9 @@ const SubTask = (p) => {
         setEdit(true)
     }
     
-    const closeEdit = () => {
+    const closeEdit = async () => {
         setEdit(false)
+        await updateSubTitle(id, value)
     }
 
 

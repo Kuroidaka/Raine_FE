@@ -73,6 +73,13 @@ export const convertDates = (dateArray) => {
     });
 }
 
+export const convertDatesRoutine = (dateArray) => {
+  return dateArray.map(dateStr => {
+    let date = new Date(dateStr.completion_date);
+    return date.getFullYear()+'-' + (date.getMonth()+1) + '-'+date.getDate();
+});
+}
+
 export const  getRecentSevenDates = (array) => {
   const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   var now = new Date(); 
@@ -110,7 +117,7 @@ export const updateRecentDates = (inputDates) => {
   }
 
   // Convert input dates to Date objects for easier comparison
-  const inputDateObjects = inputDates.map(dateStr => new Date(dateStr));
+  const inputDateObjects = inputDates.map(dateStr => new Date(dateStr.completion_date));
 
   // Check and update the 'check' key if dates match
   recentDates.forEach(recentDateObj => {

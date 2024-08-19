@@ -52,6 +52,8 @@ const TaskModal = () => {
                 note: modal?.content?.note || "",
                 dateDone: modal?.content?.dateDone || [],
                 active: modal?.content?.active || false,
+                isActive: modal?.content?.isActive || false,
+                routineDate: modal?.content?.routineDate || [],
                 target: modal?.content?.target || "0",
             })
 
@@ -68,7 +70,8 @@ const TaskModal = () => {
                 note: "",
                 // deadline: "",
                 area: [],
-                sub: []
+                sub: [],
+                routineDate: []
             })
             setArea(area)
         }

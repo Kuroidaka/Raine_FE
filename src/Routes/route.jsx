@@ -1,8 +1,11 @@
 import { Navigate } from "react-router";
-
-import DefaultLayout from "../Layout/default";
 import { lazy, Suspense } from "react";
 
+import DefaultLayout from "../Layout/default";
+import paths from "./path";
+import Loading from "../Component/Loading";
+
+const Login = lazy(() => import("../Page/Authen/Login"));
 const Planner = lazy(() => import("../Page/Planner/Planner"));
 const NoPage = lazy(() => import("../Page/NoPage"));
 const Setting = lazy(() => import("../Page/Setting/Setting"));
@@ -12,15 +15,21 @@ const StreamTest = lazy(() => import("../Page/Test/Stream"));
 const PhotoCapture = lazy(() => import("../Page/Test/Video"));
 const AudioPreview = lazy(() => import("../Page/Test/PreviewAudio"));
 
-import paths from "./path";
-import Loading from "../Component/Loading";
-import { WebSocketProvider } from "../Context/socket.context";
-
 export const routes = [
   {
     name: "default",
-    page: <Navigate to={paths.planner} />,
+    page: <Navigate to={paths.login} />,
     path: "*",
+    exact: true,
+  },
+  {
+    name: "login",
+    page: (
+        <Suspense fallback={<Loading />}>
+          <Login />
+        </Suspense>
+    ),
+    path: paths.login,
     exact: true,
   },
   {
@@ -64,7 +73,7 @@ export const routes = [
     page: (
       <DefaultLayout>
         <Suspense fallback={<Loading />}>
-         <VideoChat />
+          <VideoChat />
         </Suspense>
       </DefaultLayout>
     ),
@@ -81,7 +90,7 @@ export const routes = [
       </DefaultLayout>
     ),
     path: paths.setting,
-    exact: false,
+    exact: true,
   },
   {
     name: "test",
@@ -93,7 +102,7 @@ export const routes = [
       </DefaultLayout>
     ),
     path: paths.test,
-    exact: false,
+    exact: true,
   },
   {
     name: "test_cam",
@@ -105,7 +114,7 @@ export const routes = [
       </DefaultLayout>
     ),
     path: paths.testCam,
-    exact: false,
+    exact: true,
   },
   {
     name: "test_audio",
@@ -117,7 +126,7 @@ export const routes = [
       </DefaultLayout>
     ),
     path: paths.testAudio,
-    exact: false,
+    exact: true,
   },
   {
     name: "noPage",

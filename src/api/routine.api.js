@@ -1,32 +1,32 @@
 import axiosClient from "./axiosClient";
 
-const reminderApi = {
-    createTask: async ({
-      title, color, deadline, note, area
+const routineApi = {
+    createRoutine: async ({
+      title, color, note, area
     }) => {
-      const url = `/reminder/create`;
+      const url = `/routine/create`;
 
-      const data = { title, color, deadline, note }
+      const data = { title, color, note }
       return axiosClient.post(url, {
         data, area
       });
     },
   
-    getTasks: async () => {
-      const url = `/reminder/get`;
+    getRoutines: async () => {
+      const url = `/routine/get`;
       return axiosClient.get(url);
     },
   
-    getTaskById: async (id) => {
-      const url = `/reminder/get/${id}`;
-      return axiosClient.get(url);
-    },
+    // getTaskById: async (id) => {
+    //   const url = `/routine/get/${id}`;
+    //   return axiosClient.get(url);
+    // },
   
-    updateTask: async (id, params = {}) => {
-      const url = `/reminder/update/${id}`;
-      const { title, color, deadline, note, area = [], status } = params;
+    updateRoutine: async (id, params = {}) => {
+      const url = `/routine/update/${id}`;
+      const { title, color, note, area = [], isActive, routineDate } = params;
     
-      const data = { title, color, deadline, note, status };
+      const data = { title, color, note, isActive };
     
       // Filter out undefined values from data
       const filteredData = Object.fromEntries(
@@ -36,33 +36,34 @@ const reminderApi = {
       return axiosClient.patch(url, {
         data: filteredData,
         area: [...area],
+        dates: routineDate
       });
     },
 
     check: async (id) => {
-      const url = `/reminder/check/${id}`;
+      const url = `/routine/check/${id}`;
       return axiosClient.patch(url);
     },
   
-    deleteTask: async (id) => {
-      const url = `/reminder/delete/${id}`;
+    deleteRoutine: async (id) => {
+      const url = `/routine/delete/${id}`;
       return axiosClient.delete(url);
     },
   
     addSubTask: async (id, subTaskData) => {
-      const url = `/reminder/update/${id}/sub`;
+      const url = `/routine/update/${id}/sub`;
       return axiosClient.post(url, subTaskData);
     },
   
     updateSubTask: async (subId, subTaskData) => {
-      const url = `/reminder/update/sub/${subId}`;
+      const url = `/routine/update/sub/${subId}`;
       return axiosClient.patch(url, subTaskData);
     },
   
     deleteSubTask: async (subId) => {
-      const url = `/reminder/delete/sub/${subId}`;
+      const url = `/routine/delete/sub/${subId}`;
       return axiosClient.delete(url);
     },
   };
   
-export default reminderApi;
+export default routineApi;

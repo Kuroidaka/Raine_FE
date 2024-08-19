@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import styled from "styled-components"
 import plannerData from "./Planner.json";
 import ModalContext from "../../Context/Modal.context";
@@ -8,9 +8,9 @@ import { Icon } from "../../assets/icon"
 
 const TaskSection = (p) => {
 
-    const { data, children, setDateZone } = p
-    
-    const [state, setState] = useState(plannerData[data].dateZone[0].name)
+    const { data, children, setDateZone, dateZone } = p
+    // 
+    const [state, setState] = useState(dateZone)
     const { openModal }  = useContext(ModalContext)
     
     const hleSelctDateZ = (e) => {
@@ -25,6 +25,9 @@ const TaskSection = (p) => {
         console.log("name", name)
         openModal(name, null, name)
     }
+    useEffect(() => {
+        setState(dateZone)
+    }, [dateZone]);
     
     return (
     <Task 

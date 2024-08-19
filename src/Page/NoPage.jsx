@@ -1,8 +1,15 @@
+import styled from "styled-components";
+
 const NoPage = () => {
     return ( 
-    <div>
+    <Container>
     no page
-    </div>);
+    </Container>);
 }
  
 export default NoPage;
+
+const Container = styled.div`
+    
+
+`

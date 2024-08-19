@@ -15,68 +15,9 @@ import "flatpickr/dist/themes/light.css";
 import "flatpickr/dist/flatpickr.css";
 import GoalContext from "../../../Context/Goal.context";
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur"
-const relatedArea = [
-    {
-        name: "health",
-        value: "Sức khỏe",
-        icon: Img.health
-    },
-    {
-        name: "play",
-        value: "Vui chơi",
-        icon: Img.play
-    },
-    {
-        name: "spirit",
-        value: "Tâm linh",
-        icon: Img.spirit
-    },
-    {
-        name: "environment",
-        value: "Môi trường",
-        icon: Img.environment
-    },
-    {
-        name: "work",
-        value: "Công việc",
-        icon: Img.work
-    },
-    {
-        name: "wealth",
-        value: "Tài chính",
-        icon: Img.wealth
-    },
-    {
-        name: "growth",
-        value: "Phát triển",
-        icon: Img.growth
-    },
-    {
-        name: "relationship",
-        value: "Quan hệ",
-        icon: Img.relationship
-    },
 
-]
+import { radioData, relatedArea } from "./constants";
 
-const radioData = [
-    {
-        id: "today",
-        value: "Nay"
-    },
-    {
-        id: "tomorrow",
-        value: "Mai"
-    },
-    {
-        id: "someday",
-        value: "Ngày nào đó"
-    },
-    {
-        id: "specific-day",
-        value: "Chọn ngày"
-    },
-]
 
 const Goal = (p) => {
 

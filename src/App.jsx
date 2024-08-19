@@ -9,7 +9,6 @@ import "flatpickr/dist/themes/light.css";
 import "flatpickr/dist/flatpickr.css";
 
 import myCursor from './assets/cursor/Labradoodle.cur';
-import { WebSocketProvider } from './Context/socket.context';
 const App = () => {
 
 
@@ -20,7 +19,6 @@ const App = () => {
 
   return (
     <DeviceProvider>
-       <WebSocketProvider>
         <GlobalStyles />
           <Routes>
             {routes.map((route, idx) => {
@@ -32,7 +30,6 @@ const App = () => {
                       ></Route>
                     )})}
           </Routes>
-       </WebSocketProvider>
     </DeviceProvider>
   )
 }

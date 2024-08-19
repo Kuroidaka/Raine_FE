@@ -17,6 +17,10 @@ const Loading = () => {
 export default Loading
 
 const Container = styled.div`
+width: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
   #btn--yp {
   box-sizing: content-box;
   position: fixed;
