@@ -9,20 +9,33 @@ import AppearanceContext, { AppearanceProvider } from "../Context/Appearance.con
 import { WebSocketProvider } from "../Context/socket.context";
 import { AuthContext, AuthProvider } from "../Context/Auth.context";
 import Loading from "../Component/Loading";
+import { TaskProvider } from "../Context/Task.context";
+import { RoutineProvider } from "../Context/Routine.context";
+import { GoalProvider } from "../Context/Goal.context";
+import { ModalProvider } from "../Context/Modal.context";
+import TaskModal from "../Page/Planner/modal/Modal";
 
 const DefaultLayout = ( p ) => {
     const { children } = p
 
     return (
-      <AuthProvider>
-        <AppearanceProvider>
-            <OverlayProvider>
-                <WebSocketProvider>
-                    <DefaultLayoutComponent>{children}</DefaultLayoutComponent>
-                </WebSocketProvider>
-            </OverlayProvider>
-        </AppearanceProvider>
-      </AuthProvider>
+        <AuthProvider>
+            <AppearanceProvider>
+                <OverlayProvider>
+                    <WebSocketProvider>
+                        <TaskProvider>
+                            <RoutineProvider>
+                                <GoalProvider>
+                                <ModalProvider>
+                                    <DefaultLayoutComponent>{children}</DefaultLayoutComponent>
+                                </ModalProvider>
+                                </GoalProvider>
+                            </RoutineProvider>
+                        </TaskProvider>
+                    </WebSocketProvider>
+                </OverlayProvider>
+            </AppearanceProvider>
+        </AuthProvider>
     )
 }
 
@@ -60,6 +73,7 @@ const DefaultLayoutComponent = (p) => {
                         <Loading></Loading>
                     ): (
                         <div className="page-content">
+                            <TaskModal />
                             {children}
                         </div>
                     )}

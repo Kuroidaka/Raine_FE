@@ -6,7 +6,6 @@ import { useState, useEffect, Fragment, useContext, useMemo, useRef } from "reac
 import {  convertDates, dateConvert } from "../../../Util"
 
 import plannerData from "../Planner.json";
-import { nanoid } from 'nanoid'
 import ModalContext from "../../../Context/Modal.context";
 import TaskContext from "../../../Context/Task.context";
 import SubTask from "./SubTask";
@@ -276,7 +275,7 @@ const DateZoneLabel = (p) => {
     )
 }
 
-const Card = (p) => {
+export const Card = (p) => {
     const { 
         title,
         color = null,
@@ -285,11 +284,11 @@ const Card = (p) => {
         note = "",
         subTask = [],
         id,
-        dataSection,
-        setDateSection,
-        status
-        } = p
-    const { handleCheckTask,  }  = useContext(TaskContext)
+        status,
+        mode = "edit"
+    } = p
+
+    const { handleCheckTask, handleDeleteTask }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
 
     const [checked] = useState(status)
@@ -297,7 +296,7 @@ const Card = (p) => {
     const [subs, setSubs] = useState(subTask)
     const [subDone, setSubDone] = useState(0)
     const [option, setOption] = useState(false)
-
+    console.log("subTask", subTask)
     const countCurrSub = (dataSub) => {
         return dataSub.reduce((total, curr) => {
             if (curr.status === true) {
@@ -332,10 +331,11 @@ const Card = (p) => {
                 note,
                 id
             }
-            openModal(title, data, "task")
+            openModal(title, data, "task", mode)
         },
         check: async () => { // Check task
-            await handleCheckTask(id)
+            if(mode !== "view")
+                await handleCheckTask(id)
             // setChecked(!checked)
         },
         option: { //handle option
@@ -348,16 +348,13 @@ const Card = (p) => {
             toggle: () => {
                 setOption(!option)
             },
-            delete: (id) => {
+            delete: async (id) => {
                 const task = document.querySelector(`[name='${id}']`)
                 task.style.opacity = "0"
 
-                setTimeout(() => {
-                    let newTask = [...dataSection]; //prevent mutating
-                    newTask = newTask.filter(data => data.id !== id)
-                    setDateSection(newTask);
-                    taskHandle.option.close()
-                }, 500)
+                setTimeout(async () => {
+                    await handleDeleteTask(id)
+                }, 100)
             }
         },
         // selectWhenClick: (id) => {
@@ -464,9 +461,9 @@ const Card = (p) => {
                         onClickOutside={taskHandle.option.close}
                         offset={[10, 0]}
                         >
-                        <OptionBtnCon className="mr-5" style={{position: "relative"}} onClick={taskHandle.option.toggle}>
+                       {mode !=="view" && <OptionBtnCon className="mr-5" style={{position: "relative"}} onClick={taskHandle.option.toggle}>
                             <Img.option/>
-                        </OptionBtnCon>
+                        </OptionBtnCon>}
                     </Tippy>
                     <span onClick={taskHandle.open}><Img.arrowRight/></span>
                 </div>
@@ -478,11 +475,13 @@ const Card = (p) => {
                 {subs.length > 0 && subs.map((sub, idx) => {
                     return <SubTask key={idx} id={sub.id} color={color} title={sub.title} done={sub.status} 
                     updateSubTitle={subTaskHandle.update}
-                    updateSubCheck={subTaskHandle.check} deleteSubTask={subTaskHandle.delete}/> 
+                    updateSubCheck={subTaskHandle.check} deleteSubTask={subTaskHandle.delete}
+                    mode={mode}
+                    /> 
                 })}
                 </SubTaskList>
 
-                <AddSubTask id={id} color={color} AddSub={subTaskHandle.add} placeholder={subs.length > 0 ? "": "Thêm subtask"}/>    
+                {mode !=="view" && <AddSubTask id={id} color={color} AddSub={subTaskHandle.add} placeholder={subs.length > 0 ? "": "Thêm subtask"}/>   } 
             </Fragment>}
 
         </TaskCardContainer>
@@ -570,7 +569,7 @@ const AddSubTask = (p) => {
 
 const Option = (p) => {
     const { openDetail, deleteTask, taskId, deadline, setOption } = p
-    const { setTask, handleDeleteTask, handleUpdateTask }  = useContext(TaskContext)
+    const { handleUpdateTask }  = useContext(TaskContext)
 
     const listOption = [
         {
@@ -619,7 +618,6 @@ const Option = (p) => {
             value: "Xóa",
             icon: "deleteIcon",
             handleClick: async () => {
-                await handleDeleteTask(taskId)
                 deleteTask(taskId)
             }
         },
@@ -658,6 +656,9 @@ const Container = styled.div `
     height: 70dvh;
     overflow-y: scroll;
     scrollbar-width: none; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     
     &::-webkit-scrollbar { 
         display: none;  /* Safari and Chrome */
@@ -698,6 +699,7 @@ const TaskCardList = styled.div `
 
 `
 const TaskCardContainer = styled(motion.div) `
+    max-width: 50rem;
     width: 100%;
     height: auto;
     background-color: #fff;
@@ -776,6 +778,7 @@ const SubTaskList = styled.div `
 const Title = styled.div `
     display: flex;
     align-items: center;
+    /* max-height: 4rem; */
 
     span {
         line-height: 1;

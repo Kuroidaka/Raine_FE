@@ -26,7 +26,7 @@ const Interact = () => {
     <Container>
       <div className="chat-box">
         <motion.div
-          className="title"
+          className="chat-box-title"
           initial={{ opacity: 0, x: -100 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
@@ -64,7 +64,7 @@ const Container = styled.div`
   }
 
   /*title*/
-  .title {
+  .chat-box-title {
     display: flex;
     align-items: center;
     margin-left: 40px;

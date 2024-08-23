@@ -8,9 +8,10 @@ import { checkIsImgLink } from '../../../Util';
 import Img from '../../../assets/img'
 import IconCustom from "../../../assets/Icons/svg";
 import ImageCom from "../../../component/Image";
-import { useEffect  } from "react";
+import { useEffect, useState  } from "react";
 import Logo from "../../../assets/img/Logo";
 import MarkDown from "../../../component/MarkDownChat";
+import { Card } from "../../Planner/card/TaskCard";
 
 const functionIcon = {
     "create_reminder": {
@@ -53,6 +54,10 @@ const functionIcon = {
         "process": "Website Scraping",
         "done": "Website Scraped"            
     },
+    "ReminderChatService":{
+        "icon": "⏱️",
+        "process": "Query Tasks",
+    }
 
 }
 
@@ -71,15 +76,6 @@ const BotMsg = (p) => {
 
     useEffect(scrollToBottom, [text, functionList]);
 
-    const convertDataFuncList = (data) => {
-        // check if the data is a string then json parse it else return the data
-        if (typeof data === 'string' || data instanceof String) {
-            return JSON.parse(data)
-        } else {
-            return data
-        } 
-    }
-
     return ( 
     <Container className={`chat-msg bot-chat ${className}`} >
         <div className='icon'>
@@ -90,12 +86,11 @@ const BotMsg = (p) => {
         </div>
         <div className="chat-content">
             <p className='chat-person'>{"Raine"}</p>
-            {functionList && convertDataFuncList(functionList).length > 0 && 
-                convertDataFuncList(functionList).map((agent, index) => (
+            {functionList.length > 0 && 
+                functionList.map((agent, index) => (
                 <FunctionAgent key={index} agent={agent}/>
-            ))
-            }
-           {text &&
+            ))}
+           {(text || functionList.length > 0) &&
             <div className="bot-text-wrapper">
             {
                 checkIsImgLink(text) ? (
@@ -108,6 +103,10 @@ const BotMsg = (p) => {
                     </div>
                 ) : (
                     <div className='bot-text'>
+                    {functionList.length > 0 && 
+                        functionList.map((agent, index) => (
+                        <FunctionData key={index} agent={agent}/>
+                    ))}
                         <MarkDown text={text}/>
                     </div>
                 )
@@ -121,6 +120,8 @@ const BotMsg = (p) => {
  
 const FunctionAgent = (p) => {
     const { agent } = p
+
+
     return (
         <div className="bot-text-wrapper function-agent">
             <div className='bot-text'>
@@ -130,12 +131,61 @@ const FunctionAgent = (p) => {
                         Task Added:
                     </div>
                     <div className="function-name">
-                        <div className="icon">{functionIcon[agent].icon}</div>
-                        <div className="text">{functionIcon[agent].done}</div>
+                        <div className="icon">{functionIcon[agent.name].icon}</div>
+                        <div className="text">{functionIcon[agent.name].process}</div>
                     </div>
-                </div>        
+                </div>
+                <div className="btn_show">
+                    <button>Click</button>
+                </div>
             </div>
         </div>
+    )
+}
+
+
+
+const FunctionData = (p) => {
+    const { agent } = p
+
+    const [listFuncData, setListFuncData] = useState([])
+    const [funcName, setFuncName] = useState("")
+
+    useEffect(() => {
+        
+        const processFunctionListType = () => {
+            try {
+                const data = JSON.parse(agent.data)
+                setListFuncData(data)
+                
+            } catch (error) {
+                setListFuncData(agent.data)
+            }
+            setFuncName(agent.name)
+        }
+
+        processFunctionListType()
+    }, [agent]);
+
+    return (
+        <FuncDataContainer>
+        {listFuncData && listFuncData.length > 0 &&
+        listFuncData.map(funcData => {
+            const dataProps = {
+                title: funcData.title,
+                color: funcData.color,
+                deadline: funcData.deadline,
+                area: funcData.area,
+                note: funcData.note,
+                subTask: funcData.subTask,
+                id:funcData.id,
+                status: funcData.status,
+                mode: "view"
+            }
+            if(funcName === "ReminderChatService")
+                return (<Card key={funcData.id} {...dataProps}/>)
+        })}
+        </FuncDataContainer>
     )
 }
 
@@ -166,7 +216,7 @@ const Container = styled.div`
         }
     }
     .chat-content{
-        max-width: 80%;
+        width: 80%;
         margin-left: 18px;
         p.chat-person {
             font-size: 16px;   /* Thay đổi kích thước của chữ StudyIO */
@@ -226,9 +276,16 @@ const Container = styled.div`
             }
 
             &.function-agent {
-                width: fit-content;
+                /* width: fit-content; */
+                box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
                 background-color: #434343;
                 padding: 5px 10px;
+
+                .bot-text {
+                    display: flex;
+                    justify-content: space-between;
+                }
+
                 .function {
                     display: flex;
                     .function-title {
@@ -302,4 +359,7 @@ const Container = styled.div`
             }
         }
     }
+`
+
+const FuncDataContainer = styled.div ` 
 `

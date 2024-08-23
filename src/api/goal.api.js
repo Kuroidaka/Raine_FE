@@ -1,10 +1,10 @@
 import axiosClient from "./axiosClient";
 
-const routineApi = {
-    createRoutine: async ({
+const goalApi = {
+    createGoal: async ({
       title, color, note, area
     }) => {
-      const url = `/routine/create`;
+      const url = `/goal/create`;
 
       const data = { title, color, note }
       return axiosClient.post(url, {
@@ -12,21 +12,21 @@ const routineApi = {
       });
     },
   
-    getRoutines: async () => {
-      const url = `/routine/get`;
+    getGoals: async () => {
+      const url = `/goal/get`;
       return axiosClient.get(url);
     },
   
     // getTaskById: async (id) => {
-    //   const url = `/routine/get/${id}`;
+    //   const url = `/Goal/get/${id}`;
     //   return axiosClient.get(url);
     // },
   
-    updateRoutine: async (id, params = {}) => {
-      const url = `/routine/update/${id}`;
+    updateGoal: async (id, params = {}) => {
+      const url = `/goal/update/${id}`;
       const { title, color, note, area = [], isActive, routineDate } = params;
     
-      const data = { title, color, note, isActive };
+      const data = { title, color, note };
     
       // Filter out undefined values from data
       const filteredData = Object.fromEntries(
@@ -39,11 +39,6 @@ const routineApi = {
         dates: routineDate
       });
     },
-
-    deleteRoutine: async (id) => {
-      const url = `/routine/delete/${id}`;
-      return axiosClient.delete(url);
-    },
   };
   
-export default routineApi;
+export default goalApi;

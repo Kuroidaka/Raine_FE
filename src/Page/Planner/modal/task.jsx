@@ -196,10 +196,10 @@ const Task = (p) => {
             title="Màu tag"
             name="color"
             Icon={Img.tag}
-            plus={mode === "edit" ? false : secOpen.color}
+            plus={mode === "add" ? secOpen.color : false }
             openSec={openSec}>
-        {mode === "edit" ?
-            (<EditSection name="color" onClick={openSec} isedit={secOpen.color}>
+        {(mode === "edit" || mode === "view") ?
+            (<EditSection name="color" onClick={openSec} isedit={mode === "edit" ? secOpen.color: false} mode={mode}>
                 <CirclePicker
                     colors={
                         !secOpen.color 
@@ -235,11 +235,11 @@ const Task = (p) => {
             title="Liên quan"
             name="area"
             Icon={Img.area}
-            plus={mode === "edit" ? false : secOpen.area}
+            plus={mode === "add" ? secOpen.area : false}
             openSec={openSec} >
-        {mode === "edit" && secOpen.area 
+        {(mode === "edit" || mode === "view") && secOpen.area 
         ? (
-            <EditSection name="area" onClick={openSec} isedit={secOpen.area}>
+            <EditSection name="area" onClick={openSec} isedit={mode === "edit" ? secOpen.area: false}>
                 <div className="area-wrapper">
                 {area && Object.keys(area).map((data, idx) => {
 
@@ -267,9 +267,9 @@ const Task = (p) => {
         
         <ModalSectionContent title="Thời hạn" Icon={Img.deadline} >
             <Deadline>
-            {mode === "edit" && secOpen.deadline 
+            {(mode === "edit" || mode === "view") && secOpen.deadline 
                 ? (
-                    <EditSection name="deadline" onClick={openSec} isedit={secOpen.deadline}>
+                    <EditSection name="deadline" onClick={openSec} isedit={mode === "edit" ? secOpen.deadline: false}>
                     {isISODateString(dataInput.deadline) 
                         ? dateConvert(dataInput.deadline)
                         : radioData.find(radio => radio.id === dataInput.deadline)?.value ?? "Chọn thời hạn"}
@@ -311,9 +311,9 @@ const Task = (p) => {
             title="Ghi chú"
             name="note"
             Icon={Img.note}
-            plus={mode === "edit" ? false : secOpen.note}
+            plus={mode === "edit" ? secOpen.note : false}
             openSec={openSec}>
-        {mode === "edit" && secOpen.note
+        {(mode === "edit" || mode === "view") && secOpen.note
         ? (
             <EditSection name="note" onClick={openSec} isedit={secOpen.note}>
                 <div className="note-wrapper" onClick={() => { 
@@ -328,7 +328,7 @@ const Task = (p) => {
                 </div>
             </EditSection> 
         ) : (
-            !secOpen.note && <ReactQuill 
+            <ReactQuill 
                 theme="snow"
                 placeholder="Ghi chú của bạn..."
                 value={dataInput.note}
@@ -339,12 +339,12 @@ const Task = (p) => {
         </ModalSectionContent>
 
         
-        <Button
+        { mode !== "view" && <Button
             title="Lưu"
             onClick={handleSave}
             className="text-center"
             style={{marginTop: "20px"}}
-        />
+        />}
     </Content> 
      );
 }
@@ -371,12 +371,12 @@ const ModalSectionContent = (p) => {
 }
 
 const EditSection = (p) => {
-    const { children, onClick, isedit, name } = p
+    const { children, onClick, isedit, name, mode=null } = p
     return (
-        <EditSectionContainer name={name} isedit={isedit?.toString()}>
+        <EditSectionContainer name={name} isedit={isedit?.toString()} mode={mode && mode.toString()}>
             {children}
         
-        {name !== "note" && <span name={name} onClick={onClick} className={name === "color" && "pl-10"}><Img.edit /></span>}
+        {name !== "note" && isedit && <span name={name} onClick={onClick} className={name === "color" && "pl-10"}><Img.edit /></span>}
         </EditSectionContainer>
     )
 }
@@ -426,7 +426,7 @@ const EditSectionContainer = styled.div `
     .circle-picker {
         width: ${({isedit}) => isedit === "true" && "10px!important" };
         display: grid!important;
-        grid-template-columns: ${({isedit}) => isedit === "true" ? "0px!important" : "20px 20px 20px 20px 20px!important" };
+        grid-template-columns: ${($isedit, $mode) => $isedit !== "true" ||$mode ==="view" ? "0px!important": "20px 20px 20px 20px 20px!important"  };
         grid-template-rows: ${({isedit}) => isedit === "true" ? "20px!important" : "10px!important" };
         column-gap: 10px;
         row-gap: 15px;

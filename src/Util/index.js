@@ -2,7 +2,6 @@ import pako from 'pako';
 import base64js from 'base64-js';
 
 export const dateConvert = (dateMilli) => {
-  console.log("dateMilli", dateMilli)
 
     const valid = isDateString(dateMilli)
     // console.log("dateMilli", dateMilli, valid)

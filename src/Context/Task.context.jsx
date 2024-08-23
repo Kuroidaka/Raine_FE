@@ -22,17 +22,17 @@ export const TaskProvider = (p) => {
         cacheTime: 0,
     });
 
-    const handleDeleteTask = async (id) => {
-        try {
-            reminderApi.deleteTask(id)
-        } catch (error) {
-            console.log(error)
-            toast.error("something went wrong")
-        }
-    }
-
     const addMutation = useMutation({
         mutationFn: async ({data}) => await reminderApi.createTask(data),
+        onSuccess: () => queryClient.invalidateQueries(['task']),        
+        onError: (error) => {
+            toast.error(`Something went wrong`)
+            console.log(error)
+        },
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: async ({id}) => await reminderApi.deleteTask(id),
         onSuccess: () => queryClient.invalidateQueries(['task']),        
         onError: (error) => {
             toast.error(`Something went wrong`)
@@ -72,6 +72,15 @@ export const TaskProvider = (p) => {
             console.log(error)
         },
     });
+
+    const handleDeleteTask = async (id) => {
+        try {
+            deleteMutation.mutate({id});
+        } catch (error) {
+            console.log(error)
+            toast.error("something went wrong")
+        }
+    }
 
 
     // Function to add a new conversation

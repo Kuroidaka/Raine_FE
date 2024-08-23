@@ -23,7 +23,7 @@ const TaskSection = (p) => {
     const handleClickAdd = (e) => {
         const name = e.currentTarget.getAttribute("name")
         console.log("name", name)
-        openModal(name, null, name)
+        openModal(name, null, name, "add")
     }
     useEffect(() => {
         setState(dateZone)

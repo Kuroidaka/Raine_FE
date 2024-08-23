@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import TaskSection from "./TaskSection";
 import plannerData from "./Planner.json";
 import Button from "../../Component/Button";
-import { Img } from "../../assets/svg";
 import TaskCard from "./card/TaskCard";
 import TaskContext from "../../Context/Task.context";
 import Loading from "../../Component/Loading";
@@ -13,7 +12,6 @@ import RoutineContext from "../../Context/Routine.context";
 import RoutineCard from "./card/RoutineCard";
 import GoalContext from "../../Context/Goal.context";
 import GoalCard from "./card/GoalCard";
-import Skeleton from "./card/Skeleton";
 import { ToastContainer } from "react-toastify";
 
 const PlannerMobile = (p) => {
@@ -106,7 +104,7 @@ const TaskSectionMobile = (p) => {
 
     const hdleClickBtn = (e) => {
         const name = e.target.getAttribute("name")
-        openModal(name, null, name)
+        openModal(name, null, name, "add")
     }
 
     return (

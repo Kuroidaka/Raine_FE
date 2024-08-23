@@ -42,19 +42,19 @@ const Planner = () => {
 
     return (
         <AnimatePresence mode="wait">
-            <TaskProvider>
+            {/* <TaskProvider>
                 <RoutineProvider>
-                    <GoalProvider>
-                        <ModalProvider>
+                    <GoalProvider> */}
+                        {/* <ModalProvider> */}
                             <motion.div initial={{ opacity: 0,  scale: .75, transition: { duration: .5 } }}
                                         animate={{ opacity: 1, scale: 1, transition: { duration: .25 } }}>
-                                <TaskModal />
+                                {/* <TaskModal /> */}
                                 {device === "desktop" ? <Desktop /> : <Mobile /> }
                             </motion.div>
-                        </ModalProvider>
-                    </GoalProvider>
+                        {/* </ModalProvider> */}
+                    {/* </GoalProvider>
                 </RoutineProvider>
-            </TaskProvider> 
+            </TaskProvider>  */}
         </AnimatePresence>
     )
 }

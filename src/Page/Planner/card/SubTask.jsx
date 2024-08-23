@@ -5,7 +5,7 @@ import { Img } from "../../../assets/svg";
 import myCursor from '../../../assets/cursor/Labrador_Retriever.cur';
 
 const SubTask = (p) => {
-    const { color, title, done, updateSubCheck, updateSubTitle, id, deleteSubTask } = p
+    const { color, title, done, updateSubCheck, updateSubTitle, id, deleteSubTask, mode } = p
 
     const [checked, setChecked] = useState(done)
     const [edit, setEdit] = useState(false)
@@ -24,12 +24,14 @@ const SubTask = (p) => {
     }
 
     const handleCheck = (e, customID = null) => {
-        setChecked(!checked)
-        let id 
-        if(customID !== null) 
-            id = customID
-        else id = e.currentTarget.id
-        updateSubCheck(id, !checked)
+        if(mode !== "view"){
+            setChecked(!checked)
+            let id 
+            if(customID !== null) 
+                id = customID
+            else id = e.currentTarget.id
+            updateSubCheck(id, !checked)
+        }
     }
 
     const openEdit = () => {
@@ -86,10 +88,10 @@ const SubTask = (p) => {
             </div>
         </div>
 
-        <div className="option pointer-cursor">
+        {mode !== "view" && <div className="option pointer-cursor">
             {!edit && <span onClick={openEdit}><Img.edit/></span>}
             <span name={id} onClick={handleDel}><Img.deleteIcon/></span>
-        </div>
+        </div>}
     </SubTaskContainer>
     )
 }

@@ -5,7 +5,7 @@ import { Icon } from "../../../assets/icon";
 import { useState, useEffect, Fragment, useContext } from "react";
 import { dateConvert } from "../../../Util"
 import ModalContext from "../../../Context/Modal.context";
-import GoalContext from "../../../Context/Goal.context";
+// import GoalContext from "../../../Context/Goal.context";
 import myCursor from '../../../assets/cursor/Labrador_Retriever.cur';
 
 
@@ -45,7 +45,7 @@ const GoalCard = (p) => {
                                         note={data.note}
                                         dataSection={dataSection}
                                         setDateSection={setDateSection}
-                                        target={data.target}
+                                        target={data.percent*100}
                                         />
                                 )
                             })}
@@ -86,23 +86,24 @@ const Card = (p) => {
          } = p
     // const { task, setTask }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
-    const { setGoal } = useContext(GoalContext)
         
     const [checked, setChecked] = useState(false)
     const [option, setOption] = useState(false)
-    const [targetVl, setTargetVl] = useState(target)
+    const [targetVl] = useState(target)
 
 
 
     const handleInputTarget = (e) => {
         const { value } = e.target
-        setTargetVl(value)
-        setGoal(prev => {
-            const newGoal = [...prev]
-            const index = newGoal.map(e => e.id).indexOf(id);
-            newGoal[index].target = value;
-            return newGoal
-        })
+
+        console.log(value)
+        // setTargetVl(value)
+        // setGoal(prev => {
+        //     const newGoal = [...prev]
+        //     const index = newGoal.map(e => e.id).indexOf(id);
+        //     newGoal[index].target = value;
+        //     return newGoal
+        // })
     }
    
     const taskHandle = {
@@ -116,7 +117,7 @@ const Card = (p) => {
                 id,
                 target
             }
-            openModal(title, data, "goal")
+            openModal(title, data, "goal", "edit")
         },
         check: () => { // Check task
             setChecked(!checked)
@@ -308,6 +309,11 @@ const TaskCardList = styled.div `
 
 `
 const TaskCardContainer = styled.div `
+    max-width:50rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     width: 100%;
     height: auto;
     background-color: #fff;
@@ -380,7 +386,7 @@ const Title = styled.div `
     display: flex;
     align-items: flex-start;
     flex-direction: column-reverse;
-
+    /* max-height: 4rem; */
     span {
         line-height: 1;
         svg {

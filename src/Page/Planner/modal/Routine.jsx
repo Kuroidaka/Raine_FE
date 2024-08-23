@@ -2,8 +2,7 @@ import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import ModalContext from "../../../Context/Modal.context";
 import DOMPurify from "dompurify";
-import { convertDates, convertDatesRoutine, isDateString } from "../../../Util";
-import { nanoid } from "nanoid";
+import { convertDatesRoutine, isDateString } from "../../../Util";
 import { Img } from "../../../assets/svg";
 import Input from "../../../Component/Input";
 import Flatpickr from "react-flatpickr";
@@ -23,7 +22,7 @@ const Routine = (p) => {
     const { dataInput, setDataInput, mode, areaData } = p
     
     const { modal, closeModal }  = useContext(ModalContext)
-    const { setRoutine, handleAddRoutine, handleUpdateRoutine, handleToggleRoutineStatus } = useContext(RoutineContext)
+    const { handleAddRoutine, handleUpdateRoutine } = useContext(RoutineContext)
     const [valid, setValid] = useState(true)
     const fp = useRef(null);
 

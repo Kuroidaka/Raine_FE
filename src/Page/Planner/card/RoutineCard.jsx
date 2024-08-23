@@ -157,7 +157,7 @@ const Card = (p) => {
     // const { task, setTask }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
     
-    const { handleUpdateRoutine, handleDeleteRoutine }  = useContext(RoutineContext)
+    const { handleUpdateRoutine }  = useContext(RoutineContext)
 
     const [checked, setChecked] = useState(false)
     const [option, setOption] = useState(false)
@@ -173,7 +173,7 @@ const Card = (p) => {
                 routineDate,
                 isActive
             }
-            openModal(title, data, "routine")
+            openModal(title, data, "routine", "edit")
         },
         check: () => { // Check task
             setChecked(!checked)
@@ -295,7 +295,7 @@ const Card = (p) => {
 
 const Option = (p) => {
     const { openDetail, deleteTask, taskId, isActive, setOption } = p
-    const { setRoutine, handleDeleteRoutine, handleUpdateRoutine }  = useContext(RoutineContext)
+    const { handleDeleteRoutine, handleUpdateRoutine }  = useContext(RoutineContext)
     
     const listOption = [
         {
@@ -361,6 +361,10 @@ export default RoutineCard;
 
 
 const Container = styled.div `
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     padding-top: 20px;
     height: 70dvh;
     overflow-y: scroll;
@@ -402,9 +406,14 @@ const DateZoneLabelContainer = styled.div `
 
 `
 const TaskCardList = styled.div `
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 
 `
 const TaskCardContainer = styled.div `
+    max-width:50rem;
     width: 100%;
     height: auto;
     background-color: #fff;
@@ -476,6 +485,7 @@ const Title = styled.div `
     display: flex;
     align-items: flex-start;
     flex-direction: column-reverse;
+    /* max-height: 4rem; */
 
     span {
         line-height: 1;

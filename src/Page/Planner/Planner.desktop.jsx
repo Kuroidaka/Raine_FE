@@ -9,8 +9,8 @@ import RoutineContext from "../../Context/Routine.context";
 import TaskCard from "./card/TaskCard";
 import RoutineCard from "./card/RoutineCard";
 import ModalContext from "../../Context/Modal.context";
-import GoalContext from "../../Context/Goal.context";
-import GoalCard from "./card/GoalCard";
+// import GoalContext from "../../Context/Goal.context";
+// import GoalCard from "./card/GoalCard";
 
 import task from '../../assets/svg/task.svg'
 import routine from '../../assets/svg/routine.svg'
@@ -21,10 +21,10 @@ import { ToastContainer } from "react-toastify";
 const PlannerDesktop = () => {
     const [taskDateZone, setTaskDateZone] = useState("today")
     const [routineDateZone, setRoutineDateZone] = useState("today")
-    const [goalDateZone, setGoalDateZone] = useState("today")
+    // const [goalDateZone, setGoalDateZone] = useState("today")
     const { task, setTask, loading:taskLoad }  = useContext(TaskContext)
     const { routine, setRoutine, loading:routineLoad }  = useContext(RoutineContext)
-    const { goal, setGoal, loading:goalLoad }  = useContext(GoalContext)
+    // const { goal, setGoal, loading:goalLoad }  = useContext(GoalContext)
     
     useEffect(() => {
         console.log("taskLoad", taskLoad)
@@ -45,11 +45,11 @@ const PlannerDesktop = () => {
                <RoutineCard dataSection={routine} setDateSection={setRoutine} dateZone={routineDateZone} setDateZone={setRoutineDateZone}/>
             </SectionContent>
 
-            <SectionContent sec="goal" loading={goalLoad} dateZone={goalDateZone}
+            {/* <SectionContent sec="goal" loading={goalLoad} dateZone={goalDateZone}
                             dataSection={goal} setDateSection={setGoal} 
                             setDateZone={setGoalDateZone}>
                <GoalCard dataSection={goal} setDateSection={setGoal} dateZone={goalDateZone} setDateZone={setGoalDateZone}/>
-            </SectionContent>
+            </SectionContent> */}
         </>
      );
 }
@@ -61,7 +61,7 @@ const SectionContent = (p) => {
 
     const onClickCreateTaskbtn = e => {
         const name = e.target.getAttribute("name")
-        openModal(name, null, name)
+        openModal(name, null, name, "add")
     }
 
     return (

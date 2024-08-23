@@ -31,7 +31,8 @@ const ChatBox = () => {
     return (
         <Conversation ref={pageRef} className='list-chat'>
             {messages.length > 0 ? (
-                messages.map((msg, index) => (
+                <>
+               {messages.map((msg, index) => (
                     !msg.isBot ? (
                         <UserMsg 
                             pageRef={pageRef} 
@@ -39,14 +40,16 @@ const ChatBox = () => {
                             text={msg.text} 
                             imgList={msg.imgList} 
                         />
-                    ) : (
+                    ) : (msg.isBot) && ( 
                         <BotMsg 
                             key={index} 
                             text={msg.text} 
-                            functionList={msg.functionList} 
+                            functionList={msg.functionData} 
                         />
                     )
-                ))
+                ))}
+
+                </>
             ) : (
                 <EmptyBox />
             )}

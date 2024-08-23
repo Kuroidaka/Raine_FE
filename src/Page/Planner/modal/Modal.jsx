@@ -1,5 +1,5 @@
 import Modal from "../../../Component/Modal";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ModalContext from "../../../Context/Modal.context";
 import Task from "./task";
 import Routine from "./Routine";
@@ -7,7 +7,7 @@ import Goal from "./Goal";
 
 const TaskModal = () => {
     const { modal }  = useContext(ModalContext)
-    const [editMode, setEditMode] = useState(!!modal.content)
+    const [mode, setMode] = useState(modal.mode)
     const [dataInput, setDataInput] = useState({})
     
     const [areaData, setArea] = useState({
@@ -22,11 +22,9 @@ const TaskModal = () => {
     })
 
     useEffect(() => {
-        if(modal.content !== null) 
-            setEditMode(true)
-        else 
-            setEditMode(false)
-    },[modal.content])
+        if(modal.mode) 
+            setMode(modal.mode)
+    },[modal.mode])
     
     useEffect(() => {
         const area = {
@@ -77,21 +75,11 @@ const TaskModal = () => {
         }
 
         return () => setDataInput({})
-    }, [editMode, modal.content]);
-
-
-
-    // useEffect(() => {
-    //     if(modal.content) {
-    //         const relate = modal.content.area.forEach(area => { data[area] = true })
-    //         setArea(relate)
-    //         console.log("relate", relate)
-    //     }
-    // }, [editMode]);
+    }, [modal, mode, modal.content]);
 
 
     return <TaskContent 
-                mode={ editMode ? "edit" : "add"}
+                mode={ mode }
                 dataInput={ dataInput }
                 areaData={ areaData }
                 setDataInput = {setDataInput}

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import conversationApi from "../api/conversation.api.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -12,6 +12,7 @@ export const ConversationProvider = (p) => {
     const { id:selectedConID } = useParams();
     const [conversation, setConversation] = useState([])
     const [currentCon, setCurrenConversation] = useState([])
+    let listFuncData = useRef([])
 
     const socket =  useContext(WebSocketContext);
 
@@ -32,10 +33,32 @@ export const ConversationProvider = (p) => {
     });
 
 
+    const updateFuncDataList = (list, newData) => {
+        let updatedDataList;
+        
+        // Check if the id already exists in the state
+        const existingIndex = list.findIndex(item => item.id === newData.id);
+        
+        if (existingIndex !== -1) {
+            // If it exists, replace the old data with the new data
+            const updatedState = [...list];
+            updatedState[existingIndex] = newData;
+            updatedDataList = updatedState;
+            return updatedState;
+        } else {
+            // If it doesn't exist, add the new data to the state
+            updatedDataList = [...list, newData];
+            return updatedDataList;
+        }
+        
+    }
+    
+
     useEffect(() => {
         if (data && data.length > 0) {
             setConversation(data)
         }
+        listFuncData.current = []
     }, [data]);
 
     useEffect(() => {
@@ -46,17 +69,32 @@ export const ConversationProvider = (p) => {
         }
     }, [selectedConID, currentConData]);
 
+    
  
     useEffect(() => {
         if(socket) {
             socket.on('chatResChunk', ({ content }) => {
                 cacheConversation.addMsg({prompt: content}, true)
             });
+
+            socket.on('chatResChunkFunc', async ({ functionData, id }) => {
+                // cacheConversation.addMsg({prompt: content}, true)
+                console.log("functionName", functionData)
+                const data = { id, ...functionData }
+
+                listFuncData.current = updateFuncDataList(listFuncData.current, data)
+
+                console.log("listFuncData", listFuncData.current)
+                const params = { prompt: "" }
+                const isBot = true
+                await cacheConversation.addMsg(params, isBot, listFuncData.current)
+            });
         }
     
         // Clean up the connection on unmount
         return () => {
             if(socket) socket.off('chatResChunk');
+            if(socket) socket.off('chatResChunkFunc');
         };
       }, [socket]);
 
@@ -69,25 +107,37 @@ export const ConversationProvider = (p) => {
             const newCon = conversation.filter(data => data.id !== id)
             setConversation(newCon)
         },
-        addMsg: async(params, isBot = false) => {       
+        addMsg: async (params, isBot = false, functionData=[]) => {
             // Helper function to update messages
-            const updateMessages = (prevMessages) => {
+            const updateBotMessages = (prevMessages) => {
                 const newMessages = [...prevMessages];
+                
                 if (newMessages[newMessages.length - 1]?.isBot === false) {
-                    newMessages.push({ isBot: true, text: params.prompt });
+                    // If the last message is not from the bot, add a new bot message
+                    newMessages.push({
+                        isBot: true,
+                        text: params.prompt,
+                        functionData: functionData.length > 0 ? functionData : newMessages[newMessages.length - 1]?.functionData || []
+                    });
                 } else {
-                    newMessages[newMessages.length - 1] = { isBot: true, text: params.prompt };
+                    // If the last message is from the bot, merge the new prompt with the old text
+                    newMessages[newMessages.length - 1] = {
+                        isBot: true,
+                        text: newMessages[newMessages.length - 1].text + params.prompt,
+                        functionData: functionData.length > 0 ? functionData : newMessages[newMessages.length - 1]?.functionData || []
+                    };
                 }
+                
                 return newMessages;
             };
-
+        
             const isNewConversation = !selectedConID || selectedConID == -1
         
             if (isNewConversation) { // New conversation
                 if (isBot) {
                     setCurrenConversation(prev => ({
                         ...prev,
-                        messages: updateMessages(prev.messages)
+                        messages: updateBotMessages(prev.messages)
                     }));
                 } else {
                     setCurrenConversation({
@@ -103,7 +153,7 @@ export const ConversationProvider = (p) => {
             if (isBot) {
                 setCurrenConversation(prev => ({
                     ...prev,
-                    messages: updateMessages(prev.messages)
+                    messages: updateBotMessages(prev.messages)
                 }));
             } else {
                 const index = conversation.findIndex(data => data.id === selectedConID);
@@ -111,14 +161,18 @@ export const ConversationProvider = (p) => {
                     const newConversations = [...conversation];
                     newConversations[index] = {
                         ...newConversations[index],
-                        messages: [...newConversations[index].messages, { text: params.prompt, isBot: false }]
+                        messages: [
+                            ...newConversations[index].messages, 
+                            { text: params.prompt, isBot: false }
+                        ]
                     };
-                
+        
                     setConversation(newConversations);
                     setCurrenConversation(newConversations[index]);
                 }
             }
         }
+        
         
     }
 
@@ -146,7 +200,7 @@ export const ConversationProvider = (p) => {
                 setTimeout(() => {
                     navigate(`/chat/${con.conversationID}`)
                 }, 1000);
-            } 
+            }
         },
         onSuccess: () => queryClient.invalidateQueries(['conversations', selectedConID]),        
         onError: (error) => {
@@ -173,7 +227,7 @@ export const ConversationProvider = (p) => {
         isLoading, currentConLoading,
         selectedConID,
         deleteConversation, addMsg,
-        currentCon
+        currentCon,
     }
 
     return (
