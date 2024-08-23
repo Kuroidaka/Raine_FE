@@ -35,8 +35,7 @@ const Routine = (p) => {
     const [secOpen, setSecOpen] = useState({
         color: true,
         area: true,
-        note: true,
-        deadline: true
+        note: true
     });
 
     useEffect(() => {
@@ -63,8 +62,7 @@ const Routine = (p) => {
         setSecOpen({
             color: true,
             area: true,
-            note: true,
-            deadline: true
+            note: true
         })
     }
 
@@ -75,55 +73,11 @@ const Routine = (p) => {
         setDataInput({...dataInput, routineDate: dates })
     }
 
-    const deadlineHdle = {
-        openFP: () => { // open flatpicker
-            document.querySelector(".flat-picker-wrapper").style.display = "flex"
-        },
-        closeFP: () => { // close flatpicker
-            document.querySelector(".flat-picker-wrapper").style.display = "none"
-        },
-        // choseType: (e, mode) => { //handle Choose type of deadline
-
-        //     console.log(e.target.id)
-        //     const id = e.target.id
-        //     let dateStr = id
-        //     if(id === "") return 
-        //     if(id === "today") {
-        //         const today = new Date()
-        //         today.setHours(23,59,59,0)
-        //         dateStr = today
-        //     }else if(id === "tomorrow") {
-        //         const today = new Date()
-        //         const tomorrow = new Date(today.setHours(0,0,0,0))
-        //         tomorrow.setDate(tomorrow.getDate() + 1)
-    
-        //         dateStr = tomorrow
-        //     }
-        //     else if(id === "specific-day") {
-        //         deadlineHdle.openFP()
-        //     } else {
-        //         deadlineHdle.closeFP()
-        //         if(mode === "edit") setSecOpen({...secOpen, deadline: !secOpen.deadline })
-        //     }
-    
-        //     console.log(dateStr)
-        //     // setDataInput({...dataInput, deadline: dateStr.toString() })
-        // },
-        // choseDateFP: (date) => { // handle choose date from flatpicker
-        //     // setDataInput(prevData => ({ ...prevData, deadline: date[0].toString() }));
-        //     console.log(date[0].toString())
-        //     fp.current.flatpickr.close();
-        // }
-    }
-
     const openSec = async (e) => {
         const name = e.currentTarget.getAttribute("name")
         console.log(name)
 
         await setSecOpen({...secOpen, [name]: !secOpen[name] })
-        if(name === "deadline" && isDateString(dataInput.deadline))  {
-            await deadlineHdle.openFP()
-        }
     }
 
     const handleInput = (e, from = null) => {
@@ -152,82 +106,48 @@ const Routine = (p) => {
         setDataInput({...dataInput, area: newData })
     }
 
-        // submit
-        // const handleSave = async () => {
-        //     console.log("dataInput", dataInput)
-        //     const valid = checkValid()
+    const handleSave = async () => {
+        const valid = checkValid();
     
-        //     console.log(valid)
+        try {
+            if (valid) {
+                setValid(true);
     
-        //     if(valid){
-        //         setValid(true)
-        //         await setRoutine(prevData => {
-        //             if(mode === "edit") {
-        //                 const newData = prevData.map(data => {
-        //                     if(data.id === modal.content.id) {
-        //                         return {...dataInput, id: data.id}
-        //                     } else {
-        //                         return data
-        //                     }
-        //                 })
-        //                 return newData
-        //             } else {
-        //                 const newData = {...dataInput}
-        //                 if(typeof(newData.deadline) === "undefined") {
-        //                     const today = new Date()
-        //                     today.setHours(23,59,59,0)
-    
-        //                     newData.deadline = today.toString()
-        //                 }
-        //                 return [...prevData, {...newData, id: nanoid(), active: true}]
-        //             }
-        //         })
-        //         closeModal()
-        //     }
-        // }
+                if (mode === "edit") {
+                    const taskId = modal.content.id
+                    console.log("dataInput", dataInput)
 
-        const handleSave = async () => {
-            const valid = checkValid();
-        
-            try {
-                if (valid) {
-                    setValid(true);
-        
-                    if (mode === "edit") {
-                        const taskId = modal.content.id
-                        console.log("dataInput", dataInput)
-  
-                        await handleUpdateRoutine(taskId, dataInput);
-                    } else {
-                       await handleAddRoutine(dataInput);
-                    }
-        
-                    closeModal();
+                    await handleUpdateRoutine(taskId, dataInput);
+                } else {
+                    await handleAddRoutine(dataInput);
                 }
-            } catch (error) {
-                console.error(error); // Using console.error for logging errors
-                toast.error("An error occurred");
-            }
-        };
-
     
-        const Area = (p) => {
-            const { data } = p
-            const Image = Img[data]
-            if(Image) return <Image/>
-        }
-
-        const handleCheckStatus = () => {
-            setDataInput({...dataInput, isActive: !dataInput.isActive })
-        }
-
-        const checkValid = () => {
-            if(typeof(dataInput.title) === "undefined" || dataInput.title.trim() === "") {
-                setValid(false)
-                return false
+                closeModal();
             }
-            return true
+        } catch (error) {
+            console.error(error); // Using console.error for logging errors
+            toast.error("An error occurred");
         }
+    };
+
+
+    const Area = (p) => {
+        const { data } = p
+        const Image = Img[data]
+        if(Image) return <Image/>
+    }
+
+    const handleCheckStatus = () => {
+        setDataInput({...dataInput, isActive: !dataInput.isActive })
+    }
+
+    const checkValid = () => {
+        if(typeof(dataInput.title) === "undefined" || dataInput.title.trim() === "") {
+            setValid(false)
+            return false
+        }
+        return true
+    }
 
     return ( 
     <Content>           
@@ -241,10 +161,10 @@ const Routine = (p) => {
             title="Màu tag"
             name="color"
             Icon={Img.tag}
-            plus={mode === "edit" ? false : secOpen.color}
+            plus={mode === "add" ? secOpen.color : false}
             openSec={openSec}>
-        {mode === "edit" ?
-            (<EditSection name="color" onClick={openSec} isedit={secOpen.color}>
+        {(mode === "edit" || mode === "view") ?
+            (<EditSection name="color" onClick={openSec} isedit={mode === "edit" ? secOpen.color: false} mode={mode}>
                 <CirclePicker
                     colors={
                         !secOpen.color 
@@ -280,11 +200,11 @@ const Routine = (p) => {
             title="Liên quan"
             name="area"
             Icon={Img.area}
-            plus={mode === "edit" ? false : secOpen.area}
+            plus={mode === "add" ? secOpen.area : false}
             openSec={openSec} >
-        {mode === "edit" && secOpen.area 
+        {(mode === "edit" || mode === "view") && secOpen.area 
         ? (
-            <EditSection name="area" onClick={openSec} isedit={secOpen.area}>
+            <EditSection name="area" onClick={openSec} isedit={mode === "edit" ? secOpen.area: false}>
                 <div className="area-wrapper">
                 {area && Object.keys(area).map((data, idx) => {
                     if(area[data])
@@ -308,12 +228,12 @@ const Routine = (p) => {
         </ModalSectionContent>
 
         {/* STATUS */}
-        {modal.type === "routine" && mode !== "add" &&
+        {(mode === "edit" || mode === "view") &&
         <ModalSectionContent 
             title="Trạng thái"
             name="status"
             Icon={Img.status}
-            plus={mode === "edit" ? false : secOpen.note}
+            plus={false}
             openSec={openSec}>
             
             <div className="status-wrapper">
@@ -321,22 +241,25 @@ const Routine = (p) => {
                 ? <p style={{color: "red"}}>Dừng Hoạt Động</p>    
                 : <p style={{color: "green"}}>Hoạt Động</p>
                 }
-                <SwitchButton
-                    handleCheckStatus={handleCheckStatus}
-                    defaultValue={dataInput.isActive}
-                />
+                {mode === "edit" &&
+                    <SwitchButton
+                        handleCheckStatus={handleCheckStatus}
+                        defaultValue={dataInput.isActive}
+                    />
+                }
             </div>
             
         </ModalSectionContent>}
 
         {/* date DONE */}
         {
-        mode === "edit" && 
+        (mode === "edit" || mode === "view") && 
         <ModalSectionContent title="Ngày hoàn thành" Icon={Img.deadline} >
             <DateDone>
                 <Fragment>
                 <div className="flat-picker-wrapper">
                     <Flatpickr
+                    data-enable-time
                     ref={fp}
                     options={{
                         mode: "multiple",
@@ -358,12 +281,13 @@ const Routine = (p) => {
             title="Ghi chú"
             name="note"
             Icon={Img.note}
-            plus={mode === "edit" ? false : secOpen.note}
+            plus={mode === "edit" ? secOpen.note : false}
             openSec={openSec}>
-        {mode === "edit" && secOpen.note
+        {(mode === "edit" || mode === "view") && secOpen.note
         ? (
             <EditSection name="note" onClick={openSec} isedit={secOpen.note}>
                 <div className="note-wrapper" onClick={() => { 
+                    if(mode === "view") return null
                     setSecOpen({...secOpen, note: false })
                 }}>
                     <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} className="wrap-text"/>
@@ -386,12 +310,12 @@ const Routine = (p) => {
         </ModalSectionContent>
 
         
-        <Button
+        {mode !== "view" && <Button
             title="Lưu"
             onClick={handleSave}
             className="text-center"
             style={{marginTop: "20px"}}
-        />
+        />}
     </Content> 
      );
 }
@@ -418,12 +342,12 @@ const ModalSectionContent = (p) => {
 }
 
 const EditSection = (p) => {
-    const { children, onClick, isedit, name } = p
+    const { children, onClick, isedit, name, mode } = p
     return (
-        <EditSectionContainer name={name} isedit={isedit?.toString()}>
+        <EditSectionContainer name={name} isedit={isedit?.toString()} mode={mode && mode.toString()}>
             {children}
         
-        {name !== "note" && <span name={name} onClick={onClick} className={name === "color" && "pl-10"}><Img.edit /></span>}
+        {name !== "note" && isedit && <span name={name} onClick={onClick} className={name === "color" && "pl-10"}><Img.edit /></span>}
         </EditSectionContainer>
     )
 }
@@ -473,7 +397,7 @@ const EditSectionContainer = styled.div `
     .circle-picker {
         width: ${({isedit}) => isedit === "true" && "10px!important" };
         display: grid!important;
-        grid-template-columns: ${({isedit}) => isedit === "true" ? "0px!important" : "20px 20px 20px 20px 20px!important" };
+        grid-template-columns: ${($isedit, $mode) => $isedit !== "true" ||$mode ==="view" ? "0px!important": "20px 20px 20px 20px 20px!important"  };
         grid-template-rows: ${({isedit}) => isedit === "true" ? "20px!important" : "10px!important" };
         column-gap: 10px;
         row-gap: 15px;

@@ -143,7 +143,7 @@ const DateZoneLabel = (p) => {
     )
 }
 
-const Card = (p) => {
+export const Card = (p) => {
     const { 
         title,
         color = null,
@@ -153,7 +153,9 @@ const Card = (p) => {
         dataSection,
         setDateSection,
         routineDate,
-        isActive } = p
+        isActive,
+        mode = "edit"
+     } = p
     // const { task, setTask }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
     
@@ -173,10 +175,11 @@ const Card = (p) => {
                 routineDate,
                 isActive
             }
-            openModal(title, data, "routine", "edit")
+            openModal(title, data, "routine", mode)
         },
         check: () => { // Check task
-            setChecked(!checked)
+            if(mode !== "view")
+                setChecked(!checked)
         },
         option: { //handle option
             open: () => {
@@ -209,6 +212,7 @@ const Card = (p) => {
     }
     
     const handleClickUnCheckDate = async (date) => {
+        if(mode === "view") return null
         const isSameDate = (date1, date2) => {
             return date1.getFullYear() === date2.getFullYear() &&
                    date1.getMonth() === date2.getMonth() &&
@@ -225,6 +229,7 @@ const Card = (p) => {
     }
 
     const handleClickCheckDate = async (date) => {
+        if(mode === "view") return null
         console.log(dataSection)
 
         const dates = dataSection[0].routineDate.map(({completion_date}) => ({ completion_date }))
@@ -281,9 +286,9 @@ const Card = (p) => {
                         offset={[30, -20]}
 
                         >
-                        <OptionBtnCon className="mr-5" style={{position: "relative"}} onClick={taskHandle.option.toggle}>
+                    {mode !=="view" && <OptionBtnCon className="mr-5" style={{position: "relative"}} onClick={taskHandle.option.toggle}>
                             <Img.option/>
-                        </OptionBtnCon>
+                        </OptionBtnCon>}
                     </Tippy>
                     <span onClick={taskHandle.open}><Img.arrowRight/></span>
                 </div>

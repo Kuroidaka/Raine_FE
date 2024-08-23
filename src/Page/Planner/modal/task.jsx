@@ -114,9 +114,9 @@ const Task = (p) => {
         const name = e.currentTarget.getAttribute("name")
         console.log(name)
 
-        await setSecOpen({...secOpen, [name]: !secOpen[name] })
+        setSecOpen({...secOpen, [name]: !secOpen[name] })
         if(name === "deadline" && isDateString(dataInput.deadline))  {
-            await deadlineHdle.openFP()
+            deadlineHdle.openFP()
         }
     }
 
@@ -316,6 +316,7 @@ const Task = (p) => {
         ? (
             <EditSection name="note" onClick={openSec} isedit={secOpen.note}>
                 <div className="note-wrapper" onClick={() => { 
+                    if(mode === "view") return null
                     setSecOpen({...secOpen, note: false })
                 }}>
                     <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} className="wrap-text"/>
