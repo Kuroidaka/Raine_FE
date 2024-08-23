@@ -264,7 +264,6 @@ const Task = (p) => {
         </ModalSectionContent>
 
         {/* DEADLINE */}
-        
         <ModalSectionContent title="Thời hạn" Icon={Img.deadline} >
             <Deadline>
             {(mode === "edit" || mode === "view") && secOpen.deadline 

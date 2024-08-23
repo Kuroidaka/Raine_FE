@@ -13,7 +13,7 @@ import { TaskProvider } from "../Context/Task.context";
 import { RoutineProvider } from "../Context/Routine.context";
 import { GoalProvider } from "../Context/Goal.context";
 import { ModalProvider } from "../Context/Modal.context";
-import TaskModal from "../Page/Planner/modal/Modal";
+import Modal from "../Component/Modal";
 
 const DefaultLayout = ( p ) => {
     const { children } = p
@@ -23,15 +23,15 @@ const DefaultLayout = ( p ) => {
             <AppearanceProvider>
                 <OverlayProvider>
                     <WebSocketProvider>
-                        <TaskProvider>
-                            <RoutineProvider>
-                                <GoalProvider>
-                                <ModalProvider>
-                                    <DefaultLayoutComponent>{children}</DefaultLayoutComponent>
-                                </ModalProvider>
-                                </GoalProvider>
-                            </RoutineProvider>
-                        </TaskProvider>
+                        <ModalProvider>
+                            <TaskProvider>
+                                <RoutineProvider>
+                                    <GoalProvider>
+                                        <DefaultLayoutComponent>{children}</DefaultLayoutComponent>
+                                    </GoalProvider>
+                                </RoutineProvider>
+                            </TaskProvider>
+                        </ModalProvider>
                     </WebSocketProvider>
                 </OverlayProvider>
             </AppearanceProvider>
@@ -73,7 +73,7 @@ const DefaultLayoutComponent = (p) => {
                         <Loading></Loading>
                     ): (
                         <div className="page-content">
-                            <TaskModal />
+                            <Modal />
                             {children}
                         </div>
                     )}

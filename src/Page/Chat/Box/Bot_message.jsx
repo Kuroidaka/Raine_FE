@@ -8,10 +8,11 @@ import { checkIsImgLink } from '../../../Util';
 import Img from '../../../assets/img'
 import IconCustom from "../../../assets/Icons/svg";
 import ImageCom from "../../../component/Image";
-import { useEffect, useState  } from "react";
+import { useContext, useEffect, useState  } from "react";
 import Logo from "../../../assets/img/Logo";
 import MarkDown from "../../../component/MarkDownChat";
 import { Card } from "../../Planner/card/TaskCard";
+import ModalContext from "../../../Context/Modal.context";
 
 const functionIcon = {
     "create_reminder": {
@@ -66,7 +67,7 @@ const BotMsg = (p) => {
     const { imgPlaceHolder } = Img
 
     // const [isScroll, setIsScroll] = useState(false);
-    
+    console.log("functionList", functionList)
 
     const scrollToBottom = () => {
         // pageRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
@@ -120,7 +121,33 @@ const BotMsg = (p) => {
  
 const FunctionAgent = (p) => {
     const { agent } = p
+    const { openModal }  = useContext(ModalContext)
 
+    const [listFuncData, setListFuncData] = useState({})
+
+    useEffect(() => {
+        
+        const processFunctionListType = () => {
+            try {
+                const data = {...agent, data: JSON.parse(agent.data)}
+                
+                setListFuncData(data)
+                
+            } catch (error) {
+                setListFuncData(agent)
+            }
+        }
+
+        processFunctionListType()
+    }, [agent]);
+
+    const handleClickShow = () => {
+        const title = agent.name
+        const content = listFuncData
+        const type = "tool"
+        const mode = "view"
+        openModal(title, content, type, mode)
+    }
 
     return (
         <div className="bot-text-wrapper function-agent">
@@ -135,9 +162,9 @@ const FunctionAgent = (p) => {
                         <div className="text">{functionIcon[agent.name].process}</div>
                     </div>
                 </div>
-                <div className="btn_show">
-                    <button>Click</button>
-                </div>
+                {(listFuncData.comment || listFuncData.data) && <div className="btn_show">
+                    <button onClick={handleClickShow}>Click</button>
+                </div>}
             </div>
         </div>
     )
@@ -167,6 +194,8 @@ const FunctionData = (p) => {
         processFunctionListType()
     }, [agent]);
 
+    console.log("listFuncData", listFuncData)
+
     return (
         <FuncDataContainer>
         {listFuncData && listFuncData.length > 0 &&
@@ -182,6 +211,8 @@ const FunctionData = (p) => {
                 status: funcData.status,
                 mode: "view"
             }
+
+            // console.log("dataProps", dataProps)
             if(funcName === "ReminderChatService")
                 return (<Card key={funcData.id} {...dataProps}/>)
         })}

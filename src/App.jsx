@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import "flatpickr/dist/themes/light.css";
 import "flatpickr/dist/flatpickr.css";
+import 'react-json-pretty/themes/acai.css';
 
 import myCursor from './assets/cursor/Labradoodle.cur';
 const App = () => {

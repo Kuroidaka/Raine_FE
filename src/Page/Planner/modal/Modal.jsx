@@ -1,15 +1,14 @@
 import Modal from "../../../Component/Modal";
-import { useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import ModalContext from "../../../Context/Modal.context";
 import Task from "./task";
 import Routine from "./Routine";
 import Goal from "./Goal";
 
 const TaskModal = () => {
-    const { modal }  = useContext(ModalContext)
+    const { modal } = useContext(ModalContext)
     const [mode, setMode] = useState(modal.mode)
     const [dataInput, setDataInput] = useState({})
-    
     const [areaData, setArea] = useState({
         health: false,
         play: false,
@@ -20,11 +19,12 @@ const TaskModal = () => {
         development: false,
         relationships: false,
     })
+    const [isInitialized, setIsInitialized] = useState(false)  // Add this state
 
     useEffect(() => {
-        if(modal.mode) 
+        if (modal.mode) 
             setMode(modal.mode)
-    },[modal.mode])
+    }, [modal.mode])
     
     useEffect(() => {
         const area = {
@@ -37,11 +37,9 @@ const TaskModal = () => {
             development: false,
             relationships: false,
         }
-        
-        console.log("modal", modal)
+        console.log(modal.content)
 
-        if(modal.content !== null) {
-            
+        if (modal.content !== null) {
             setDataInput({
                 title: modal?.content?.title || "",
                 color: modal?.content?.color || "",
@@ -55,9 +53,8 @@ const TaskModal = () => {
                 target: modal?.content?.target || "0",
             })
 
-
             const relate = modal.content.area.reduce((prev, next) => {
-                return {...prev, [next.area]: true}
+                return { ...prev, [next.area]: true }
             }, area)
             console.log("relate", relate)
             setArea(relate)
@@ -66,7 +63,6 @@ const TaskModal = () => {
                 title: "",
                 color: "",
                 note: "",
-                // deadline: "",
                 area: [],
                 sub: [],
                 routineDate: []
@@ -74,26 +70,28 @@ const TaskModal = () => {
             setArea(area)
         }
 
-        return () => setDataInput({})
-    }, [modal, mode, modal.content]);
+        setIsInitialized(true)  // Mark as initialized
 
+        return () => setDataInput({})
+    }, [modal, mode, modal.content])
+
+    if (!isInitialized) return null;  // Render nothing until initialized
 
     return <TaskContent 
-                mode={ mode }
-                dataInput={ dataInput }
-                areaData={ areaData }
-                setDataInput = {setDataInput}
-                // areaData={area} 
-                />
+        mode={mode}
+        dataInput={dataInput}
+        areaData={areaData}
+        setDataInput={setDataInput}
+    />
 }
 
 const TaskContent = (p) => {
     const { dataInput, setDataInput, mode, areaData } = p
     const { modal }  = useContext(ModalContext)
 
-
+    console.log("dataInput", dataInput)
     return ( 
-    <Modal >
+    <>
     {
     modal.type === "task" ?
         <Task 
@@ -108,14 +106,16 @@ const TaskContent = (p) => {
             setDataInput={setDataInput}
             mode={mode}
             areaData={areaData}/> :
-    modal.type === "goal" &&
+    modal.type === "goal" ?
         <Goal
             dataInput={dataInput} 
             setDataInput={setDataInput}
             mode={mode}
-            areaData={areaData}/> 
-    }
-    </Modal>
+            areaData={areaData}/> :
+    modal.type === "tool" &&
+        <>test</>
+    } 
+    </>
      );
 }
  

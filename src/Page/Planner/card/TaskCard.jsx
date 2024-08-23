@@ -288,6 +288,7 @@ export const Card = (p) => {
         mode = "edit"
     } = p
 
+
     const { handleCheckTask, handleDeleteTask }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
 
@@ -296,7 +297,7 @@ export const Card = (p) => {
     const [subs, setSubs] = useState(subTask)
     const [subDone, setSubDone] = useState(0)
     const [option, setOption] = useState(false)
-    console.log("subTask", subTask)
+
     const countCurrSub = (dataSub) => {
         return dataSub.reduce((total, curr) => {
             if (curr.status === true) {

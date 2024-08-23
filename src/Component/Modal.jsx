@@ -7,9 +7,10 @@ import ModalContext from "../Context/Modal.context";
 import Loading from "./Loading"
 import Overlay from "../Layout/Component/Overlay";
 import myCursor from '../assets/cursor/Labrador_Retriever.cur';
+import TaskModal from "../Page/Planner/modal/Modal";
+import ToolsDataModal from "../Page/Chat/ToolsDataModal";
 
-const Modal = (p) => {
-    const { children, data } = p
+const Modal = () => {
 
     const { device } = useContext(DeviceContext)
 
@@ -68,6 +69,17 @@ const Modal = (p) => {
 
     }
 
+    const renderModalContent = () => {
+
+        if(["task", "goal", "routine"].indexOf(modal.type) !== -1) {
+            return <TaskModal />
+        }
+
+        if(modal.type === "tool") {
+            return <ToolsDataModal />
+        }
+    }
+
     return (   
      <Fragment>
         <Container
@@ -79,7 +91,7 @@ const Modal = (p) => {
                 <h1>{modal.title}</h1>
                 <Icon.x onClick={hdleToggle}  style={{cursor: `url(${myCursor}), auto`}}/>
             </Title>
-           {isDataLoaded ? children: <Loading />}
+           {isDataLoaded ? renderModalContent(): <Loading />}
         </Container> 
         <Overlay onClick={hdleClickOverLay} 
             isOpen={isOpenOverlay}
