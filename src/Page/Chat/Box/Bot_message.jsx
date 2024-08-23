@@ -105,19 +105,19 @@ const BotMsg = (p) => {
            {(text || functionList.length > 0) &&
             <div className="bot-text-wrapper">
             {
-                checkIsImgLink(text) ? (
-                    <div className='bot-text'>
-                        <ImageCom 
-                            src={text}
-                            imgPlaceHolder={imgPlaceHolder} 
-                            imgsize={'423px' }
-                        />
-                    </div>
-                ) : (
+                // checkIsImgLink(text) ? (
+                //     <div className='bot-text'>
+                //         <ImageCom 
+                //             src={text}
+                //             imgPlaceHolder={imgPlaceHolder} 
+                //             imgsize={'423px' }
+                //         />
+                //     </div>
+                // ) : (
                     <div className='bot-text'>
                         <MarkDown text={text}/>
                     </div>
-                )
+                // )
             }
             </div>}
 
@@ -201,7 +201,7 @@ const FunctionData = (p) => {
 
     console.log("listFuncData", listFuncData)
 
-    if(listFuncData && listFuncData.length > 0)
+    if(listFuncData && listFuncData?.length > 0)
 
         if(funcName === "ReminderChatService") 
             return (
@@ -236,11 +236,12 @@ const FunctionData = (p) => {
                         routineDate: funcData.routineDate,
                         id:funcData.id,
                         isActive: funcData.isActive,
+                        routineTime: funcData.routineTime,
                         mode: "view"
                     }
 
                     // console.log("dataProps", dataProps)
-                    return (<RoutineCard key={funcData.id} {...dataProps}/>)
+                    return (<RoutineCard key={funcData.id} routineData={dataProps} {...dataProps}/>)
                 })}
                 </FuncDataContainer>
             )

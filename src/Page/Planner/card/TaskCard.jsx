@@ -79,7 +79,7 @@ const TaskCard = (p) => {
                 datesAfterTomorrow: dATTasksArr,
                 someDay: someDayTasks,
             });
-            console.log(tomorrowTasks.length, dATTasksArr.length)
+          
             if(overDueTasks.length + todayTasks.length === 0 && tomorrowTasks.length + dATTasksArr.length > 0) {
                 const zone = 'week' || plannerData['task'].dateZone[1].name
                 setDateZone(zone)
@@ -697,7 +697,10 @@ const DateZoneLabelContainer = styled.div `
 
 `
 const TaskCardList = styled.div `
-
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 `
 const TaskCardContainer = styled(motion.div) `
     max-width: 50rem;

@@ -22,6 +22,7 @@ export const ModalProvider = (p) => {
       
       const openModal = (title = null, content = null, type = null, mode = "view") => {
         device !== "mobile" && openOverlay()
+        console.log("open modal with content", content)
         setModal({
           isOpen: true,
           title,

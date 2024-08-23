@@ -2,11 +2,11 @@ import axiosClient from "./axiosClient";
 
 const routineApi = {
     createRoutine: async ({
-      title, color, note, area
+      title, color, note, area, routineTime
     }) => {
       const url = `/routine/create`;
 
-      const data = { title, color, note }
+      const data = { title, color, note, routineTime }
       return axiosClient.post(url, {
         data, area
       });
@@ -24,9 +24,9 @@ const routineApi = {
   
     updateRoutine: async (id, params = {}) => {
       const url = `/routine/update/${id}`;
-      const { title, color, note, area = [], isActive, routineDate } = params;
+      const { title, color, note, area = [], isActive, routineDate, routineTime } = params;
     
-      const data = { title, color, note, isActive };
+      const data = { title, color, note, isActive, routineTime };
     
       // Filter out undefined values from data
       const filteredData = Object.fromEntries(

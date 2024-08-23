@@ -306,7 +306,10 @@ const DateZoneLabelContainer = styled.div `
 
 `
 const TaskCardList = styled.div `
-
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 `
 const TaskCardContainer = styled.div `
     max-width:50rem;

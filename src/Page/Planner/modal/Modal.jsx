@@ -4,6 +4,7 @@ import ModalContext from "../../../Context/Modal.context";
 import Task from "./task";
 import Routine from "./Routine";
 import Goal from "./Goal";
+import { convertTimeHHmmToDate } from "../../../Util";
 
 const TaskModal = () => {
     const { modal } = useContext(ModalContext)
@@ -51,6 +52,7 @@ const TaskModal = () => {
                 isActive: modal?.content?.isActive || false,
                 routineDate: modal?.content?.routineDate || [],
                 target: modal?.content?.target || "0",
+                routineTime:  modal?.content?.routineTime? convertTimeHHmmToDate(modal?.content?.routineTime) : new Date()
             })
 
             const relate = modal.content.area.reduce((prev, next) => {

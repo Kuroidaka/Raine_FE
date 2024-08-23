@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import ModalContext from "../../../Context/Modal.context";
 import DOMPurify from "dompurify";
-import { convertDatesRoutine, isDateString } from "../../../Util";
+import { convertDatesRoutine, formatTimeHHmm, isDateString } from "../../../Util";
 import { Img } from "../../../assets/svg";
 import Input from "../../../Component/Input";
 import Flatpickr from "react-flatpickr";
@@ -67,10 +67,15 @@ const Routine = (p) => {
     }
 
     const handleChooseDateRoutine = (date) => {
-    
+        if(mode === "view") return null
         const dates = date.map(data => ({ completion_date: data.toString()}))
        
         setDataInput({...dataInput, routineDate: dates })
+    }
+    const handleChooseTimeRoutine = (date) => {
+        
+       console.log(date)
+        setDataInput({...dataInput, routineTime: date })
     }
 
     const openSec = async (e) => {
@@ -112,14 +117,14 @@ const Routine = (p) => {
         try {
             if (valid) {
                 setValid(true);
-    
+                const newData = {...dataInput, routineTime : formatTimeHHmm(new Date(dataInput.routineTime))}
                 if (mode === "edit") {
                     const taskId = modal.content.id
-                    console.log("dataInput", dataInput)
+                    console.log("dataInput", newData)
 
-                    await handleUpdateRoutine(taskId, dataInput);
+                    await handleUpdateRoutine(taskId, newData);
                 } else {
-                    await handleAddRoutine(dataInput);
+                    await handleAddRoutine(newData);
                 }
     
                 closeModal();
@@ -251,6 +256,30 @@ const Routine = (p) => {
             
         </ModalSectionContent>}
 
+        {/* Routine Time */}
+        {(mode === "edit" || mode === "view") && 
+        <ModalSectionContent title="Routine time" Icon={Img.deadline} >
+            <DateDone>
+                <Fragment>
+                <div className="flat-picker-wrapper">
+                    <Flatpickr
+                    data-enable-time
+                    options={{
+                        inline: true,
+                        dateFormat: 'h:i K',
+                        noCalendar: true,
+                        enableTime:true,
+                        allowInput: false,
+                    }}
+                    value={dataInput.routineTime}
+                    onChange={handleChooseTimeRoutine}
+                    />
+                </div>
+                </Fragment>
+            </DateDone>
+        </ModalSectionContent>
+        }
+
         {/* date DONE */}
         {
         (mode === "edit" || mode === "view") && 
@@ -259,14 +288,16 @@ const Routine = (p) => {
                 <Fragment>
                 <div className="flat-picker-wrapper">
                     <Flatpickr
-                    data-enable-time
                     ref={fp}
                     options={{
                         mode: "multiple",
                         inline: true,
                         maxDate: "today",
+                        dateFormat: "Y-m-d",
+
+                        ...(mode === "view" && { enable: convertDatesRoutine(dataInput.routineDate) })
                     }}
-                    value={dataInput.routineDate?.length > 0 && convertDatesRoutine(dataInput.routineDate)}
+                    value={convertDatesRoutine(dataInput.routineDate)}
                     onChange={handleChooseDateRoutine}
                     />
                 </div>
@@ -343,8 +374,10 @@ const ModalSectionContent = (p) => {
 
 const EditSection = (p) => {
     const { children, onClick, isedit, name, mode } = p
+
+
     return (
-        <EditSectionContainer name={name} isedit={isedit?.toString()} mode={mode && mode.toString()}>
+        <EditSectionContainer name={name} $isEdit={isedit.toString()} $mode={mode && mode.toString()}>
             {children}
         
         {name !== "note" && isedit && <span name={name} onClick={onClick} className={name === "color" && "pl-10"}><Img.edit /></span>}
@@ -395,10 +428,18 @@ const EditSectionContainer = styled.div `
     }
 
     .circle-picker {
-        width: ${({isedit}) => isedit === "true" && "10px!important" };
+        width: ${({$isEdit}) => $isEdit === "true" && "10px!important" };
         display: grid!important;
-        grid-template-columns: ${($isedit, $mode) => $isedit !== "true" ||$mode ==="view" ? "0px!important": "20px 20px 20px 20px 20px!important"  };
-        grid-template-rows: ${({isedit}) => isedit === "true" ? "20px!important" : "10px!important" };
+        grid-template-columns: ${({$isEdit, $mode}) => {
+            if ($mode === "edit" && $isEdit === "false") {
+                return "20px 20px 20px 20px!important";
+            }
+            else if ($mode === "view" || ($mode === "edit" && $isEdit === "true")) {
+
+                return "0px!important";
+            }
+        }};
+        grid-template-rows: ${({$isEdit}) => $isEdit === "true" ? "20px!important" : "10px!important" };
         column-gap: 10px;
         row-gap: 15px;
     }
@@ -435,7 +476,7 @@ const Content = styled.div`
         gap: 7px;
         justify-content: center;  
         display: grid!important;
-        grid-template-columns: 20px 20px 20px 20px 20px;
+        grid-template-columns: 20px 20px 20px 20px;
         grid-template-rows: 10px;
         column-gap: 10px;
         row-gap: 15px;

@@ -291,12 +291,14 @@ const Task = (p) => {
                     </Ratio>
                     <div className="flat-picker-wrapper">
                         <Flatpickr
+                        data-enable-time
                         ref={fp}
                         options={{
                             inline: true,
                             minDate: "today",
+                           
                         }}
-                        value={isDateString(dataInput.deadline) ? new Date(dataInput.deadline) : null}
+                        value={ new Date(dataInput.deadline)}
                         onChange={(date) => deadlineHdle.choseDateFP(date)}
                         />
                     </div>
@@ -373,7 +375,7 @@ const ModalSectionContent = (p) => {
 const EditSection = (p) => {
     const { children, onClick, isedit, name, mode=null } = p
     return (
-        <EditSectionContainer name={name} isedit={isedit?.toString()} mode={mode && mode.toString()}>
+        <EditSectionContainer name={name} $isEdit={isedit?.toString()} $mode={mode && mode.toString()}>
             {children}
         
         {name !== "note" && isedit && <span name={name} onClick={onClick} className={name === "color" && "pl-10"}><Img.edit /></span>}
@@ -424,10 +426,18 @@ const EditSectionContainer = styled.div `
     }
 
     .circle-picker {
-        width: ${({isedit}) => isedit === "true" && "10px!important" };
+        width: ${({$isEdit}) => $isEdit === "true" && "10px!important" };
         display: grid!important;
-        grid-template-columns: ${($isedit, $mode) => $isedit !== "true" ||$mode ==="view" ? "0px!important": "20px 20px 20px 20px 20px!important"  };
-        grid-template-rows: ${({isedit}) => isedit === "true" ? "20px!important" : "10px!important" };
+        grid-template-columns: ${({$isEdit, $mode}) => {
+            if ($mode === "edit" && $isEdit === "false") {
+                return "20px 20px 20px 20px!important";
+            }
+            else if ($mode === "view" || ($mode === "edit" && $isEdit === "true")) {
+
+                return "0px!important";
+            }
+        }};
+        grid-template-rows: ${({$isEdit}) => $isEdit === "true" ? "20px!important" : "10px!important" };
         column-gap: 10px;
         row-gap: 15px;
     }
@@ -464,7 +474,7 @@ const Content = styled.div`
         gap: 7px;
         justify-content: center;  
         display: grid!important;
-        grid-template-columns: 20px 20px 20px 20px 20px;
+        grid-template-columns: 20px 20px 20px 20px;
         grid-template-rows: 10px;
         column-gap: 10px;
         row-gap: 15px;
@@ -536,7 +546,6 @@ const Deadline = styled.div`
     text-align: center;
     
     .flat-picker-wrapper {
-        display: none;
         justify-content: center;
 
     }
@@ -554,8 +563,8 @@ const Ratio = styled.div`
     justify-content: center;
     flex-direction: row;
     label {
-    display: flex
-            cursor: url(${myCursor}), auto;
+    display: flex;
+     cursor: url(${myCursor}), auto;
     font-weight: 500;
     position: relative;
     overflow: hidden;

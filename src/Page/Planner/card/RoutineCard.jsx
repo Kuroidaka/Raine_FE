@@ -17,7 +17,6 @@ const RoutineCard = (p) => {
         all: []
     })
 
-    console.log("dataSection", dataSection)
 
     useEffect(() => {
     
@@ -67,6 +66,7 @@ const RoutineCard = (p) => {
                                                 setDateSection={setDateSection}
                                                 routineDate={data.routineDate}
                                                 isActive={data.isActive}
+                                                routineData={data}
                                                 />
                                         )
                                     })}
@@ -92,6 +92,7 @@ const RoutineCard = (p) => {
                                         setDateSection={setDateSection}
                                         routineDate={data.routineDate}
                                         isActive={data.isActive}
+                                        routineData={data}
                                         />
                                 )
                             })}
@@ -112,6 +113,7 @@ const RoutineCard = (p) => {
                                         setDateSection={setDateSection}
                                         routineDate={data.routineDate}
                                         isActive={data.isActive}
+                                        routineData={data}
                                         />
                                 )
                             })}
@@ -154,7 +156,9 @@ export const Card = (p) => {
         setDateSection,
         routineDate,
         isActive,
-        mode = "edit"
+        mode = "edit",
+        
+        routineData
      } = p
     // const { task, setTask }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
@@ -173,7 +177,8 @@ export const Card = (p) => {
                 note,
                 id,
                 routineDate,
-                isActive
+                isActive,
+                routineTime: routineData.routineTime
             }
             openModal(title, data, "routine", mode)
         },

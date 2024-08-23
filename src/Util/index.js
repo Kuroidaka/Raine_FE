@@ -2,18 +2,14 @@ import pako from 'pako';
 import base64js from 'base64-js';
 
 export const dateConvert = (dateMilli) => {
-
-    const valid = isDateString(dateMilli)
-    // console.log("dateMilli", dateMilli, valid)
-
-
-    // if (isDateString(dateMilli) ) {
-        var d = (new Date(dateMilli) + '').split(' ');
-        return [d[2], d[1]].join(' ');
-    // }
-    // else return dateMilli
-
-    
+  return new Date(dateMilli).toLocaleString('en-GB', {
+    weekday: 'short', // Fri
+    day: '2-digit',   // 23
+    month: 'short',   // Aug
+    hour: 'numeric',  // 11
+    minute: '2-digit', // 08
+    hour12: true      // 12-hour clock
+  });
 }
 
 export const dateConvertForModal = (dateMilli) => {
@@ -75,9 +71,37 @@ export const convertDates = (dateArray) => {
 export const convertDatesRoutine = (dateArray) => {
   return dateArray.map(dateStr => {
     let date = new Date(dateStr.completion_date);
-    return date.getFullYear()+'-' + (date.getMonth()+1) + '-'+date.getDate();
-});
+
+    // Format the date to "Y-m-d H:i"
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero
+    const day = String(date.getDate()).padStart(2, '0'); // Add leading zero
+    const hours = String(date.getHours()).padStart(2, '0'); // Add leading zero
+    const minutes = String(date.getMinutes()).padStart(2, '0'); // Add leading zero
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  });
 }
+
+export function formatTimeHHmm(date) {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+export function convertTimeHHmmToDate(timeString) {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  const date = new Date();
+
+  date.setHours(hours);
+  date.setMinutes(minutes);
+  date.setSeconds(0); // Optionally reset seconds to 0
+  date.setMilliseconds(0); // Optionally reset milliseconds to 0
+
+  return date;
+}
+
+
 
 export const  getRecentSevenDates = (array) => {
   const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
