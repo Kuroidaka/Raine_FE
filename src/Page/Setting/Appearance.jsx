@@ -4,23 +4,64 @@ import { data } from "../../assets/photos/background.js"
 import { useContext, useEffect, useState } from "react";
 import AppearanceContext from "../../Context/Appearance.context";
 import DeviceContext from "../../Context/Device.context";
+import { toast } from "react-toastify";
+import fileApi from "../../api/file.api.js";
+import { API_BASE_URL, PREFIX } from "../../config/index.js";
+import userApi from "../../api/user.api.js";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Loading from "../../Component/Loading.jsx"
 
 const Appearance = () => {
 
-    const [dataAppearance] = useState(data)
+    const [dataAppearance, setDataAppearance] = useState([])
     const { appearance, setAppearance } = useContext(AppearanceContext)
     const { device } = useContext(DeviceContext)
-    const handleClickPhoto = (data) => {
-        setAppearance({
-            url: data.url,
-            name: data.name
-        })
-    }
 
+    const queryClient = useQueryClient();
+
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['backgroundImage'],
+        queryFn: fileApi.getBGImages,
+        cacheTime: 0,
+    });
+    
+    useEffect(() => {
+        if (data) {
+            const updatedBGList = data.map(bg => ({
+                ...bg,
+                url: `${API_BASE_URL}${PREFIX}${bg.urlPath}`,
+            }));
+            setDataAppearance(updatedBGList);
+        }
+    }, [data]);
+    
+    const handleClickPhoto = async (data) => {
+        try {
+            await userApi.setBackgroundImg(data.id);
+            setAppearance({
+                url: data.url,
+                name: data.name,
+            });
+        } catch (error) {
+            console.error('Failed to set background image:', error);
+            toast.error(error.message);
+        }
+    };
+    
+    const addMutation = useMutation({
+        mutationFn: ({ file }) => fileApi.uploadBGImages(file),
+        onSuccess: () => queryClient.invalidateQueries(['backgroundImage']),
+        onError: (error) => {
+            toast.error('Something went wrong');
+            console.error('Failed to upload background image:', error);
+        },
+    });
+    
     const handleInputBG = (e) => {
         const file = e.target.files[0];
         previewFile(file);
-    }
+        addMutation.mutate({ file });
+    };
 
     const previewFile = (file) => {
         const reader = new FileReader();
@@ -32,6 +73,9 @@ const Appearance = () => {
             });
         };
     };
+
+    if(isLoading) return <Loading></Loading>
+    if(error) return <>Error</>
 
     return (
         <Container>
@@ -65,13 +109,13 @@ const Appearance = () => {
             </PreviewSection>
 
             <Content>
-                <WithoutBackground className={`pointer-cursor ${appearance.url === "" && "active"}`} onClick={() => handleClickPhoto({ url: "", name: "" })}>
+                <WithoutBackground className={`pointer-cursor ${appearance.url === "" && "active"}`} onClick={() => handleClickPhoto({ id: null, url: "", name: "" })}>
                     <div className="title-wrapper">
                         <Icon.bin />
                         {device === "desktop" && <span>Không cần hình nền</span>}
                     </div>
                 </WithoutBackground>
-                <UploadBackground className="pointer-cursor" onClick={() => handleClickPhoto({ url: "", name: "" })}>
+                <UploadBackground className="pointer-cursor">
                     <input
                         type="file"
                         style={{ display: "none" }}
@@ -178,7 +222,7 @@ const PreviewInfor = styled.div`
 
 const Content = styled.div`
     width: 100%;
-    height: 50dvh;
+    max-height: 50dvh;
     padding: 20px;
     overflow-y: scroll;
     -ms-overflow-style: none;  /* Internet Explorer 10+ */

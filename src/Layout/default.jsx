@@ -43,7 +43,7 @@ const DefaultLayoutComponent = (p) => {
     const { children } = p
 
     const { device } = useContext(DeviceContext)
-    const { appearance } = useContext(AppearanceContext)
+    const { appearance } = useContext(AppearanceContext) || { url: "", name: ""}
     const { isLoad } = useContext(AuthContext)
 
     const [isOpenMenu, setIsOpenMenu] = useState(false)

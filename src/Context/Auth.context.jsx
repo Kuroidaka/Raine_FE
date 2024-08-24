@@ -1,12 +1,14 @@
 import { createContext, useState, useEffect } from 'react';
 import authenApi from '../api/authen.api';
 import { useNavigate } from 'react-router';
+import { decodeToken } from '../Util';
 
 export const AuthContext = createContext(null);
 
 export const AuthProvider = (p) => {
   const { children } = p
   const [isLoad, setLoading] = useState(true);
+  const [userData, setUserData] = useState({})
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -20,7 +22,8 @@ export const AuthProvider = (p) => {
       }
 
       try {
-        await authenApi.verifyToken();
+        const data = await authenApi.verifyToken();
+        setUserData(data)
       } catch (err) {
         console.error('Token verification failed:', err);
         logOut();
@@ -41,6 +44,7 @@ export const AuthProvider = (p) => {
 
   const value = {
     logOut,
+    userData,
     // role,
     // permissionList,
     isLoad,

@@ -1,5 +1,6 @@
 import pako from 'pako';
 import base64js from 'base64-js';
+import { jwtDecode } from 'jwt-decode';
 
 export const dateConvert = (dateMilli) => {
   return new Date(dateMilli).toLocaleString('en-GB', {
@@ -291,3 +292,15 @@ export function base64ToFile(base64String) {
 
 // Example usage:
 // const file = base64ToFile(base64String);
+
+
+export const decodeToken = (token) => {
+  try {
+      // Decode the token
+      const decoded = jwtDecode(token);
+      return decoded;
+  } catch (error) {
+      console.error('Invalid token:', error);
+      return null;
+  }
+};

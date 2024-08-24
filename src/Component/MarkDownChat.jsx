@@ -24,7 +24,6 @@ const MarkDown = (p) => {
 
     return (
         <Container>
-            
             <ReactMarkdown
             // eslint-disable-next-line react/no-children-prop
             children={text}
@@ -65,6 +64,14 @@ const Container = styled.div `
     pre{
         margin: 0!important; 
     }
+}
+
+hr {
+    margin: 10px 5px;
+}
+
+ul {
+    list-style: disc;
 }
 
 .code-block-header {
