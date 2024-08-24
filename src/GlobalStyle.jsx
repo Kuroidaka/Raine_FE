@@ -146,6 +146,10 @@ const GlobalStyles = createGlobalStyle`
     .pointer-cursor {
         cursor: ${`url(${myCursor}), auto`}!important;
     }
+    .disable-click {
+        pointer-events: none;
+        cursor: default; /* Optional: Change the cursor to indicate that the element is not clickable */
+    }
 `
 
 export default GlobalStyles;

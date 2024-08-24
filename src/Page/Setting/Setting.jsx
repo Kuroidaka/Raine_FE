@@ -1,78 +1,81 @@
 import styled from "styled-components";
-import { Icon } from "../../assets/icon"
-import { useContext, useState } from "react";
+import { Icon } from "../../assets/icon";
+import { useContext, useState, useCallback, useMemo } from "react";
 import Appearance from "./Appearance";
 import DeviceContext from "../../Context/Device.context";
+import { VscTools } from "react-icons/vsc";
+import Tools from "./Tools";
 
 const Setting = () => {
+    const [selectItem, setSelectItem] = useState("appearance");
+    const { device } = useContext(DeviceContext);
 
-    
-    const [selectItem, setSelectItem] = useState("appearance")
-    const { device } = useContext(DeviceContext)
-    const dataItem = [
+    const dataItem = useMemo(() => [
         {
             icon: <Icon.background />,
             name: "appearance",
-            title: "Hiển thị"
+            title: "Hiển thị",
+            component: <Appearance /> 
         },
+        {
+            icon: <VscTools />,
+            name: "tools",
+            title: "Tool",
+            component: <Tools />
+        },
+    ], []);
 
-    ]
+    const handleChooseItem = useCallback((id) => {
+        setSelectItem(id);
+    }, []);
 
-
-    const handleChooseItem = (id) => {
-        setSelectItem(id)
-    }
+    const selectedComponent = useMemo(() => {
+        const selectedItem = dataItem.find(item => item.name === selectItem);
+        return selectedItem ? selectedItem.component : null;
+    }, [dataItem, selectItem]);
 
     return (
         <Container>
             <BoxContent>
                 <MenuList>
-                {dataItem && dataItem.map((item, idx) => {
-                    return <MenuItem 
-                                key={idx}
-                                className={`pointer-cursor ${selectItem === item.name && "active"}`}
-                                onClick={() => handleChooseItem(item.name)}>
-                                {item.icon}
-                               {device === "desktop" && <span>{item.title}</span>}
-                            </MenuItem>
-                })}
+                    {dataItem.map((item, idx) => (
+                        <MenuItem 
+                            key={idx}
+                            className={`pointer-cursor ${selectItem === item.name ? "active" : ""}`}
+                            onClick={() => handleChooseItem(item.name)}
+                        >
+                            {item.icon}
+                            {device === "desktop" && <span>{item.title}</span>}
+                        </MenuItem>
+                    ))}
                 </MenuList>
-
                 <ContentWrapper>
-                {selectItem === "appearance" 
-                    ? <Appearance /> :
-                    null
-                }
+                    {selectedComponent}
                 </ContentWrapper>
             </BoxContent>
         </Container>
     );
 }
- 
+
 export default Setting;
 
 const Container = styled.div `
     display: flex;
+`;
 
-`
 const BoxContent = styled.div `
-    
     @media screen and (min-width: 769px) {
         margin: 15px;
         border: 1px solid #cfcfcf;
         border-radius: 10px;
     }
-    @media screen and (max-width: 768px) {
-    }
     height: 90dvh;
     width: 100%;
     background-color: #fdfdfd;
-    
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     display: flex;
-    
     overflow: hidden;
-`
+`;
 
 const MenuList = styled.ul `
     list-style: none;
@@ -84,13 +87,10 @@ const MenuList = styled.ul `
         width: 13%;
         margin: 10px;
     }
-    
     height: 100%;
-    
-`
+`;
 
 const ContentWrapper = styled.div `
-    
     @media screen and (min-width: 769px) {
         width: 80%;
     }
@@ -100,7 +100,7 @@ const ContentWrapper = styled.div `
     border-left: 1px solid #cfcfcf;
     background-color: #ffffff;
     height: auto;
-`
+`;
 
 const MenuItem = styled.li`
     display: flex;
@@ -136,4 +136,4 @@ const MenuItem = styled.li`
             font-weight: 900;
         }
     }
-`
+`;

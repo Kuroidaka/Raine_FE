@@ -257,8 +257,7 @@ const Routine = (p) => {
         </ModalSectionContent>}
 
         {/* Routine Time */}
-        {(mode === "edit" || mode === "view") && 
-        <ModalSectionContent title="Routine time" Icon={Img.deadline} >
+        <ModalSectionContent title="Routine time" Icon={Img.deadline} disableClick={mode === "view" && true}>
             <DateDone>
                 <Fragment>
                 <div className="flat-picker-wrapper">
@@ -278,7 +277,6 @@ const Routine = (p) => {
                 </Fragment>
             </DateDone>
         </ModalSectionContent>
-        }
 
         {/* date DONE */}
         {
@@ -330,7 +328,7 @@ const Routine = (p) => {
                 </div>
             </EditSection> 
         ) : (
-            !secOpen.note && <ReactQuill 
+            <ReactQuill 
                 theme="snow"
                 placeholder="Ghi chú của bạn..."
                 value={dataInput.note}
@@ -352,7 +350,7 @@ const Routine = (p) => {
 }
 
 const ModalSectionContent = (p) => {
-    const { title, name, Icon, children, plus, openSec } = p
+    const { title, name, Icon, children, plus, openSec, disableClick=false } = p
     
     return (
         <ModalSectionContentStyle className="tag">
@@ -364,7 +362,7 @@ const ModalSectionContent = (p) => {
                 <span className="text">{title}</span>
                 {plus && <span className="icon">&nbsp;+</span>}
             </Label>
-            <div className="content">
+            <div className={`content ${disableClick && "disable-click"}`}>
                 {children}
             </div>
             

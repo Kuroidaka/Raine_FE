@@ -11,7 +11,7 @@ import { GrUploadOption } from 'react-icons/gr'
 import { BiMessageAltDetail, BiHomeAlt2, BiSolidCaretLeftCircle, BiLeftArrowAlt, BiSolidDownload, BiRightArrowCircle, BiCaretRight, BiCheck, BiListUl, BiLogoGmail, BiCheckCircle, BiLibrary } from 'react-icons/bi'
 import { ImPlus, ImLibrary } from 'react-icons/im'
 import { SiGumtree } from 'react-icons/si'
-import { FaFacebookMessenger, FaInstagram, FaFacebook, FaShare, FaFacebookF } from 'react-icons/fa';
+import { FaFacebookMessenger, FaInstagram, FaShare, FaFacebookF } from 'react-icons/fa';
 
 
 
@@ -50,7 +50,6 @@ export const Icon = {
     upload: GrUploadOption,
     list: BiLibrary,
     play: BsFillPlayFill,
-    pause: MdPause,
     share: FaShare,
     love: MdFavorite,
     addOutline: MdAdd,
@@ -60,7 +59,6 @@ export const Icon = {
     leftArrow: BiSolidCaretLeftCircle,
     back: BiLeftArrowAlt,
     library: ImLibrary,
-    facebook: FaFacebook,
     messenger: FaFacebookMessenger,
     instagram: FaInstagram,
     gmail: BiLogoGmail,
