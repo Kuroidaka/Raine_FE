@@ -4,7 +4,7 @@ import { useContext, useState, useCallback, useMemo } from "react";
 import Appearance from "./Appearance";
 import DeviceContext from "../../Context/Device.context";
 import { VscTools } from "react-icons/vsc";
-import Tools from "./Tools";
+import AISetting from "./AISetting/AI";
 
 const Setting = () => {
     const [selectItem, setSelectItem] = useState("appearance");
@@ -19,9 +19,9 @@ const Setting = () => {
         },
         {
             icon: <VscTools />,
-            name: "tools",
-            title: "Tool",
-            component: <Tools />
+            name: "aiSetting",
+            title: "AI Setting",
+            component: <AISetting />
         },
     ], []);
 

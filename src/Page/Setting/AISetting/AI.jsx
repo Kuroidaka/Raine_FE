@@ -1,11 +1,12 @@
 import styled from "styled-components";
-import { Icon } from "../../assets/icon.js";
-import { data } from "../../assets/photos/background.js"
+import { Icon } from "../../../assets/icon.js";
+import { data } from "../../../assets/photos/background.js"
 import { useContext, useEffect, useState } from "react";
-import AppearanceContext from "../../Context/Appearance.context.jsx";
-import DeviceContext from "../../Context/Device.context.jsx";
+import AppearanceContext from "../../../Context/Appearance.context.jsx";
+import DeviceContext from "../../../Context/Device.context.jsx";
+import ToolSettings from "./Tool.jsx";
 
-const Tools = () => {
+const AISetting = () => {
 
 
     return (
@@ -14,11 +15,14 @@ const Tools = () => {
                 <h2>Tùy chỉnh tools cho Raine</h2>
             </TitleWrapper>
 
+            <ToolSettings />
         </Container>
     );
 }
 
-export default Tools;
+
+
+export default AISetting;
 
 const Container = styled.div`
     width: 100%;
