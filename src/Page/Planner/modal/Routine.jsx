@@ -14,7 +14,7 @@ import RoutineContext from "../../../Context/Routine.context";
 import SwitchButton from "../../../Component/SwitchButton";
 import myCursor from '../../../assets/cursor/Labrador_Retriever.cur';
 
-import { relatedArea } from "./constants";
+import { colorList, relatedArea } from "./constants";
 import { toast } from "react-toastify";
 
 const Routine = (p) => {
@@ -173,7 +173,7 @@ const Routine = (p) => {
                 <CirclePicker
                     colors={
                         !secOpen.color 
-                            ? ["#f44336", "#e91e63", "#673ab7", "#03a9f4", "#4caf50", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722"]
+                            ? colorList
                             : [dataInput.color]
                         }
                     onChange={(color) => {
@@ -188,7 +188,7 @@ const Routine = (p) => {
                 </EditSection>
             ) : (
                 !secOpen.color && <CirclePicker
-                colors={["#f44336", "#e91e63", "#673ab7", "#03a9f4", "#4caf50", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722"]}
+                colors={colorList}
                 onChange={(color) => {
                     setHex(color.hex);
                     setDataInput({...dataInput, color: color.hex })
@@ -430,7 +430,7 @@ const EditSectionContainer = styled.div `
         display: grid!important;
         grid-template-columns: ${({$isEdit, $mode}) => {
             if ($mode === "edit" && $isEdit === "false") {
-                return "20px 20px 20px 20px!important";
+                return "20px 20px 20px 20px 20px 20px 20px 20px!important";
             }
             else if ($mode === "view" || ($mode === "edit" && $isEdit === "true")) {
 
@@ -474,7 +474,7 @@ const Content = styled.div`
         gap: 7px;
         justify-content: center;  
         display: grid!important;
-        grid-template-columns: 20px 20px 20px 20px;
+        grid-template-columns: 20px 20px 20px 20px 20px 20px 20px 20px;
         grid-template-rows: 10px;
         column-gap: 10px;
         row-gap: 15px;

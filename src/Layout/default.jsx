@@ -14,28 +14,28 @@ import { RoutineProvider } from "../Context/Routine.context";
 import { GoalProvider } from "../Context/Goal.context";
 import { ModalProvider } from "../Context/Modal.context";
 import Modal from "../Component/Modal";
+import { Outlet } from "react-router";
 
-const DefaultLayout = ( p ) => {
-    const { children } = p
+const DefaultLayout = () => {
 
     return (
-        <AuthProvider>
-            <AppearanceProvider>
-                <OverlayProvider>
-                    <WebSocketProvider>
-                        <ModalProvider>
-                            <TaskProvider>
-                                <RoutineProvider>
-                                    <GoalProvider>
-                                        <DefaultLayoutComponent>{children}</DefaultLayoutComponent>
-                                    </GoalProvider>
-                                </RoutineProvider>
-                            </TaskProvider>
-                        </ModalProvider>
-                    </WebSocketProvider>
-                </OverlayProvider>
-            </AppearanceProvider>
-        </AuthProvider>
+        <AppearanceProvider>
+            <OverlayProvider>
+                <WebSocketProvider>
+                    <ModalProvider>
+                        <TaskProvider>
+                            <RoutineProvider>
+                                <GoalProvider>
+                                    <DefaultLayoutComponent>
+                                        <Outlet />
+                                    </DefaultLayoutComponent>
+                                </GoalProvider>
+                            </RoutineProvider>
+                        </TaskProvider>
+                    </ModalProvider>
+                </WebSocketProvider>
+            </OverlayProvider>
+        </AppearanceProvider>
     )
 }
 

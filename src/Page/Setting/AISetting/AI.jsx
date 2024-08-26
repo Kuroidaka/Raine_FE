@@ -7,8 +7,6 @@ import DeviceContext from "../../../Context/Device.context.jsx";
 import ToolSettings from "./Tool.jsx";
 
 const AISetting = () => {
-
-
     return (
         <Container>
             <TitleWrapper>

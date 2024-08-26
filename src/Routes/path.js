@@ -1,13 +1,16 @@
 const paths = {
     login: "/login",
     planner: "/planner",
-    setting: "/setting",
     chat: "/chat",
     videoChat: "/chat/cam",
-    test: "/test",
+
+    setting: "/setting",
+
     testCam: "/test/cam",
     testAudio: "/test/audio",
-    noPage: "*"
+    test: "/test",
+
+    noPage: "*",
 }
 
 export default paths;

@@ -1,61 +1,65 @@
 import styled from "styled-components";
 import { Icon } from "../../assets/icon";
-import { useContext, useState, useCallback, useMemo } from "react";
-import Appearance from "./Appearance";
-import DeviceContext from "../../Context/Device.context";
+import { useContext, useCallback, useMemo } from "react";
 import { VscTools } from "react-icons/vsc";
+import { useNavigate, useParams } from "react-router";
+import DeviceContext from "../../Context/Device.context";
+import Appearance from "./Appearance";
 import AISetting from "./AISetting/AI";
+import Loading from "../../Component/Loading";
+import { Suspense } from "react";
+
+const dataItem = [
+  {
+    icon: <Icon.background />,
+    name: "appearance",
+    title: "Hiển thị",
+    component: <Appearance />,
+  },
+  {
+    icon: <VscTools />,
+    name: "ai",
+    title: "AI Setting",
+    component: <AISetting />,
+  },
+];
 
 const Setting = () => {
-    const [selectItem, setSelectItem] = useState("appearance");
-    const { device } = useContext(DeviceContext);
+  const { name } = useParams();
+  const { device } = useContext(DeviceContext);
+  const navigate = useNavigate();
 
-    const dataItem = useMemo(() => [
-        {
-            icon: <Icon.background />,
-            name: "appearance",
-            title: "Hiển thị",
-            component: <Appearance /> 
-        },
-        {
-            icon: <VscTools />,
-            name: "aiSetting",
-            title: "AI Setting",
-            component: <AISetting />
-        },
-    ], []);
+  const handleChooseItem = useCallback((name) => {
+    navigate(`/setting/${name}`);
+  }, [navigate]);
 
-    const handleChooseItem = useCallback((id) => {
-        setSelectItem(id);
-    }, []);
+  const selectedComponent = useMemo(() => {
+    const selectedItem = dataItem.find((item) => item.name === name);
+    return selectedItem ? selectedItem.component : null;
+  }, [name]);
 
-    const selectedComponent = useMemo(() => {
-        const selectedItem = dataItem.find(item => item.name === selectItem);
-        return selectedItem ? selectedItem.component : null;
-    }, [dataItem, selectItem]);
-
-    return (
-        <Container>
-            <BoxContent>
-                <MenuList>
-                    {dataItem.map((item, idx) => (
-                        <MenuItem 
-                            key={idx}
-                            className={`pointer-cursor ${selectItem === item.name ? "active" : ""}`}
-                            onClick={() => handleChooseItem(item.name)}
-                        >
-                            {item.icon}
-                            {device === "desktop" && <span>{item.title}</span>}
-                        </MenuItem>
-                    ))}
-                </MenuList>
-                <ContentWrapper>
-                    {selectedComponent}
-                </ContentWrapper>
-            </BoxContent>
-        </Container>
-    );
-}
+  return (
+    <Container>
+      <BoxContent>
+        <MenuList>
+          {dataItem.map((item, idx) => (
+            <MenuItem
+              key={idx}
+              className={`pointer-cursor ${name === item.name ? "active" : ""}`}
+              onClick={() => handleChooseItem(item.name)}
+            >
+              {item.icon}
+              {device === "desktop" && <span>{item.title}</span>}
+            </MenuItem>
+          ))}
+        </MenuList>
+        <ContentWrapper>
+          <Suspense fallback={<Loading />}>{selectedComponent}</Suspense>
+        </ContentWrapper>
+      </BoxContent>
+    </Container>
+  );
+};
 
 export default Setting;
 

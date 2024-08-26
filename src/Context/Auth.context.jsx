@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
 import authenApi from '../api/authen.api';
-import { useNavigate } from 'react-router';
 import { decodeToken } from '../Util';
 
 export const AuthContext = createContext(null);
@@ -9,7 +8,7 @@ export const AuthProvider = (p) => {
   const { children } = p
   const [isLoad, setLoading] = useState(true);
   const [userData, setUserData] = useState({})
-  const navigate = useNavigate()
+
 
   useEffect(() => {
     const fetchTokenData = async () => {
@@ -37,7 +36,7 @@ export const AuthProvider = (p) => {
 
   const logOut = () => {
     localStorage.removeItem('token');
-    navigate("/login")
+    window.history.pushState(null, '', '/login');
     // setRole({});
     // setPermissionList([]);
   };
