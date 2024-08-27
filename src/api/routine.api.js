@@ -8,7 +8,7 @@ const routineApi = {
 
       const data = { title, color, note, routineTime }
       return axiosClient.post(url, {
-        data, area
+        area, ...data
       });
     },
   
@@ -34,9 +34,9 @@ const routineApi = {
       );
     
       return axiosClient.patch(url, {
-        data: filteredData,
         area: [...area],
-        dates: routineDate
+        dates: routineDate,
+        ...filteredData
       });
     },
 

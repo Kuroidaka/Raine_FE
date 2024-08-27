@@ -3,7 +3,7 @@ import Tippy from '@tippyjs/react/headless';
 import { Img } from "../../../assets/svg";
 import Input from "../../../Component/Input"
 import { useState, useEffect, Fragment, useContext, useMemo, useRef } from "react";
-import {  convertDates, dateConvert } from "../../../Util"
+import {  convertDates, convertToTodayWithSameTime, dateConvert } from "../../../Util"
 
 import plannerData from "../Planner.json";
 import ModalContext from "../../../Context/Modal.context";
@@ -570,7 +570,12 @@ const AddSubTask = (p) => {
 
 const Option = (p) => {
     const { openDetail, deleteTask, taskId, deadline, setOption } = p
-    const { handleUpdateTask }  = useContext(TaskContext)
+    const { handleUpdateTask, task }  = useContext(TaskContext)
+
+    const findTask = (taskId) => {
+        const result = task.find(i => i.id === taskId)
+        return result
+    }
 
     const listOption = [
         {
@@ -578,8 +583,11 @@ const Option = (p) => {
             value: "Hôm nay",
             icon: "deadline",
             handleClick: async () => {
+                const task = findTask(taskId)
+
                 await handleUpdateTask(taskId, {
-                    deadline: new Date()
+                    deadline: convertToTodayWithSameTime(task.deadline),
+                    area: task.area
                 })
             }
         },
@@ -588,10 +596,13 @@ const Option = (p) => {
             value: "Mai",
             icon: "deadline",
             handleClick: async () => {
-                const tomorrow = new Date();
+                const task = findTask(taskId)
+                const tomorrow = new Date(task.deadline);
                 tomorrow.setDate(tomorrow.getDate() + 1);
+
                 await handleUpdateTask(taskId, {
-                    deadline: tomorrow
+                    deadline: tomorrow,
+                    area: task.area
                 })                
             }
         },
@@ -600,8 +611,10 @@ const Option = (p) => {
             value: "Ngày nào đó",
             icon: "deadline",
             handleClick: async () => {
+                const task = findTask(taskId)
                 await handleUpdateTask(taskId, {
-                    deadline: "someday"
+                    deadline: "someday",
+                    area: task.area
                 })                
             }
         },

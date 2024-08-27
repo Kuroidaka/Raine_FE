@@ -304,3 +304,24 @@ export const decodeToken = (token) => {
       return null;
   }
 };
+
+export function convertToTodayWithSameTime(dateString) {
+  // Parse the input date string
+  const inputDate = new Date(dateString);
+
+  // Get today's date
+  const today = new Date();
+
+  // Create a new Date object with today's date and the same time as the input date
+  const result = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+    inputDate.getHours(),
+    inputDate.getMinutes(),
+    inputDate.getSeconds(),
+    inputDate.getMilliseconds()
+  );
+
+  return result;
+}
