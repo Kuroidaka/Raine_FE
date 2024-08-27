@@ -13,7 +13,7 @@ const Input = (p) => {
     const { id, value = "", name, onInput, onKeyDown, inputStyle, className, focusborder = "true", placeholder, plhdercolor, onBlur, autoFocus } = p
 
     return ( 
-        <Container style={inputStyle} focusborder ={focusborder} plhdercolor={plhdercolor}>
+        <Container style={inputStyle} $focusborder ={focusborder} $plhdercolor={plhdercolor}>
             <input 
                 id={id}
                 value={value}
@@ -52,11 +52,11 @@ const Container = styled.div`
         color: #626262;
 
         &:focus {
-            border: ${({focusborder}) => focusborder === "true" ? "1px solid rgba(0, 0, 0, 0.2)!important" : "" };
+            border: ${({$focusborder}) => $focusborder === "true" ? "1px solid rgba(0, 0, 0, 0.2)!important" : "" };
             box-shadow: 0 3px 10px 0 rgba(0,0,0,.15);
         }
         &::placeholder {
-            color: ${({plhdercolor}) => plhdercolor };
+            color: ${({$plhdercolor}) => $plhdercolor };
             font-size: 1.15rem;
             opacity: 1; /* Firefox */
         }

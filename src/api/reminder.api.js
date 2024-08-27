@@ -8,7 +8,7 @@ const reminderApi = {
 
       const data = { title, color, deadline, note }
       return axiosClient.post(url, {
-        data, area
+        area, ...data
       });
     },
   
@@ -34,8 +34,8 @@ const reminderApi = {
       );
     
       return axiosClient.patch(url, {
-        data: filteredData,
         area: [...area],
+        ...filteredData
       });
     },
 

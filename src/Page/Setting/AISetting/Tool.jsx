@@ -109,6 +109,7 @@ const SwitchContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
+  gap: 10px;
 
   & + &{
     border-top: max(1px, 0.0625rem) solid #cfcfcf;

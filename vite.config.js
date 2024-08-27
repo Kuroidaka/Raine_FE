@@ -7,10 +7,10 @@ export default defineConfig({
   
   assetsInclude: ['**/*.cur', '**/*.ani'],
   server: {
-    https: {
-      key: './localhost-key.pem',
-      cert: './localhost.pem'
-    },
+    // https: {
+    //   key: './localhost-key.pem',
+    //   cert: './localhost.pem'
+    // },
     host: '0.0.0.0', // This allows access from your local network IP
     port: 5173,
   },

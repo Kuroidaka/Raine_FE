@@ -25,6 +25,7 @@ const Task = (p) => {
     const { handleAddTask, handleUpdateTask }  = useContext(TaskContext)
     const [valid, setValid] = useState(true)
     const fp = useRef(null);
+    const QuillRef = useRef(null)
 
     const sanitizedHTML = DOMPurify.sanitize(dataInput.note);
     // const [dataInput, setDataInput] = useState(data)
@@ -40,7 +41,6 @@ const Task = (p) => {
     });
 
     useEffect(() => {
-        console.log("listen event close modal")
         window.addEventListener('modalClosing', closeModalProcess);
 
         return () => {
@@ -297,9 +297,8 @@ const Task = (p) => {
                         options={{
                             inline: true,
                             minDate: "today",
-                           
                         }}
-                        value={ new Date(dataInput.deadline)}
+                        value={dataInput?.deadline && new Date(dataInput.deadline)}
                         onChange={(date) => deadlineHdle.choseDateFP(date)}
                         />
                     </div>
@@ -323,16 +322,12 @@ const Task = (p) => {
                     setSecOpen({...secOpen, note: false })
                 }}>
                     <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} className="wrap-text"/>
-                    {/* <ReactQuill
-                        value={dataInput.note}
-                        readOnly={true}
-                        theme={"bubble"}
-                        /> */}
                 </div>
             </EditSection> 
         ) : (
             <ReactQuill 
                 theme="snow"
+                ref={QuillRef}
                 placeholder="Ghi chú của bạn..."
                 value={dataInput.note}
                 onChange={(value) => {

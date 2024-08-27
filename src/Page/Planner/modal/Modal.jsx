@@ -38,7 +38,6 @@ const TaskModal = () => {
             development: false,
             relationships: false,
         }
-        console.log(modal.content)
 
         if (modal.content !== null) {
             setDataInput({
@@ -58,7 +57,6 @@ const TaskModal = () => {
             const relate = modal.content.area.reduce((prev, next) => {
                 return { ...prev, [next.area]: true }
             }, area)
-            console.log("relate", relate)
             setArea(relate)
         } else {
             setDataInput({
@@ -91,7 +89,6 @@ const TaskContent = (p) => {
     const { dataInput, setDataInput, mode, areaData } = p
     const { modal }  = useContext(ModalContext)
 
-    console.log("dataInput", dataInput)
     return ( 
     <>
     {
