@@ -17,7 +17,6 @@ const Login = () => {
     username: "",
     password: "",
   });
-  console.log(123)
 
   const navigate = useNavigate()
 
@@ -62,7 +61,7 @@ const Login = () => {
 
       // Save token to localStorage
       if (token) {
-          localStorage.setItem('token', token);
+        localStorage.setItem('token', token);
           navigate('/planner')
       }
     } catch (error) {

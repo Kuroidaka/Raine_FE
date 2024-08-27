@@ -14,7 +14,7 @@ Example:
 
 const Button = (p) => {
 
-    const { title, onClick, className, style, name } = p
+    const { title="", onClick=() => {}, className="", style={}, name="" } = p
 
     const hleClick = (e) => {
         onClick(e)

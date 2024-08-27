@@ -11,7 +11,6 @@ import "react-json-pretty/themes/acai.css";
 
 import myCursor from "./assets/cursor/Labradoodle.cur";
 import RouterWrapper from "./Routes/Router";
-import { AuthProvider } from "./Context/Auth.context";
 const App = () => {
   useEffect(() => {
     document.body.style.cursor = `url(${myCursor}), auto`;
@@ -19,7 +18,6 @@ const App = () => {
 
   return (
     <DeviceProvider>
-      <AuthProvider>
         <GlobalStyles />
         <RouterWrapper />
         {/* <Routes>
@@ -32,7 +30,6 @@ const App = () => {
                     ></Route>
                   )})}
         </Routes> */}
-      </AuthProvider>
     </DeviceProvider>
   );
 };

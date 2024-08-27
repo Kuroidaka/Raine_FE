@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { data } from "../assets/photos/background.js"
 import { AuthContext } from "./Auth.context.jsx";
 import { API_BASE_URL, PREFIX } from "../config/index.js";
 import userApi from "../api/user.api.js";
@@ -13,15 +12,16 @@ export const AppearanceProvider = (p) => {
 
     useEffect(() => {
 
-        const fetchUser = async () => {
+        const fetchBGImage = async () => {
             try {
                 if(userData?.id) {
-                    const user = await userApi.getUser(userData.id)
-                    console.log("user", user)
-                    setAppearance({
-                        name: user.backgroundImage.name.split(".")[0],
-                        url: `${API_BASE_URL}${PREFIX}${user.backgroundImage.urlPath}` 
-                    })
+                    const backgroundImage = await userApi.getBackgroundImg()
+                    if(backgroundImage) {
+                        setAppearance({
+                            name: backgroundImage.name.split(".")[0],
+                            url: `${API_BASE_URL}${PREFIX}${backgroundImage.urlPath}` 
+                        })
+                    }
 
                 }
             } catch (error) {
@@ -29,7 +29,7 @@ export const AppearanceProvider = (p) => {
             }
         }
 
-        fetchUser()
+        fetchBGImage()
     }, [userData]);
     const contextValue = {
         appearance, setAppearance

@@ -14,6 +14,12 @@ const userApi = {
         // Send POST request with query parameters and data body
         return axiosClient.post(url, { bgId });
     },
+    getBackgroundImg: async () => {
+        const url = `/user/get-background-img`;
+
+        // Send POST request with query parameters and data body
+        return axiosClient.get(url);
+    },
     getTools: async () => {
         const url = `/user/tools`;
 

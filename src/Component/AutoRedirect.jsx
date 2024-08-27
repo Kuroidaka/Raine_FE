@@ -1,16 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import Loading from './Loading';
-import { AuthContext } from '../Context/Auth.context';
 import authenApi from '../api/authen.api';
 
 const AutoRedirect = (p) => {
   const { children } = p;
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { token } = useContext(AuthContext)
-
+  const token = localStorage.getItem("token") 
   useEffect(() => {
     if (token) {
         authenApi.verifyToken(token)

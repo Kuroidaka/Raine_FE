@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import userApi from "../../../api/user.api";
 import Loading from "../../../Component/Loading";

@@ -1,15 +1,14 @@
-import { lazy, Suspense, useEffect, useState, useContext } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import DefaultLayout from "../Layout/default";
 import paths from "./path";
 import Loading from "../Component/Loading";
-import { AuthContext } from "../Context/Auth.context";
-import RequireAuth from "../Component/RequireAuth";
 import AutoRedirect from "../Component/AutoRedirect";
 
 // const Login = lazy(() => import("../Page/Authen/Login"));
-import Login from "../Page/Authen/Login"
+import Login from "../Page/Authen/Login";
 import HomeLayout from "../Layout/HomeLayout";
+import { AuthProvider } from "../Context/Auth.context";
 const Planner = lazy(() => import("../Page/Planner/Planner"));
 const NoPage = lazy(() => import("../Page/NoPage"));
 const Setting = lazy(() => import("../Page/Setting/Setting"));
@@ -37,7 +36,6 @@ const getDashboardChildrenRoutes = async () => {
 
 const RouterWrapper = () => {
   const [routes, setRoutes] = useState(null);
-  const { isLoad } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchRoutes = async () => {
@@ -48,7 +46,6 @@ const RouterWrapper = () => {
           element: <HomeLayout />,
           errorElement: <>error occur</>,
           children: [
-            // { index: true, element: <Navigate to={paths.login} /> },
             {
               index: true,
               path: paths.login,
@@ -62,14 +59,14 @@ const RouterWrapper = () => {
               path: '/',
               element: (
                 <Suspense fallback={<Loading />}>
-                  <RequireAuth>
+                  <AuthProvider>
                     <DefaultLayout />
-                  </RequireAuth>
+                  </AuthProvider>
                 </Suspense>
               ),
               children: dashboardChildrenRoutes.length > 0 
               ? dashboardChildrenRoutes 
-              : [{ index: true, element: <Navigate to="/login" /> }],
+              : [{ index: true, element: <Navigate to={paths.login} /> }],
             },
             {
               path: paths.noPage,
@@ -89,12 +86,11 @@ const RouterWrapper = () => {
       setRoutes(createBrowserRouter(routerConfig));
     };
 
-    if (!isLoad) {
-      fetchRoutes();
-    }
-  }, [isLoad]);
+    fetchRoutes();
 
-  return isLoad || !routes ? <Loading /> : <RouterProvider router={routes} />;
+  }, []);
+
+  return routes ? <RouterProvider router={routes} /> : <Loading />;
 };
 
 export default RouterWrapper;
