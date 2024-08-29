@@ -6,6 +6,7 @@ import authenApi from "../../api/authen.api";
 import Loading from "../../Component/Loading";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router";
+import OverlayDimLoading from "../../Component/Overlay";
 
 const Login = () => {
   const emailRef = useRef(null);
@@ -77,9 +78,7 @@ const Login = () => {
       <ToastContainer></ToastContainer>
       <StyledForm>
       {loading && (
-          <Overlay>
-            <Loading />
-          </Overlay>
+        <OverlayDimLoading /> 
         )}
 
         <div className="svgContainer">

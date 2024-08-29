@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 import Loading from './Loading';
 import authenApi from '../api/authen.api';
+import OverlayDimLoading from './Overlay';
 
 const AutoRedirect = (p) => {
   const { children } = p;
@@ -28,7 +29,7 @@ const AutoRedirect = (p) => {
 
   if (isLoading) {
     // Optionally return a loading indicator while checking
-    return <Loading minsize="35px" />;
+    return <OverlayDimLoading /> 
   }
 
   if (isVerified) {

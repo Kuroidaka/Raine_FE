@@ -1,7 +1,7 @@
 
 import styled from "styled-components";
 import Sidebar from "./Component/Sidebar";
-import { Fragment, useContext, useState } from "react";
+import { Fragment, Suspense, useContext, useState } from "react";
 import DeviceContext from "../Context/Device.context";
 import Header from "./Component/Header";
 import { OverlayProvider } from "../Context/Overlay.context";
@@ -15,27 +15,31 @@ import { GoalProvider } from "../Context/Goal.context";
 import { ModalProvider } from "../Context/Modal.context";
 import Modal from "../Component/Modal";
 import { Outlet } from "react-router";
+import OverlayDimLoading from "../Component/Overlay";
+
 
 const DefaultLayout = () => {
 
     return (
-        <AppearanceProvider>
-            <OverlayProvider>
-                <WebSocketProvider>
-                    <ModalProvider>
-                        <TaskProvider>
-                            <RoutineProvider>
-                                <GoalProvider>
-                                    <DefaultLayoutComponent>
-                                        <Outlet />
-                                    </DefaultLayoutComponent>
-                                </GoalProvider>
-                            </RoutineProvider>
-                        </TaskProvider>
-                    </ModalProvider>
-                </WebSocketProvider>
-            </OverlayProvider>
-        </AppearanceProvider>
+        <AuthProvider>
+            <AppearanceProvider>
+                <OverlayProvider>
+                    <WebSocketProvider>
+                        <ModalProvider>
+                            <TaskProvider>
+                                <RoutineProvider>
+                                    <GoalProvider>
+                                        <DefaultLayoutComponent>
+                                            <Outlet />
+                                        </DefaultLayoutComponent>
+                                    </GoalProvider>
+                                </RoutineProvider>
+                            </TaskProvider>
+                        </ModalProvider>
+                    </WebSocketProvider>
+                </OverlayProvider>
+            </AppearanceProvider>
+        </AuthProvider>
     )
 }
 
@@ -69,14 +73,14 @@ const DefaultLayoutComponent = (p) => {
                     <Sidebar
                         isopen={isOpenMenu} toggle={toggleSideBar}
                         isOpenOvelay={isOpenOvelay} setIsOpenOverlay={setIsOpenOverlay}/>
-                    {isLoad ? (
-                        <Loading></Loading>
-                    ): (
+
+                    <Suspense fallback={isLoad && <OverlayDimLoading />}>
                         <div className="page-content">
+                            {/* <OverlayDimLoading /> */}
                             <Modal />
                             {children}
                         </div>
-                    )}
+                    </Suspense>
                 </div>
             </DftLaySty>
        </Fragment>

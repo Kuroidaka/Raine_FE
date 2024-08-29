@@ -66,7 +66,6 @@ align-items: center;
     transform: translateY(0.75em);
   }
 }
-  padding-top: 66px;
   color: #ccc;
   text-align: center;
 
