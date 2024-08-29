@@ -54,7 +54,7 @@ const Setting = () => {
           ))}
         </MenuList>
         <ContentWrapper>
-          <Suspense fallback={<Loading />}>{selectedComponent}</Suspense>
+          <Suspense fallback={<LoadingSettingWrap><Loading /></LoadingSettingWrap>}>{selectedComponent}</Suspense>
         </ContentWrapper>
       </BoxContent>
     </Container>
@@ -103,6 +103,9 @@ const ContentWrapper = styled.div `
     }
     border-left: 1px solid #cfcfcf;
     background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: auto;
 `;
 
@@ -141,3 +144,11 @@ const MenuItem = styled.li`
         }
     }
 `;
+
+const LoadingSettingWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+`

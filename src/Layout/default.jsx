@@ -43,6 +43,7 @@ const DefaultLayout = () => {
     )
 }
 
+
 const DefaultLayoutComponent = (p) => {
     const { children } = p
 

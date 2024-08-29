@@ -6,6 +6,7 @@ import styled from "styled-components";
 import ConversationContext from "../../../Context/conversation.context";
 import { toast } from "react-toastify";
 import Loading from "../../../Component/Loading";
+import OverlayDimLoading from "../../../Component/Overlay";
 
 
 const History = (p) => {
@@ -18,7 +19,7 @@ const History = (p) => {
 
 
     if(isLoading) {
-        return <Loading></Loading>
+        return <OverlayDimLoading />
     }
 
     if(error) {
