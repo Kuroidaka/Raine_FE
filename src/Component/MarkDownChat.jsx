@@ -112,7 +112,40 @@ ul {
     transform: scale(1.1);
     opacity: 0.9;
 } */
+    table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 18px;
+}
 
+table th, table td {
+  padding: 10px;
+  border: 2px solid #1a1a1a;
+  text-align: left;
+}
+
+table th {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+table tr {
+  background-color: #34495e;
+  color: #ecf0f1;
+  transition: background-color 0.3s ease;
+}
+
+table tr:nth-child(even) {
+  background-color: #2c3e50;
+}
+
+table tr:hover {
+  /* background-color: #1abc9c; */
+  /* color: #ffffff; */
+}
 
     
 `

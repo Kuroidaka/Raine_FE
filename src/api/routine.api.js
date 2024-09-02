@@ -24,7 +24,7 @@ const routineApi = {
   
     updateRoutine: async (id, params = {}) => {
       const url = `/routine/update/${id}`;
-      const { title, color, note, area = [], isActive, routineDate, routineTime } = params;
+      const { title, color, note, area, isActive, routineDate, routineTime } = params;
     
       const data = { title, color, note, isActive, routineTime };
     
@@ -32,12 +32,17 @@ const routineApi = {
       const filteredData = Object.fromEntries(
         Object.entries(data).filter(([_, value]) => value !== undefined)
       );
-    
-      return axiosClient.patch(url, {
-        area: [...area],
+      
+      const dataBody = {
         dates: routineDate,
         ...filteredData
-      });
+      }
+
+      if(area) {
+        dataBody.area = [...area]
+      }
+
+      return axiosClient.patch(url, dataBody);
     },
 
     deleteRoutine: async (id) => {

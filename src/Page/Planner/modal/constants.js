@@ -54,10 +54,6 @@ export const radioData = [
         value: "Mai"
     },
     {
-        id: "someday",
-        value: "Ngày nào đó"
-    },
-    {
         id: "specific-day",
         value: "Chọn ngày"
     },

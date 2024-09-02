@@ -66,10 +66,11 @@ export const RoutineProvider = (p) => {
     }, [addMutation]);
 
     const handleUpdateRoutine = async (routineId, data = {}) => {
-        if (Array.isArray(data.area) && isObject(data.area[0])) {
+        console.log(1)
+        if (data?.area && Array.isArray(data?.area) && isObject(data?.area[0])) {
             data.area = data.area.map(item => item.area);
         }
-        
+        console.log(2)
         updateMutation.mutate({ routineId, data });
     };
 

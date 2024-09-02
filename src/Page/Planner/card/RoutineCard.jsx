@@ -76,27 +76,7 @@ const RoutineCard = (p) => {
                         </Fragment>
 
     const AllDZ = () => <Fragment>
-                            {/* Must Do */}
-                            <DateZoneLabel name="must-do" className="mb-10" title="Phải Làm" num={dateType.mustdo.length} />
-                            <TaskCardList className="mb-30">
-                            {dateType.mustdo > 0 && dateType.mustdo.map((data, idx) => {
-                                return (
-                                    <Card 
-                                        key={idx} 
-                                        id={data.id}
-                                        title={data.title}
-                                        color={data?.color}
-                                        area={data.area}
-                                        note={data.note}
-                                        dataSection={dataSection}
-                                        setDateSection={setDateSection}
-                                        routineDate={data.routineDate}
-                                        isActive={data.isActive}
-                                        routineData={data}
-                                        />
-                                )
-                            })}
-                            </TaskCardList>
+                            {TodayDZ()}
                             {/* Do Not Need */}
                             <DateZoneLabel name="must-do" className="mb-10" title="Không cần phải làm" num={dateType?.doNotNeed?.length ?? 0} />
                             <TaskCardList className="mb-30">

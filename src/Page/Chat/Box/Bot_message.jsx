@@ -65,6 +65,10 @@ const functionIcon = {
         "icon": "⏱️",
         "process": "Query Routines",
     },
+    "ReminderCreateChatService":{
+        "icon": "⏱️",
+        "process": "Create Task",
+    },
 
 }
 
@@ -177,77 +181,81 @@ const FunctionAgent = (p) => {
     )
 }
 
-const FunctionData = (p) => {
-    const { agent } = p
-
-    const [listFuncData, setListFuncData] = useState([])
-    const [funcName, setFuncName] = useState("")
+const FunctionData = ({ agent }) => {
+    const [listFuncData, setListFuncData] = useState([]);
+    const [funcName, setFuncName] = useState("");
 
     useEffect(() => {
-        
         const processFunctionListType = () => {
             try {
-                const data = JSON.parse(agent.data)
-                setListFuncData(data)
-                
+                // Attempt to parse agent.data if it's a string
+                let data = typeof agent.data === 'string' ? JSON.parse(agent.data) : agent.data;
+            
+                // Ensure that data is always an array
+                setListFuncData(Array.isArray(data) ? data : (data !== null && data !== undefined) ? [data] : []);
             } catch (error) {
-                setListFuncData(agent.data)
+                console.error('Failed to parse agent data:', error);
+                setListFuncData([]);
             }
-            setFuncName(agent.name)
-        }
+            setFuncName(agent.name);
+        };
 
-        processFunctionListType()
+        processFunctionListType();
     }, [agent]);
 
-    console.log("listFuncData", listFuncData)
+    const renderCards = () => {
+        if (!listFuncData || listFuncData.length === 0) return null;
 
-    if(listFuncData && listFuncData?.length > 0)
+        const cardComponents = {
+            "ReminderChatService": TaskCard,
+            "RoutineChatService": RoutineCard,
+            "ReminderCreateChatService": TaskCard,
+        };
 
-        if(funcName === "ReminderChatService") 
-            return (
-                <FuncDataContainer>
-                {
-                listFuncData.map(funcData => {
-                    const dataProps = {
-                        title: funcData.title,
-                        color: funcData.color,
-                        deadline: funcData.deadline,
-                        area: funcData.area,
-                        note: funcData.note,
-                        subTask: funcData.subTask,
-                        id:funcData.id,
-                        status: funcData.status,
-                        mode: "view"
-                    }
-                    return (<TaskCard key={funcData.id} {...dataProps}/>)
-                })}
-                </FuncDataContainer>
-            )
-        else if(funcName === "RoutineChatService")  {
-            return (
-                <FuncDataContainer>
-                {
-                listFuncData.map(funcData => {
-                    const dataProps = {
-                        title: funcData.title,
-                        color: funcData.color,
-                        area: funcData.area,
-                        note: funcData.note,
-                        routineDate: funcData.routineDate,
-                        id:funcData.id,
-                        isActive: funcData.isActive,
-                        routineTime: funcData.routineTime,
-                        mode: "view"
-                    }
+        const sharedProps = (funcData) => ({
+            title: funcData.title,
+            color: funcData.color,
+            note: funcData.note,
+            id: funcData.id,
+            mode: "view",
+        });
 
-                    // console.log("dataProps", dataProps)
-                    return (<RoutineCard key={funcData.id} routineData={dataProps} {...dataProps}/>)
-                })}
-                </FuncDataContainer>
-            )
-        }
-    return null
-}
+        const specificProps = {
+            "ReminderChatService": (funcData) => ({
+                ...sharedProps(funcData),
+                deadline: funcData.deadline,
+                area: funcData.area,
+                subTask: funcData.subTask,
+                status: funcData.status,
+            }),
+            "RoutineChatService": (funcData) => ({
+                ...sharedProps(funcData),
+                area: funcData.area,
+                routineDate: funcData.routineDate,
+                isActive: funcData.isActive,
+                routineTime: funcData.routineTime,
+            }),
+            "ReminderCreateChatService": (funcData) => ({
+                ...sharedProps(funcData),
+                deadline: funcData.deadline,
+                status: funcData.status,
+            }),
+        };
+
+        const CardComponent = cardComponents[funcName];
+        const getProps = specificProps[funcName];
+
+        return (
+            <FuncDataContainer>
+                {listFuncData.map((funcData) => (
+                    <CardComponent key={funcData.id} {...getProps(funcData)} />
+                ))}
+            </FuncDataContainer>
+        );
+    };
+
+    return renderCards();
+};
 
 export default BotMsg;
 
@@ -276,7 +284,8 @@ const Container = styled.div`
         }
     }
     .chat-content{
-        width: 80%;
+        max-width: 80%;
+        width: auto;
         margin-left: 18px;
         p.chat-person {
             font-size: 16px;   /* Thay đổi kích thước của chữ StudyIO */

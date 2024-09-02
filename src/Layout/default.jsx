@@ -9,7 +9,7 @@ import AppearanceContext, { AppearanceProvider } from "../Context/Appearance.con
 import { WebSocketProvider } from "../Context/socket.context";
 import { AuthContext, AuthProvider } from "../Context/Auth.context";
 import Loading from "../Component/Loading";
-import { TaskProvider } from "../Context/Task.context";
+import TaskContext, { TaskProvider } from "../Context/Task.context";
 import { RoutineProvider } from "../Context/Routine.context";
 import { GoalProvider } from "../Context/Goal.context";
 import { ModalProvider } from "../Context/Modal.context";
@@ -50,6 +50,7 @@ const DefaultLayoutComponent = (p) => {
     const { device } = useContext(DeviceContext)
     const { appearance } = useContext(AppearanceContext) || { url: "", name: ""}
     const { isLoad } = useContext(AuthContext)
+    const { isLoading } = useContext(TaskContext)
 
     const [isOpenMenu, setIsOpenMenu] = useState(false)
     const [isOpenOvelay, setIsOpenOverlay] = useState(false)
@@ -77,7 +78,6 @@ const DefaultLayoutComponent = (p) => {
 
                     <Suspense fallback={isLoad && <OverlayDimLoading />}>
                         <div className="page-content">
-                            {/* <OverlayDimLoading /> */}
                             <Modal />
                             {children}
                         </div>
