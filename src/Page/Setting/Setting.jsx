@@ -95,18 +95,19 @@ const MenuList = styled.ul `
 `;
 
 const ContentWrapper = styled.div `
+  overflow-y: scroll;
     @media screen and (min-width: 769px) {
         width: 80%;
     }
     @media screen and (max-width: 768px) {
         width: 100%;
     }
-    border-left: 1px solid #cfcfcf;
-    background-color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: auto;
+  border-left: 1px solid #cfcfcf;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
 `;
 
 const MenuItem = styled.li`

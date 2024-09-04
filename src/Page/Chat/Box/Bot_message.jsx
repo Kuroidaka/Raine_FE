@@ -69,6 +69,10 @@ const functionIcon = {
         "icon": "⏱️",
         "process": "Create Task",
     },
+    "RoutineCreateChatService":{
+        "icon": "⏱️",
+        "process": "Create Routine",
+    },
 
 }
 
@@ -210,6 +214,7 @@ const FunctionData = ({ agent }) => {
             "ReminderChatService": TaskCard,
             "RoutineChatService": RoutineCard,
             "ReminderCreateChatService": TaskCard,
+            "RoutineCreateChatService": RoutineCard
         };
 
         const sharedProps = (funcData) => ({
@@ -239,6 +244,11 @@ const FunctionData = ({ agent }) => {
                 ...sharedProps(funcData),
                 deadline: funcData.deadline,
                 status: funcData.status,
+            }),
+            "RoutineCreateChatService": (funcData) => ({
+                ...sharedProps(funcData),
+                isActive: funcData.isActive,
+                routineTime: funcData.routineTime,
             }),
         };
 

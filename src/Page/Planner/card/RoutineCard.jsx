@@ -137,8 +137,9 @@ export const Card = (p) => {
         routineDate,
         isActive,
         mode = "edit",
+        routineTime
         
-        routineData
+        // routineData
      } = p
     // const { task, setTask }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
@@ -158,7 +159,7 @@ export const Card = (p) => {
                 id,
                 routineDate,
                 isActive,
-                routineTime: routineData.routineTime
+                routineTime: routineTime
             }
             openModal(title, data, "routine", mode)
         },
@@ -236,9 +237,9 @@ export const Card = (p) => {
     }
 
     return (
-        <TaskCardContainer name={id} style={color != null ? {backgroundColor: color} : {backgroundColor: "#FFFFF"}} className="text-dark">
+        <TaskCardContainer name={id} style={color !== "" ? {backgroundColor: color} : {backgroundColor: "#FFFFF"}} className="text-dark">
             <MainTask>
-                <div className={`card-title ${color ?"text-white" : ""}  ${checked ? "blur" : ""}`}>
+                <div className={`card-title ${color === "" ?"text-white" : "text-dark"}  ${checked ? "blur" : ""}`}>
                     <Title>
                         <RoutineChecked>
                         {routineDate && updateRecentDates(routineDate).reverse().map((date) => {
@@ -255,7 +256,7 @@ export const Card = (p) => {
                     </RelateArea>
                 </div>
 
-                <div className={`card-option ${color ?"text-white" : ""}`}>
+                <div className={`card-option ${color === "" ?"text-white" : ""}`}>
                     <Tippy
                         interactive
                         render={attrs => (

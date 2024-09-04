@@ -60,6 +60,7 @@ const Title = styled.div`
 `
 
 const ContentWrapper = styled.div `
+
   /* border-color: #cfcfcf;
   border-radius: 0.375rem;
   border-style: solid;
