@@ -53,10 +53,10 @@ const RoutineCard = (p) => {
                                     {/* Must Do */}
                                     <DateZoneLabel name="must-do" className="mb-10" title="Phải Làm" num={dateType.mustdo.length} />
                                     <TaskCardList className="mb-30">
-                                    {dateType.mustdo.length >0 && dateType.mustdo.map((data, idx) => {
+                                    {dateType.mustdo.length >0 && dateType.mustdo.map((data) => {
                                         return (
                                             <Card 
-                                                key={idx} 
+                                                key={data.id} 
                                                 id={data.id}
                                                 title={data.title}
                                                 color={data?.color}
@@ -80,10 +80,10 @@ const RoutineCard = (p) => {
                             {/* Do Not Need */}
                             <DateZoneLabel name="must-do" className="mb-10" title="Không cần phải làm" num={dateType?.doNotNeed?.length ?? 0} />
                             <TaskCardList className="mb-30">
-                            {dateType.doNotNeed.length > 0 && dateType.doNotNeed.map((data, idx) => {
+                            {dateType.doNotNeed.length > 0 && dateType.doNotNeed.map((data) => {
                                 return (
                                     <Card 
-                                        key={idx} 
+                                        key={data.id} 
                                         id={data.id}
                                         title={data.title}
                                         color={data?.color}
@@ -144,7 +144,7 @@ export const Card = (p) => {
     // const { task, setTask }  = useContext(TaskContext)
     const { openModal }  = useContext(ModalContext)
     
-    const { handleUpdateRoutine }  = useContext(RoutineContext)
+    const { handleUpdateRoutine, handleUpdateRoutineDates }  = useContext(RoutineContext)
 
     const [checked, setChecked] = useState(false)
     const [option, setOption] = useState(false)
@@ -210,22 +210,24 @@ export const Card = (p) => {
             return !isSameDate(new Date(d.completion_date), new Date(date))
         })
 
-        const routineId = dataSection[0].id
-        await handleUpdateRoutine(routineId, { routineDate: dateList })
+        const routineId = id
+        await handleUpdateRoutineDates(routineId, dateList)
     }
 
     const handleClickCheckDate = async (date) => {
         if(mode === "view") return null
         console.log(dataSection)
 
-        const dates = dataSection[0].routineDate.map(({completion_date}) => ({ completion_date }))
+        const dates = dataSection[0].routineDate.map(({completion_date}) => ({ 
+            completion_date :new Date(completion_date).toString()  
+        }))
         dates.push({
             completion_date: date
         })
 
-        const routineId = dataSection[0].id
+        const routineId = id
 
-        await handleUpdateRoutine(routineId, { routineDate: dates })
+        await handleUpdateRoutineDates(routineId, dates)
         // setDateSection(prev => {
         //     const newRoutine = [...prev]
         //     const index = newRoutine.map(e => e.id).indexOf(id);

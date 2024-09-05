@@ -77,7 +77,7 @@ const functionIcon = {
 }
 
 const BotMsg = (p) => {
-    const { text, className, functionList=[] } = p
+    const { text, className, functionList=[], key } = p
     const { imgPlaceHolder } = Img
 
     // const [isScroll, setIsScroll] = useState(false);
@@ -102,13 +102,13 @@ const BotMsg = (p) => {
         <div className="chat-content">
             <p className='chat-person'>{"Raine"}</p>
             {functionList.length > 0 && 
-                functionList.map((agent, index) => (
-                <>
-                    <div className="func-data-wrapper">
-                        <FunctionAgent key={index} agent={agent}/>
-                       <div className="func-data-list"> <FunctionData key={index} agent={agent}/></div>
+                functionList.map((agent) => (
+                <div key={agent.id}>
+                    <div className="func-data-wrapper" >
+                        <FunctionAgent agent={agent}/>
+                       <div className="func-data-list"> <FunctionData agent={agent}/></div>
                     </div>
-                </>
+                </div>
             ))}
            {(text || functionList.length > 0) &&
             <div className="bot-text-wrapper">

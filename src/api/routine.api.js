@@ -44,6 +44,15 @@ const routineApi = {
 
       return axiosClient.patch(url, dataBody);
     },
+    updateRoutineDates: async (id, routineDate = []) => {
+      const url = `/routine/update/${id}/dates`;
+    
+      const dataBody = {
+        dates: routineDate,
+      }
+
+      return axiosClient.patch(url, dataBody);
+    },
 
     deleteRoutine: async (id) => {
       const url = `/routine/delete/${id}`;

@@ -38,6 +38,7 @@ export const RoutineProvider = (p) => {
         },
     });
 
+    
     const updateMutation = useMutation({
         mutationFn: async ({ routineId, data }) => {
             await routineApi.updateRoutine(routineId, data);
@@ -48,7 +49,16 @@ export const RoutineProvider = (p) => {
             console.log(error);
         },
     });
-
+    const updateDatesMutation = useMutation({
+        mutationFn: async ({ routineId, routineDate }) => {
+            await routineApi.updateRoutineDates(routineId, routineDate);
+        },
+        onSuccess: () => queryClient.invalidateQueries(['routines']),
+        onError: (error) => {
+            toast.error("Something went wrong");
+            console.log(error);
+        },
+    });
     const toggleStatusMutation = useMutation({
         mutationFn: async ({ routineId }) => {
             await routineApi.toggleRoutineStatus(routineId);
@@ -66,12 +76,13 @@ export const RoutineProvider = (p) => {
     }, [addMutation]);
 
     const handleUpdateRoutine = async (routineId, data = {}) => {
-        console.log(1)
         if (data?.area && Array.isArray(data?.area) && isObject(data?.area[0])) {
             data.area = data.area.map(item => item.area);
         }
-        console.log(2)
         updateMutation.mutate({ routineId, data });
+    };
+    const handleUpdateRoutineDates = async (routineId, routineDate) => {
+        updateDatesMutation.mutate({ routineId, routineDate });
     };
 
     const handleToggleRoutineStatus = async (routineId) => {
@@ -86,7 +97,7 @@ export const RoutineProvider = (p) => {
 
     const valueContext = {
         routine, setRoutine,
-        handleAddRoutine, handleDeleteRoutine, handleUpdateRoutine, handleToggleRoutineStatus,
+        handleAddRoutine, handleDeleteRoutine, handleUpdateRoutine, handleToggleRoutineStatus, handleUpdateRoutineDates,
         loading: isLoading
     };
 

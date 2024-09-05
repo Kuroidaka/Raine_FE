@@ -32,21 +32,22 @@ const ChatBox = () => {
         <Conversation ref={pageRef} className='list-chat'>
             {messages.length > 0 ? (
                 <>
-               {messages.map((msg, index) => (
-                    !msg.isBot ? (
-                        <UserMsg 
-                            pageRef={pageRef} 
-                            key={index} 
-                            text={msg.text} 
-                            imgList={msg.imgList} 
-                        />
-                    ) : (msg.isBot) && ( 
-                        <BotMsg 
-                            key={index} 
-                            text={msg.text} 
-                            functionList={msg.functionData} 
-                        />
-                    )
+               {messages.map((msg) => (
+                <div key={msg.id} >
+                {!msg.isBot ? (
+                    <UserMsg 
+                        pageRef={pageRef} 
+                        
+                        text={msg.text} 
+                        imgList={msg.imgList} 
+                    />
+                ) : (msg.isBot) && ( 
+                    <BotMsg 
+                        text={msg.text} 
+                        functionList={msg.functionData} 
+                    />
+                )}
+                </div>
                 ))}
 
                 </>
