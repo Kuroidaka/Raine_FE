@@ -195,12 +195,18 @@ export const ConversationProvider = (p) => {
     const addMutation = useMutation({
         mutationFn: async ({data, isStream, isVision}) => {
             await cacheConversation.addMsg(data)
-            const con = await conversationApi.createChat(data, isStream, isVision)
-            if(!selectedConID) {
-                setTimeout(() => {
-                    navigate(`/chat/${con.conversationID}`)
-                }, 1000);
+
+            if(!isVision) {
+                const con = await conversationApi.createChat(data, isStream)
+                if(!selectedConID) { 
+                    setTimeout(() => {
+                        navigate(`/chat/${con.conversationID}`)
+                    }, 1000);
+                }
+            }else if(data.conversationID) {
+                navigate(`/chat/cam/${data.conversationID}`)
             }
+    
         },
         onSuccess: () => queryClient.invalidateQueries(['conversations', selectedConID]),        
         onError: (error) => {
@@ -216,10 +222,9 @@ export const ConversationProvider = (p) => {
     }, [deleteMutation]);
 
     // Function to add a new conversation
-    const addMsg = useCallback((data, isStream, isVision) => {
+    const addMsg = useCallback((data, isStream, isVision=false) => {
         addMutation.mutate({data, isStream, isVision});
     }, [addMutation]);
-
 
     const contextValue = {
         conversationList: conversation,

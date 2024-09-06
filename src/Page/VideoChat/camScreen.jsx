@@ -6,44 +6,28 @@ import {  useNavigate } from "react-router-dom";
 import useMediaRecorder from '@wmik/use-media-recorder';
 
 import useSilenceAwareRecorder from 'silence-aware-recorder/react';
-import { imagesGrid } from './helper';
 import conversationApi from '../../api/conversation.api';
 import { toast } from 'react-toastify';
-import { base64ToFile } from '../../Util';
 import ActionBox from './ActionBox';
 import AudioSpeak from './AudioSpeak';
+import { IMAGE_WIDTH, INTERVAL, SCREEN_IMAGE_WIDTH, SILENCE_DURATION, SILENT_THRESHOLD } from './constant';
 
-
-const INTERVAL = 1000
-const SILENCE_DURATION = 2500
-const SILENT_THRESHOLD = -30
-
-const SCREEN_IMAGE_WIDTH = 512
-const SCREEN_MAX_SCREENSHOTS = 1
-const SCREEN_IMAGE_QUALITY = 1
-const SCREEN_COLUMNS = 1
-
-const IMAGE_WIDTH = 1080
-const MAX_SCREENSHOTS = 30
-const IMAGE_QUALITY = 1
-const COLUMNS = 4
 const CamScreen = (p) => {
   const {
     setPhase,
     setIsWaiting,
     canvasRef,
-    setImagesGridUrl,
     setBotText,
-    setTranscription,
     isBusy,
     videoRef,
-    conID,
+    isScreenShare,
+    screenshotsRef,
+    
+    handleProcessAI
   } = p
 
     const maxVolumeRef = useRef(0);
     const minVolumeRef = useRef(-100);
-    const isScreenShare = useRef(false)
-    const screenshotsRef = useRef([]);
     
     const screenRef = useRef(null);
 
@@ -68,28 +52,8 @@ const CamScreen = (p) => {
       mediaStreamConstraints: { audio: false, video: true },
     });
 
-    const handleSendClient = async ({ inputValue, file, conversationID }) => {
-      let result 
 
-      // API CHAT
-      try {
-        result = await conversationApi.createChatVideo({
-          prompt: inputValue,
-          file,
-          conversationID
-        }, true);
-        console.log("final response: ", result.content);
-        setBotText(result.content)
-        
-      } catch (error) {
-        // result.content = error.message
-        throw new Error
-      }
-
-      return result
-    };
-      
-    async function onSpeech(data) {
+    async function onSpeech(data) { //User say
       if (isBusy.current) return;
       isBusy.current = true;
       console.log("data", URL.createObjectURL(data))
@@ -98,22 +62,7 @@ const CamScreen = (p) => {
       const result = await handleSTT(data)
 
       if (result.content.length > 0) {
-        setTranscription(result.content);
-
-        const FrameFile = videoRef.current.srcObject !== null ? await videoProcess() : null
-        setPhase("user: processing completion");
-
-        console.log("conID", conID)
-        const { content, conversationID: returnedConID } = await handleSendClient({
-          file: FrameFile,
-          inputValue: result.content,
-          conversationID: conID.current
-        });
-        console.log("returnedConID", returnedConID)
-        setIsWaiting(false);
-        if(conID.current === null) conID.current = returnedConID 
-
-        await handleTTS(content)
+        await handleProcessAI(result.content)
       }
       else { // continue recording
         isBusy.current = false;
@@ -155,27 +104,7 @@ const CamScreen = (p) => {
       }
     }
 
-    const handleTTS = async (content) => {
-      try {
 
-        if (content && typeof content === "string") {
-
-          setPhase("assistant: processing text to speech");
-
-          const ttsFormData = new FormData();
-          ttsFormData.append("input", content);
-
-          await conversationApi.tts(content);
-
-          setPhase("assistant: playing audio");
-
-        }
-      
-      } catch (error) {
-        console.log(error)
-        throw new error
-      }
-    }
 
     // Define recorder for audio
     const audio = useSilenceAwareRecorder({
@@ -194,34 +123,6 @@ const CamScreen = (p) => {
         navigate("/chat");
     };
   
-    const videoProcess = async () => {
-      setImagesGridUrl(null);
-      setPhase("user: uploading video captures");
-  
-      // gen img grid
-      const maxScreenshots = isScreenShare.current ? SCREEN_MAX_SCREENSHOTS : MAX_SCREENSHOTS
-      console.log("MAX_SCREENSHOTS", isScreenShare.current)
-  
-      screenshotsRef.current = screenshotsRef.current.slice(
-        -maxScreenshots
-      ); // Keep only the last XXX screenshots
-  
-      const imageUrl = await imagesGrid({
-        base64Images: screenshotsRef.current,
-        columns: isScreenShare.current ? SCREEN_COLUMNS : COLUMNS,
-        gridImageWidth: isScreenShare.current ? SCREEN_IMAGE_WIDTH : IMAGE_WIDTH ,
-        quality: isScreenShare.current ? SCREEN_IMAGE_QUALITY : IMAGE_QUALITY,
-      });
-  
-      screenshotsRef.current = [];
-      // downloadImageFromBase64(imageUrl)
-      const file = base64ToFile(imageUrl)
-      // const uploadUrls = await hostImages([imageUrl]);
-  
-      setImagesGridUrl(imageUrl);
-  
-      return file
-    }
 
     const recorder = {
       hartStart: (vi, ref) => {

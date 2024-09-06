@@ -1,14 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import {
-    Send, File1, Image, Delete, AttachFile
-} from "../../../assets/Icons/index";
-import * as motion from "framer-motion";
-// import ConversationContext from "../../../context/Conversation.context";
-import Typing from "../../../component/Typing";
+import { File1, Image, Delete, AttachFile } from "../../../assets/Icons/index";
+import ConversationContext from "../../../Context/conversation.context";
 
 const InputCom = (p) => {
     const { filesImages, uploadFileImg, setFilesImages, handleSend } = p;
-    // const { isWaiting, setIsWaiting, selectedCon } = useContext(ConversationContext);
+    // const { isWaiting, setIsWaiting, selectedConID } = useContext(ConversationContext);
     const [inputValue, setInputValue] = useState('');
 
     const handleInputChange = (event) => {
@@ -21,15 +17,6 @@ const InputCom = (p) => {
             handleSend(inputValue)
             setInputValue('');
         }
-        // setFiles([]);
-        // if (uploadedFiles.length > 0) {
-        //     setShowContent(true);
-        // }
-        // if (updatedFiles.length === 0) {
-        //     setShowContent(false);
-        // }
-
-
     };
 
     const handleEnterKeyPress = (e) => {

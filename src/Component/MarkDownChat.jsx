@@ -72,6 +72,7 @@ hr {
 
 ul {
     list-style: disc;
+    margin-left: 23px;
 }
 
 .code-block-header {

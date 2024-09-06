@@ -5,11 +5,13 @@ import { motion } from "framer-motion";
 
 import ChatBox from "./Box";
 import InputBox from "./input/index";
+import ConversationContext from "../../Context/conversation.context";
+import { useContext } from "react";
 // import ConversationContext from "../../Context/conversation.context";
 // import { useContext } from "react";
 
 const Interact = () => {
-  // const { } = useContext(ConversationContext);
+  const { selectedConID } = useContext(ConversationContext);
 
   const navigate = useNavigate();
 
@@ -19,7 +21,12 @@ const Interact = () => {
   };
   const handleSwitchVideoChat = () => {
     // createNewConversation()
-    navigate("/chat/cam");
+    if(selectedConID) {
+      navigate(`/chat/cam/${selectedConID}`);
+    }
+    else{
+      navigate(`/chat/cam`);
+    }
   };
 
   return (
@@ -119,5 +126,6 @@ const InputContainer = styled.div`
   width: 100%;
   height: auto;
   position: absolute;
+  padding: 0.2em 10%;
   bottom: 25px;
 `;

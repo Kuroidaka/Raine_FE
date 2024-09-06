@@ -8,21 +8,13 @@ import Input from './Input';
 // import ConversationContext from '../../../context/Conversation.context';
 // import FileContext from '../../../context/File.context';
 // import fileApi from '../../../api/v1/file';
-import { filesToBase64, hostImages, filesToBlobURLs } from "../../../Util" 
+import { filesToBase64, hostImages } from "../../../Util" 
 import ConversationContext from '../../../Context/conversation.context';
 
-const InputBox = () => {
-
+const InputBox = (p) => {
+    const { handleProcessAI, conversationId } = p
     const { selectedConID, addMsg } = useContext(ConversationContext);
-    // const { filesDocs, setFilesDocs, delFile, isLoadingFile, uploadFile } = useContext(FileContext);
-    const [loadingFileList, setLoadingFileList] = useState([]);
-    // file image for upload at the input box
-    const [filesImages, setFilesImages] = useState(
-    [
-        // { id: 1, type: 'image', name: 'phong_canh.png' },
-        // { id: 3, type: 'file', name: 'chinh_sach_moi.pdf' }
-    ]
-    )
+    const [filesImages, setFilesImages] = useState([])
 
 
     const imageFile = {
@@ -66,60 +58,27 @@ const InputBox = () => {
             // });
         }
     }
-
-    // const handleUploadFileImg = async (event) => {
-        
-    //     const uploadedFiles = event.target.files;
-    //     const formData = new FormData();
-    //     for (let i = 0; i < uploadedFiles.length; i++) {
-    //         const file = uploadedFiles[i];
-    //         const newFile = { id: Date.now() + i, type: 'file', name: file.name };   
-    //         formData.append("images", file);
-    //         setFilesImages(prevFiles => [...prevFiles, newFile]);
-    //     }
-    //     const result = await uploadFileImg(formData)
-
-    //     return result
-
-    // };
-
-    const handleUploadFileDocs = (event) => {
-        const uploadedFiles = event.target.files;
-        const formData = new FormData();
-        const newListFile = []
-        for (let i = 0; i < uploadedFiles.length; i++) {
-            const file = uploadedFiles[i];
-            const newFile = { id: Date.now() + i,size: file.size, name: file.name };   
-
-            formData.append("files", file);
-            newListFile.push(newFile)
-            // setFilesDocs(prevFiles => [...prevFiles, newFile])
-            setLoadingFileList(prevFiles => [...prevFiles, newFile.name])
-        }
-
-        // uploadFile(formData)
-    };
-
-    // useEffect(() => {
-    //     if(!isLoadingFile) {
-    //         setLoadingFileList([])
-    //     }
-    // }, [isLoadingFile]);
-
     const handleSend = async (inputValue) => {
         const dataBody = {
             prompt: inputValue
         }
 
-        if(selectedConID && selectedConID !== -1) {
-            dataBody.conversationID = selectedConID
+        console.log("selectedConID", selectedConID)
+        if(selectedConID && selectedConID !== -1 || conversationId) {
+            dataBody.conversationID = selectedConID || conversationId
         }
-
-        await addMsg(dataBody, true)
-
+        let isStream = true
+        let isVision = false
+        if (typeof handleProcessAI === "function") {
+            isVision = true
+            addMsg(dataBody, isStream, isVision)
+            await handleProcessAI(inputValue);
+        }
+        else {
+            await addMsg(dataBody, isStream)
+        }
     };
 
-    // const docsProp = { filesDocs, handleUploadFileDocs, setFilesDocs, delFile, isLoadingFile, loadingFileList }
     const inputProp = { 
         filesImages,
         uploadFileImg: imageFile.setFileImg,
@@ -129,7 +88,6 @@ const InputBox = () => {
 
     return (
         <div className='Input'>            
-            {/* <DocsUploaded {...docsProp}/> */}
             <Input {...inputProp}/>
         </div>
     );

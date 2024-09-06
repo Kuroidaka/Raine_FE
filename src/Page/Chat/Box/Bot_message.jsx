@@ -80,9 +80,6 @@ const BotMsg = (p) => {
     const { text, className, functionList=[], key } = p
     const { imgPlaceHolder } = Img
 
-    // const [isScroll, setIsScroll] = useState(false);
-    console.log("functionList", functionList)
-
     const scrollToBottom = () => {
         // pageRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
         const div = document.querySelector('.list-chat');

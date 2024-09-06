@@ -30,6 +30,7 @@ const getDashboardChildrenRoutes = async () => {
     { page: "chat", path: paths.chat, element: <SuspenseWrapper><ChatPage /></SuspenseWrapper> },
     { page: "chat", path: `${paths.chat}/:id`, element: <SuspenseWrapper><ChatPage /></SuspenseWrapper> },
     { page: "videoChat", path: paths.videoChat, element: <SuspenseWrapper><VideoChat /></SuspenseWrapper> },
+    { page: "videoChat", path: `${paths.videoChat}/:id`, element: <SuspenseWrapper><VideoChat /></SuspenseWrapper> },
     { page: "setting", path: paths.setting, element: <SuspenseWrapper><Setting /></SuspenseWrapper> },
     { page: "setting", path: `${paths.setting}/:name`, element: <SuspenseWrapper><Setting /></SuspenseWrapper> },
     { page: "test", path: paths.test, element: <SuspenseWrapper><StreamTest /></SuspenseWrapper> },
