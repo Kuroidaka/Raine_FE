@@ -9,6 +9,7 @@ import Overlay from "../Layout/Component/Overlay";
 import myCursor from '../assets/cursor/Labrador_Retriever.cur';
 import TaskModal from "../Page/Planner/modal/Modal";
 import ToolsDataModal from "../Page/Chat/ToolsDataModal";
+import RelateMemoModal from "../Page/Chat/RelateMemoModal";
 
 const Modal = () => {
 
@@ -77,6 +78,10 @@ const Modal = () => {
 
         if(modal.type === "tool") {
             return <ToolsDataModal />
+        }
+
+        if(modal.type === "memo") {
+            return <RelateMemoModal />
         }
     }
 

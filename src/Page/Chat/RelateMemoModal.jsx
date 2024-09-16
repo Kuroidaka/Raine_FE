@@ -6,28 +6,31 @@ import styled from "styled-components";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion"
 
-const ToolsDataModal = () => {
+const RelateMemoModal = () => {
 
     
     const { modal } = useContext(ModalContext)
-    const [message, setMessage] = useState("")
     const [jsonData, setJsonData] = useState(null)
 
-    const [selectedSec, setSelectedSec] = useState("Comment")
+    const [selectedSec, setSelectedSec] = useState("JSON")
 
     useEffect(() => {
         if(modal.content) {
-            const jsonString = JSON.stringify(modal.content.data);
+
+            const dataJson = modal.content.map(data => {
+                return {
+                    output_text: data.output_text,
+                    distance: data.distance,
+                    createdAt: data.createdAt,
+                }
+            })
+            const jsonString = JSON.stringify(dataJson);
             setJsonData(jsonString)
-            setMessage(modal.content.comment)
         }
 
     }, [modal]);
 
     const sections = [
-        {
-            name: "Comment"
-        },
         {
             name: "JSON"
         }
@@ -42,7 +45,7 @@ const ToolsDataModal = () => {
                 <motion.li
                     key={idx}
                     className={`col3 pointer-cursor active`}
-                    onClick={() => {setSelectedSec( sec.name)}}>
+                    onClick={() => {setSelectedSec(sec.name)}}>
                     {sec.name}
                    {selectedSec === sec.name && <Underline layoutId="underline" />}
                 </motion.li>
@@ -50,25 +53,18 @@ const ToolsDataModal = () => {
             })}
             </TabList>
 
-            {selectedSec ==="Comment" ?
-                 <div className="mark-down-wrapper">
-                 <MarkDown text={message}></MarkDown>
-                </div> :
-            selectedSec ==="JSON" && jsonData !== null &&
+            {selectedSec ==="JSON" && jsonData !== null &&
             <div className="json-wrapper">
                 <JSONPretty 
                 id="json-pretty"
                 onJSONPrettyError={() => toast.error("Error occur when pretty JSON")}
                 data={jsonData}></JSONPretty>
-            </div>
-            }
-
-           
+            </div>}
         </Container>
      );
 }
  
-export default ToolsDataModal;
+export default RelateMemoModal;
 
 const Container = styled.div` 
     padding: 10px;

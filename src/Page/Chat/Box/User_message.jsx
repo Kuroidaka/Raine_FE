@@ -9,6 +9,7 @@ import Img from "../../../assets/img";
 
 import ImageCom from "../../../component/Image";
 import MarkDown from "../../../component/MarkDownChat";
+import { FadeIn } from "../../../Component/Motion";
 
 const UserMsg = (p) => {
 
@@ -63,7 +64,7 @@ const UserMsg = (p) => {
  
 export default UserMsg;
 
-const Container = styled.div`
+const Container = styled(FadeIn)`
     width: 100%;
     display: flex;
     direction: rtl;

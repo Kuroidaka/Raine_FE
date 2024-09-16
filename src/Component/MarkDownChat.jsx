@@ -66,6 +66,10 @@ const Container = styled.div `
     }
 }
 
+p {
+    font-size: 1.4rem;
+}
+
 hr {
     margin: 10px 5px;
 }
@@ -73,6 +77,10 @@ hr {
 ul {
     list-style: disc;
     margin-left: 23px;
+
+    li {
+        margin: 4px 0!important;
+    }
 }
 
 .code-block-header {

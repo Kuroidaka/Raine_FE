@@ -4,10 +4,8 @@ import styled from "styled-components";
 // import remarkGfm from "remark-gfm";
 // import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 // import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { checkIsImgLink } from '../../../Util';
-import Img from '../../../assets/img'
+import { motion } from "framer-motion"
 import IconCustom from "../../../assets/Icons/svg";
-import ImageCom from "../../../component/Image";
 import { useContext, useEffect, useState  } from "react";
 import Logo from "../../../assets/img/Logo";
 import MarkDown from "../../../component/MarkDownChat";
@@ -15,6 +13,7 @@ import { Card as TaskCard } from "../../Planner/card/TaskCard";
 import { Card as RoutineCard } from "../../Planner/card/RoutineCard";
 import ModalContext from "../../../Context/Modal.context";
 import { FiTerminal } from "react-icons/fi";
+import { FadeIn } from "../../../Component/Motion";
 
 const functionIcon = {
     "create_reminder": {
@@ -73,12 +72,17 @@ const functionIcon = {
         "icon": "⏱️",
         "process": "Create Routine",
     },
+    "FileAskChatService":{
+        "icon": "📁",
+        "process": "File Search",
+    }
 
 }
 
 const BotMsg = (p) => {
-    const { text, className, functionList=[], key } = p
-    const { imgPlaceHolder } = Img
+    const { text, className, functionList=[], memoryDetail } = p
+
+    const [thinking, setThinking] = useState(true)
 
     const scrollToBottom = () => {
         // pageRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
@@ -87,6 +91,34 @@ const BotMsg = (p) => {
     };
 
     useEffect(scrollToBottom, [text, functionList]);
+
+
+    const renderMemoryDetail = () => {
+        if (memoryDetail && memoryDetail.length > 0) {
+            return <MemoAgent memo={memoryDetail}/>
+        }
+        return null
+    }
+
+    const renderFunctionList = () => {
+        if (functionList && functionList.length > 0) {
+            return functionList.map((agent) => (
+                <div key={agent.id}>
+                    <FadeIn className="func-data-wrapper" >
+                        <FunctionAgent agent={agent}/>
+                       <div className="func-data-list"> <FunctionData agent={agent}/></div>
+                    </FadeIn>
+                </div>
+            ))  
+        }
+        return null
+    }
+
+    useEffect(() => {
+        if (text.length > 0 || functionList.length > 0) {
+            setThinking(false)
+        }
+    }, [text, functionList])
 
     return ( 
     <Container className={`chat-msg bot-chat ${className}`} >
@@ -98,15 +130,9 @@ const BotMsg = (p) => {
         </div>
         <div className="chat-content">
             <p className='chat-person'>{"Raine"}</p>
-            {functionList.length > 0 && 
-                functionList.map((agent) => (
-                <div key={agent.id}>
-                    <div className="func-data-wrapper" >
-                        <FunctionAgent agent={agent}/>
-                       <div className="func-data-list"> <FunctionData agent={agent}/></div>
-                    </div>
-                </div>
-            ))}
+            {thinking && <p>Thinking...</p>}
+            {renderMemoryDetail()}
+            {renderFunctionList()}
            {(text || functionList.length > 0) &&
             <div className="bot-text-wrapper">
             {
@@ -162,7 +188,7 @@ const FunctionAgent = (p) => {
     }
 
     return (
-        <div className="bot-text-wrapper function-agent">
+        <FadeIn className="bot-text-wrapper function-agent">
             <div className='bot-text'>
                 <div className="function">
                     <div className="function-title">
@@ -178,7 +204,40 @@ const FunctionAgent = (p) => {
                     <FiTerminal onClick={handleClickShow}>Click</FiTerminal>
                 </div>}
             </div>
-        </div>
+        </FadeIn>
+    )
+}
+
+const MemoAgent = (p) => {
+    const { memo } = p
+    const { openModal }  = useContext(ModalContext)
+
+
+    const handleClickShow = () => {
+        const title = "Relate Memory"
+        const content = memo
+        const type = "memo"
+        const mode = "view"
+        openModal(title, content, type, mode)
+    }
+
+
+    return (
+        <FadeIn className="bot-text-wrapper function-agent">
+            <div className='bot-text'>
+                <div className="function">
+                    <div className="function-title">
+                        <IconCustom.task></IconCustom.task>
+                    </div>
+                    <div className="function-name">
+                       Relate Memory
+                    </div>
+                </div>
+                {(memo && memo.length > 0) && <div className="btn_show">
+                    <FiTerminal onClick={handleClickShow}>Click</FiTerminal>
+                </div>}
+            </div>
+        </FadeIn>
     )
 }
 
@@ -211,7 +270,8 @@ const FunctionData = ({ agent }) => {
             "ReminderChatService": TaskCard,
             "RoutineChatService": RoutineCard,
             "ReminderCreateChatService": TaskCard,
-            "RoutineCreateChatService": RoutineCard
+            "RoutineCreateChatService": RoutineCard,
+            "FileAskChatService": null
         };
 
         const sharedProps = (funcData) => ({
@@ -247,10 +307,16 @@ const FunctionData = ({ agent }) => {
                 isActive: funcData.isActive,
                 routineTime: funcData.routineTime,
             }),
+            "FileAskChatService": (funcData) => ({
+                ...sharedProps(funcData),
+                file: funcData.file,
+            }),
         };
 
         const CardComponent = cardComponents[funcName];
         const getProps = specificProps[funcName];
+
+        if (!CardComponent) return null;
 
         return (
             <FuncDataContainer>
@@ -266,7 +332,7 @@ const FunctionData = ({ agent }) => {
 
 export default BotMsg;
 
-const Container = styled.div`
+const Container = styled(FadeIn)`
     /*bot*/
     width: 100%;
     display: flex;
@@ -360,11 +426,12 @@ const Container = styled.div`
                 border-top-right-radius: 10px!important;
                 border-bottom-left-radius: 0px!important;
                 border-bottom-right-radius: 0px!important;
+                margin-bottom: 10px;
 
                 .bot-text {
                     display: flex;
                     justify-content: space-between;
-                    
+                    gap:10px;
                 }
 
                 .function {
@@ -463,6 +530,8 @@ const Container = styled.div`
     }
 `
 
-const FuncDataContainer = styled.div ` 
+const FuncDataContainer = styled(FadeIn) ` 
  padding: 25px 10px 10px;
+ max-height: 300px;
+ overflow-y: scroll;
 `

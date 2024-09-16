@@ -4,17 +4,58 @@ import { nanoid } from 'nanoid'
 import '../style/index.scss'
 import DocsUploaded from "./Docs";
 import Input from './Input';
-// import conversationApi from '../../../api/v1/conversation';
-// import ConversationContext from '../../../context/Conversation.context';
-// import FileContext from '../../../context/File.context';
-// import fileApi from '../../../api/v1/file';
 import { filesToBase64, hostImages } from "../../../Util" 
 import ConversationContext from '../../../Context/conversation.context';
+import { toast } from 'react-toastify';
+import fileApi from '../../../api/file.api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import conversationApi from '../../../api/conversation.api';
+import { useNavigate, useParams } from 'react-router';
 
 const InputBox = (p) => {
-    const { handleProcessAI, conversationId } = p
+    const { handleProcessAI } = p
     const { selectedConID, addMsg } = useContext(ConversationContext);
     const [filesImages, setFilesImages] = useState([])
+    const [isUploading, setIsUploading] = useState(false)
+    const { id: conversationId } = useParams();
+
+    const navigate = useNavigate()
+
+    const queryClient = useQueryClient();
+
+    const { data:filesData, isLoading } = useQuery({
+        queryKey:['conversations', conversationId], 
+        queryFn: () => conversationId && conversationApi.getConversationFile(conversationId),
+        cacheTime: 0,
+    });
+
+    const uploadFileMutation = useMutation({
+        mutationFn: async ({data}) => {
+            const res = await fileApi.uploadFileForChat(data)
+            return res
+        },
+        onMutate: () => setIsUploading(true),
+        onSuccess: (data) => {
+
+            queryClient.invalidateQueries(['conversations', data.conversationID])
+            navigate(`/chat/${data.conversationID}`)
+        },
+        onError: (error) => {
+            console.log("error", error)
+            toast.error(`Something went wrong`)
+        },
+        onSettled: () => setIsUploading(false),
+    });
+
+    const deleteFileMutation = useMutation({
+        mutationFn: async ({id}) => await fileApi.deleteFileForChat(id),
+        onSuccess: () => queryClient.invalidateQueries(['conversations', conversationId]),        
+        onError: (error) => {
+            console.log("error", error)
+            toast.error(`Something went wrong`)
+        },
+    });
+
 
 
     const imageFile = {
@@ -86,8 +127,17 @@ const InputBox = (p) => {
         handleSend
     }
 
+    const docsProp = { 
+        filesData,
+        uploadFileMutation, deleteFileMutation,
+        isLoading,
+        isUploading, setIsUploading
+
+     }
+
     return (
-        <div className='Input'>            
+        <div className='Input'>
+            <DocsUploaded {...docsProp}/>
             <Input {...inputProp}/>
         </div>
     );

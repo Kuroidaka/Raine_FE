@@ -21,6 +21,18 @@ const fileApi = {
                 'Content-Type': 'multipart/form-data',
             },
         });
+    },
+    uploadFileForChat: async (formData) => {
+        const url = `/file/ask/upload`;
+        return axiosClient.post(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+    deleteFileForChat: async (id) => {
+        const url = `/file/ask/delete/${id}`;
+        return axiosClient.delete(url);
     }
 }
 

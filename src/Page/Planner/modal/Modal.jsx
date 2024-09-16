@@ -1,4 +1,3 @@
-import Modal from "../../../Component/Modal";
 import { Fragment, useContext, useEffect, useState } from "react";
 import ModalContext from "../../../Context/Modal.context";
 import Task from "./task";

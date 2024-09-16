@@ -20,7 +20,7 @@ export default Header;
 
 const Container = styled.div`
 
-    height: var(--header-ht);
+    height: auto;
     width: 100vw;
     .header {
         display: flex;

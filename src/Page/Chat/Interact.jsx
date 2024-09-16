@@ -2,17 +2,19 @@ import { Edit as EditIcon, Video as VideoIcon } from "react-feather";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { IoIosArrowBack } from "react-icons/io";
 
 import ChatBox from "./Box";
 import InputBox from "./input/index";
 import ConversationContext from "../../Context/conversation.context";
 import { useContext } from "react";
+import DeviceContext from "../../Context/Device.context";
 // import ConversationContext from "../../Context/conversation.context";
 // import { useContext } from "react";
 
 const Interact = () => {
   const { selectedConID } = useContext(ConversationContext);
-
+  const { device } = useContext(DeviceContext);
   const navigate = useNavigate();
 
   const handleOpenNewChat = () => {
@@ -55,6 +57,7 @@ const Interact = () => {
           <InputBox />
         </InputContainer>
       </div>
+
     </Container>
   );
 };
@@ -63,6 +66,7 @@ export default Interact;
 
 const Container = styled.div`
   height: 100%;
+  position: relative;
   .chat-box {
     height: 100%;
     background: var(--main-gradient);
@@ -75,7 +79,7 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     margin-left: 40px;
-    height: 8vh;
+    height: 8%;
     gap: 15px;
     h1 {
       font-size: 20px; /* Thay đổi kích thước của chữ StudyIO */
@@ -107,7 +111,7 @@ const BoxChatContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 84vh;
+  height: 80%;
 
   .start-screen {
     display: flex;

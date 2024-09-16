@@ -126,7 +126,7 @@
                         }
                     }
 
-                    .file_name {
+                    .uploaded_file_name {
                         font-size: 1.1rem;
                         margin-left: 4px;
                         white-space: nowrap;
@@ -146,12 +146,12 @@
                     }
 
                     &:hover {
-                        .file_name {
+                        .uploaded_file_name {
                             color: white;
-
-                            & {
-                              background-color: var(--second-color);
-                            }
+                            transition: all 0.3s ease-in-out;
+                            // & {
+                            //   background-color: var(--second-color);
+                            // }
                         }
 
                     }
@@ -168,8 +168,8 @@
             border: 1px solid white;
             border-radius: 10px;
             padding: 10px;
-            margin-right: 1em;
             cursor: pointer;
+            transition: all 0.3s ease-in-out;
 
             &:hover {
                 background-color: var(--second-color);
@@ -218,7 +218,7 @@
                         color: white;
                     }
 
-                    .file_name {
+                    .uploaded_file_name {
                         flex: 1;
                         color: #BBBBBB;
                         margin-left: 5px;

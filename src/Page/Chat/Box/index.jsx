@@ -42,7 +42,8 @@ const ChatBox = () => {
                         imgList={msg.imgList} 
                     />
                 ) : (msg.isBot) && ( 
-                    <BotMsg 
+                    <BotMsg
+                        memoryDetail={msg.relatedMemo ? JSON.parse(msg.relatedMemo) : []} 
                         text={msg.text} 
                         functionList={msg.functionData} 
                     />
@@ -88,7 +89,7 @@ const Conversation = styled.div`
     }
 
     .chat-msg:last-child {
-        margin-bottom: 100px;
+        margin-bottom: 5rem;
     }
 
 

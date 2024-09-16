@@ -1,11 +1,12 @@
-
 import styled from "styled-components";
 import Sidebar from "./Component/Sidebar";
 import { Fragment, Suspense, useContext, useState } from "react";
 import DeviceContext from "../Context/Device.context";
 import Header from "./Component/Header";
 import { OverlayProvider } from "../Context/Overlay.context";
-import AppearanceContext, { AppearanceProvider } from "../Context/Appearance.context";
+import AppearanceContext, {
+  AppearanceProvider,
+} from "../Context/Appearance.context";
 import { WebSocketProvider } from "../Context/socket.context";
 import { AuthContext, AuthProvider } from "../Context/Auth.context";
 import Loading from "../Component/Loading";
@@ -17,118 +18,117 @@ import Modal from "../Component/Modal";
 import { Outlet } from "react-router";
 import OverlayDimLoading from "../Component/Overlay";
 
-
 const DefaultLayout = () => {
-
-    return (
-        <AuthProvider>
-            <AppearanceProvider>
-                <OverlayProvider>
-                    <WebSocketProvider>
-                        <ModalProvider>
-                            <TaskProvider>
-                                <RoutineProvider>
-                                    <GoalProvider>
-                                        <DefaultLayoutComponent>
-                                            <Outlet />
-                                        </DefaultLayoutComponent>
-                                    </GoalProvider>
-                                </RoutineProvider>
-                            </TaskProvider>
-                        </ModalProvider>
-                    </WebSocketProvider>
-                </OverlayProvider>
-            </AppearanceProvider>
-        </AuthProvider>
-    )
-}
-
+  return (
+    <AuthProvider>
+      <AppearanceProvider>
+        <OverlayProvider>
+          <WebSocketProvider>
+            <ModalProvider>
+              <TaskProvider>
+                <RoutineProvider>
+                  <GoalProvider>
+                    <DefaultLayoutComponent>
+                      <Outlet />
+                    </DefaultLayoutComponent>
+                  </GoalProvider>
+                </RoutineProvider>
+              </TaskProvider>
+            </ModalProvider>
+          </WebSocketProvider>
+        </OverlayProvider>
+      </AppearanceProvider>
+    </AuthProvider>
+  );
+};
 
 const DefaultLayoutComponent = (p) => {
-    const { children } = p
+  const { children } = p;
 
-    const { device } = useContext(DeviceContext)
-    const { appearance } = useContext(AppearanceContext) || { url: "", name: ""}
-    const { isLoad } = useContext(AuthContext)
-    const { isLoading } = useContext(TaskContext)
+  const { device } = useContext(DeviceContext);
+  const { appearance } = useContext(AppearanceContext) || { url: "", name: "" };
+  const { isLoad } = useContext(AuthContext);
+  const { isLoading } = useContext(TaskContext);
 
-    const [isOpenMenu, setIsOpenMenu] = useState(false)
-    const [isOpenOvelay, setIsOpenOverlay] = useState(false)
+  const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const [isOpenOvelay, setIsOpenOverlay] = useState(false);
 
-    const openSideBar = () => {
-        setIsOpenMenu(true)
-        setIsOpenOverlay(true)
-    }
-    const toggleSideBar = (boolen) => {
-        return () => {
-            setIsOpenMenu(boolen)
-        }
-    }
+  const openSideBar = () => {
+    setIsOpenMenu(true);
+    setIsOpenOverlay(true);
+  };
+  const toggleSideBar = (boolen) => {
+    return () => {
+      setIsOpenMenu(boolen);
+    };
+  };
 
-    return (
-       <Fragment>
-            <Background background={appearance.url}/>
-            <DftLaySty $device={device} > 
-                {device === "mobile" && <Header toggleSideBar={openSideBar}/>}
-                
-                <div className="body">
-                    <Sidebar
-                        isopen={isOpenMenu} toggle={toggleSideBar}
-                        isOpenOvelay={isOpenOvelay} setIsOpenOverlay={setIsOpenOverlay}/>
+  return (
+    <Fragment>
+      <Background background={appearance.url} />
+      <DftLaySty $device={device}>
+        {device === "mobile" && <Header toggleSideBar={openSideBar} />}
 
-                    <Suspense fallback={isLoad && <OverlayDimLoading />}>
-                        <div className="page-content">
-                            <Modal />
-                            {children}
-                        </div>
-                    </Suspense>
-                </div>
-            </DftLaySty>
-       </Fragment>
-    )
-}
- 
+        <div className="body">
+          <Sidebar
+            isopen={isOpenMenu}
+            toggle={toggleSideBar}
+            isOpenOvelay={isOpenOvelay}
+            setIsOpenOverlay={setIsOpenOverlay}
+          />
+
+          <Suspense fallback={isLoad && <OverlayDimLoading />}>
+            <div className="page-content">
+              <Modal />
+              {children}
+            </div>
+          </Suspense>
+        </div>
+      </DftLaySty>
+    </Fragment>
+  );
+};
+
 export default DefaultLayout;
 
 const DftLaySty = styled.div`
-   
-    background-color: transparent;
-    height: 100dvh;
-    width: 100vw;
-    position: relative;
+  background-color: transparent;
+  height: 100dvh;
+  width: 100vw;
+  position: relative;
 
-    .body {
-        display: flex;
-        flex-direction: row;
+  .body {
+    display: flex;
+    flex-direction: row;
 
-        .page-content {
-            overflow-y: scroll;
-            margin-left: ${({$device}) => $device === "desktop" ? "var(--sidebar-wt)" : "0px" };
-            width: 100%;
+    .page-content {
+      overflow-y: scroll;
+      margin-left: ${({ $device }) =>
+        $device === "desktop" ? "var(--sidebar-wt)" : "0px"};
+      width: 100%;
 
-            @media (max-width: 768px) {
-                height: calc(100svh - var(--header-ht));
-            }
+      @media (max-width: 768px) {
+        height: calc(100svh - var(--header-ht));
+      }
 
-            @media (min-width: 769px) {
-                height: 100dvh;
-            }
-        }
+      @media (min-width: 769px) {
+        height: 100dvh;
+      }
     }
-
-`
+  }
+`;
 
 const Background = styled.div`
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    opacity: .5;
-    background-image: ${({background}) => `url(${background})`};
-    min-height: 100lvh;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-    background-size: cover;
-    opacity: .4;
-`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.5;
+  background-image: ${({ background }) => `url(${background})`};
+  min-height: 100lvh;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.4;
+`;

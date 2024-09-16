@@ -5,7 +5,6 @@ import Interact from "./interact";
 import History from "./History/History";
 
 const ChatPage = () => {
-    
     return ( 
         <ConversationProvider>
             <ToastContainer />

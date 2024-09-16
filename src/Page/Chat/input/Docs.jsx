@@ -4,9 +4,21 @@ import {
     Upload, File2_2, Delete2, AttachFile
 } from "../../../assets/Icons/index";
 import Load from "../../../component/Load";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import conversationApi from "../../../api/conversation.api";
+import { useParams } from "react-router";
+import fileApi from "../../../api/file.api";
+import { toast } from "react-toastify";
 
 const DocsUploaded = (p) => {
-    const { filesDocs, setFilesDocs, handleUploadFileDocs, delFile, isLoadingFile, loadingFileList } = p
+    const { 
+        filesData,
+        uploadFileMutation, deleteFileMutation,
+        isLoading, 
+        isUploading
+    } = p
+    const { id: conversationId } = useParams();
+
 
     const [hoveredFile, setHoveredFile] = useState(null);
     const [selectFile, setSelectFile] = useState(null);
@@ -20,19 +32,23 @@ const DocsUploaded = (p) => {
     };
 
 
-    const handleDeleteClick = (name) => {
-        // Xoá file theo name
-        setSelectFile(name);
-        const callBack = () => {
-            const updatedFiles = filesDocs.filter(file => file.name !== name);
-            setFilesDocs(updatedFiles);
-        }
-        delFile(name, callBack)
+    const handleDeleteClick = (id) => {
+        deleteFileMutation.mutate({id: id})
     };
+
+    const handleUploadFileDocs = async (e) => {
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+        if(conversationId) formData.append('conversationId', conversationId);
+        uploadFileMutation.mutate({data: formData})
+    }
+
+    const acceptFile = ['.pdf', '.docx', '.txt', '.md']
 
     return (
         <div className="File_uploaded">
-        {filesDocs && filesDocs.length > 0 ? (
+        {isUploading || (filesData && filesData.length > 0) ? (
             <div className="Content">
             <div className="Content_head">
                 <div className="p1">Files</div>
@@ -49,7 +65,7 @@ const DocsUploaded = (p) => {
                 <input
                     type="file"
                     id="fileInput"
-                    accept=".pdf,.docx,.pptx"
+                    accept={acceptFile.join(',')}
                     style={{ display: 'none' }}
                     onChange={(e) => handleUploadFileDocs(e)}
                     multiple
@@ -58,7 +74,7 @@ const DocsUploaded = (p) => {
             </div>
             <hr />
             <div className="file_uploaded_area">
-                {filesDocs.map((file) => (
+                {filesData && filesData.map((file) => (
                 <div
                     className="file_uploaded_container"
                     key={file.id}
@@ -66,7 +82,7 @@ const DocsUploaded = (p) => {
                     onMouseLeave={handleMouseLeave}
                 >
                 {
-                    (isLoadingFile && selectFile === file.name) || loadingFileList.indexOf(file.name) !== -1? 
+                    (isLoading) ? 
                     (
                         <span className="load_button">
                             <Load minsize="15px"/>
@@ -75,7 +91,7 @@ const DocsUploaded = (p) => {
                         hoveredFile === file.id ? (
                         <span
                             className="delete_button"
-                            onClick={() => handleDeleteClick(file.name)}
+                            onClick={() => handleDeleteClick(file.id)}
                         >
                             <Delete2 />
                         </span>
@@ -86,24 +102,16 @@ const DocsUploaded = (p) => {
                         ) 
                     )
                 }
-                    <p className="file_name">{file.name}</p>
+                    <p className="uploaded_file_name">{file.originalname}</p>
                 </div>
                 ))}
+                {/* loading */}
+                {isUploading && (
+                    <div className="loading_file">
+                        <Load minsize="15px"/>
+                    </div>
+                )}
             </div>
-            {/* <div className='file_uploaded_area'>
-                    <div className='file_uploaded_container'>
-                        <span className='delete_button'> <Delete2 /></span> <Image2 />&nbsp;
-                        <p className="file_name">kasdfhi.png</p>
-                    </div>
-                    <div className='file_uploaded_container'>
-                        <span className='delete_button'> <Delete2 /></span> <File2_2 />&nbsp;
-                        <p className="file_name">kadhafsohsddfhi.pdf</p>
-                    </div>
-                    <div className='file_uploaded_container'>
-                        <span className='delete_button'> <Delete2 /></span> <File2_2 />&nbsp;
-                        <p className="file_name">kadhafsohsddfhi.pdf</p>
-                    </div>
-                </div> */}
             </div>
         ) : (
             <label id="Icon_Upload" htmlFor="fileInput">
@@ -113,7 +121,7 @@ const DocsUploaded = (p) => {
                 <input
                     type="file"
                     id="fileInput"
-                    accept=".pdf,.docx,.pptx"
+                    accept={acceptFile.join(',')}
                     style={{ display: 'none' }}
                     onChange={(e) => handleUploadFileDocs(e)}
                     multiple

@@ -83,6 +83,11 @@ const conversationApi = {
         return axiosClient.post(url, { text });
 
         // return URL.createObjectURL(response);
+    },
+    getConversationFile: async (id) => {
+        const url = `/conversation/file/${id}`;
+
+        return axiosClient.get(url);
     }
 }
 
