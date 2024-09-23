@@ -3,9 +3,7 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import CodeCopyBtn from "./Btnv2";
-import styled from "styled-components";
-import { Fragment } from "react";
-
+import styled from "styled-components"
 
 const MarkDown = (p) => {
 

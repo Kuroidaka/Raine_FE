@@ -28,23 +28,26 @@ export const ConversationProvider = (p) => {
 
   const queryClient = useQueryClient();
 
+
+  
   const { data, error, isLoading } = useQuery({
     queryKey: ["conversations"],
     queryFn: () => conversationApi.getConversationHistory(),
     cacheTime: 0,
   });
-
+  
   const {
     data: currentConData,
     isLoading: currentConLoading,
     error: currenConError,
   } = useQuery({
     queryKey: ["conversation", selectedConID],
-    queryFn: () =>
-      selectedConID
-        ? conversationApi.getConversationHistory(selectedConID)
-        : Promise.resolve(null),
+    queryFn: () => 
+      selectedConID 
+        ? conversationApi.getConversationHistory(selectedConID) 
+        : Promise.resolve([]),  // Return an empty array instead of null
     enabled: !!selectedConID,
+    initialData: [], // Ensure that the data is initialized with an empty array
   });
 
   const updateFuncDataList = (list, newData) => {
@@ -77,7 +80,6 @@ export const ConversationProvider = (p) => {
   useEffect(() => {
     if (!selectedConID) setCurrenConversation([]);
     else if (currentConData) {
-      console.log("currentConData", currentConData);
       setCurrenConversation(currentConData);
     }
   }, [selectedConID, currentConData]);
@@ -110,6 +112,10 @@ export const ConversationProvider = (p) => {
         const isBot = true;
         await cacheConversation.addMsg(params, isBot, listFuncData.current, listMemoData.current);
       });
+
+      socket.on("chatResMemoStorage", ({ content }) => {
+        console.log("content", content)
+      })
     }
 
     // Clean up the connection on unmount
@@ -117,6 +123,7 @@ export const ConversationProvider = (p) => {
       if (socket) socket.off("chatResChunk");
       if (socket) socket.off("chatResChunkFunc");
       if (socket) socket.off("chatResMemo");
+      if (socket) socket.off("chatResMemoStorage");
     };
   }, [socket]);
 
@@ -162,7 +169,6 @@ export const ConversationProvider = (p) => {
       };
 
       const isNewConversation = !selectedConID || selectedConID == -1;
-      console.log("selectedConID", selectedConID)
       if (isNewConversation) {
         // New conversation
         if (isBot) {
@@ -178,8 +184,6 @@ export const ConversationProvider = (p) => {
           });
         }
 
-        // get all conversation to update conversation list
-        queryClient.invalidateQueries(["conversations"]);
         return;
       }
 
@@ -244,8 +248,13 @@ export const ConversationProvider = (p) => {
         navigate(`/chat/cam/${data.conversationID}`);
       }
     },
-    onSuccess: () =>
-        selectedConID && queryClient.invalidateQueries(["conversations", selectedConID]),
+    onSuccess: () =>{
+      if(!selectedConID){
+        queryClient.invalidateQueries(["conversations"]);
+      } else {
+        queryClient.invalidateQueries(["conversations", selectedConID])
+      }
+    },
     onError: (error) => {
       toast.error(`Something went wrong`);
       console.log(error);

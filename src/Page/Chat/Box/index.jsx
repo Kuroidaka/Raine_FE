@@ -45,7 +45,8 @@ const ChatBox = () => {
                     <BotMsg
                         memoryDetail={msg.relatedMemo ? JSON.parse(msg.relatedMemo) : []} 
                         text={msg.text} 
-                        functionList={msg.functionData} 
+                        functionList={msg.functionData}
+                        memoStorage={msg.memoStorage}
                     />
                 )}
                 </div>

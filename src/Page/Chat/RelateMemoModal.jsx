@@ -19,9 +19,11 @@ const RelateMemoModal = () => {
 
             const dataJson = modal.content.map(data => {
                 return {
-                    output_text: data.output_text,
-                    distance: data.distance,
+                    guide: data.guide,
+                    answer: data.answer,
+                    criteria: data.criteria,
                     createdAt: data.createdAt,
+                    distance: data.distance
                 }
             })
             const jsonString = JSON.stringify(dataJson);

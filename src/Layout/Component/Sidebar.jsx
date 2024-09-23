@@ -11,8 +11,8 @@ import myCursor from "../../assets/cursor/Labrador_Retriever.cur";
 
 const menuItems = [
     { name: "task", label: 'Tác vụ', icon: Icon.task, link: paths.planner },
-    { name: "setting", label: 'Cài đặt', icon: Icon.setting, link: paths.setting },
-    { name: "chat", label: 'Raine', icon: Icon.setting, link: paths.chat },
+    { name: "setting", label: 'Cài đặt', icon: Icon.setting, link: `${paths.setting}/appearance`},
+    { name: "chat", label: 'Raine', icon: Icon.AI, link: paths.chat },
 ];
 
 const Sidebar = (p) => {

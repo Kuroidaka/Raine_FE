@@ -12,6 +12,7 @@ import { BiMessageAltDetail, BiHomeAlt2, BiSolidCaretLeftCircle, BiLeftArrowAlt,
 import { ImPlus, ImLibrary } from 'react-icons/im'
 import { SiGumtree } from 'react-icons/si'
 import { FaFacebookMessenger, FaInstagram, FaShare, FaFacebookF } from 'react-icons/fa';
+import { PiFinnTheHumanDuotone } from 'react-icons/pi'
 
 
 
@@ -40,6 +41,7 @@ export const Icon = {
     home: BiHomeAlt2,
     tree: SiGumtree,
     setting: FiSettings,
+    AI: PiFinnTheHumanDuotone,
     menu: FiMenu,
     x: RiCloseFill,
     Playy: BsPlay,

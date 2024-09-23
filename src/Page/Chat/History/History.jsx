@@ -1,15 +1,12 @@
 import { Fragment, useContext, useState } from "react";
-import { ChevronRight, ChevronLeft } from "react-feather";
 
 import Sidebar from "./Sidebar";
 import styled from "styled-components";
 import ConversationContext from "../../../Context/conversation.context";
 import { toast } from "react-toastify";
-import Loading from "../../../Component/Loading";
 import OverlayDimLoading from "../../../Component/Overlay";
 import DeviceContext from "../../../Context/Device.context";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { motion } from "framer-motion";
 
 const History = (p) => {
   const { children } = p;

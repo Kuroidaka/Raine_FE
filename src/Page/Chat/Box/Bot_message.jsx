@@ -80,7 +80,7 @@ const functionIcon = {
 }
 
 const BotMsg = (p) => {
-    const { text, className, functionList=[], memoryDetail } = p
+    const { text, className, functionList=[], memoryDetail, memoStorage } = p
 
     const [thinking, setThinking] = useState(true)
 
@@ -110,6 +110,13 @@ const BotMsg = (p) => {
                     </FadeIn>
                 </div>
             ))  
+        }
+        return null
+    }
+
+    const renderMemoStorage = () => {
+        if (memoStorage && memoStorage.length > 0) {
+            return <MemoStorageAgent memoStorage={memoStorage}/>
         }
         return null
     }
@@ -151,7 +158,7 @@ const BotMsg = (p) => {
                 // )
             }
             </div>}
-
+            {renderMemoStorage()}
         </div>
     </Container>   
      );
@@ -223,7 +230,7 @@ const MemoAgent = (p) => {
 
 
     return (
-        <FadeIn className="bot-text-wrapper function-agent">
+        <FadeIn className="bot-text-wrapper function-agent memo-relate-agent">
             <div className='bot-text'>
                 <div className="function">
                     <div className="function-title">
@@ -240,6 +247,40 @@ const MemoAgent = (p) => {
         </FadeIn>
     )
 }
+
+const MemoStorageAgent = (p) => {
+    const { memoStorage } = p
+    const { openModal }  = useContext(ModalContext)
+
+
+    const handleClickShow = () => {
+        const title = "Memory saved"
+        const content = memoStorage
+        const type = "memo"
+        const mode = "view"
+        openModal(title, content, type, mode)
+    }
+
+    console.log("memoStorage", memoStorage)
+    return (
+        <FadeIn className="bot-text-wrapper function-agent memo-storage-agent">
+            <div className='bot-text'>
+                <div className="function">
+                    <div className="function-title">
+                        <IconCustom.task></IconCustom.task>
+                    </div>
+                    <div className="function-name">
+                        Memory Saved
+                    </div>
+                </div>
+                {(memoStorage && memoStorage.length > 0) && <div className="btn_show">
+                    <FiTerminal onClick={handleClickShow}>Click</FiTerminal>
+                </div>}
+            </div>
+        </FadeIn>
+    )
+}
+
 
 const FunctionData = ({ agent }) => {
     const [listFuncData, setListFuncData] = useState([]);
@@ -332,7 +373,7 @@ const FunctionData = ({ agent }) => {
 
 export default BotMsg;
 
-const Container = styled(FadeIn)`
+const Container = styled.div`
     /*bot*/
     width: 100%;
     display: flex;
@@ -427,6 +468,15 @@ const Container = styled(FadeIn)`
                 border-bottom-left-radius: 0px!important;
                 border-bottom-right-radius: 0px!important;
                 margin-bottom: 10px;
+
+
+                &.memo-storage-agent {
+                    border-radius: 10px!important;
+                }
+
+                &.memo-relate-agent {
+                    border-radius: 10px!important;
+                }
 
                 .bot-text {
                     display: flex;
