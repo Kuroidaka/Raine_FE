@@ -4,7 +4,6 @@ import styled from "styled-components";
 // import remarkGfm from "remark-gfm";
 // import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 // import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { motion } from "framer-motion"
 import IconCustom from "../../../assets/Icons/svg";
 import { useContext, useEffect, useState  } from "react";
 import Logo from "../../../assets/img/Logo";
@@ -94,7 +93,7 @@ const BotMsg = (p) => {
 
 
     const renderMemoryDetail = () => {
-        if (memoryDetail && memoryDetail.length > 0) {
+        if(memoryDetail && memoryDetail.length > 0) {
             return <MemoAgent memo={memoryDetail}/>
         }
         return null
@@ -115,7 +114,7 @@ const BotMsg = (p) => {
     }
 
     const renderMemoStorage = () => {
-        if (memoStorage && memoStorage.length > 0) {
+        if(memoStorage) {
             return <MemoStorageAgent memoStorage={memoStorage}/>
         }
         return null
@@ -462,7 +461,7 @@ const Container = styled.div`
                 /* width: fit-content; */
                 box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
                 background-color: #434343;
-                padding: 5px 10px;
+                padding: 3px 10px;
                 border-top-left-radius: 10px!important;
                 border-top-right-radius: 10px!important;
                 border-bottom-left-radius: 0px!important;

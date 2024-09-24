@@ -21,6 +21,7 @@ export const ConversationProvider = (p) => {
   const [currentCon, setCurrenConversation] = useState([]);
   let listFuncData = useRef([]);
   let listMemoData = useRef([]);
+  let listMemoStorage = useRef([]);
 
   const socket = useContext(WebSocketContext);
 
@@ -75,6 +76,7 @@ export const ConversationProvider = (p) => {
     }
     listFuncData.current = [];
     listMemoData.current = [];
+    listMemoStorage.current = [];
   }, [data]);
 
   useEffect(() => {
@@ -103,18 +105,25 @@ export const ConversationProvider = (p) => {
         await cacheConversation.addMsg(params, isBot, listFuncData.current);
       });
 
-      socket.on("chatResMemo", async ({ active, memoryDetail }) => {
-        active && console.log("active", active)
-        memoryDetail && console.log("memo", memoryDetail);
-        listMemoData.current = memoryDetail;
-        
-        const params = { prompt: "" };
-        const isBot = true;
-        await cacheConversation.addMsg(params, isBot, listFuncData.current, listMemoData.current);
+      socket.on("chatResMemo", async ({ active, memoryDetail = [] }) => {
+        if(active){
+          listMemoData.current = memoryDetail;
+          console.log("listMemoData", listMemoData.current)
+          const params = { prompt: "" };
+          const isBot = true;
+          await cacheConversation.addMsg(params, isBot, listFuncData.current, listMemoData.current);
+        }
       });
 
-      socket.on("chatResMemoStorage", ({ content }) => {
-        console.log("content", content)
+      socket.on("chatResMemoStorage", async ({ active, memoryDetail = [] }) => {
+        if(active){
+          listMemoStorage.current = memoryDetail;
+          console.log("listMemoStorage", listMemoStorage.current)
+
+          const params = { prompt: "" };
+          const isBot = true;
+          await cacheConversation.addMsg(params, isBot, listFuncData.current, listMemoData.current, listMemoStorage.current);
+        }
       })
     }
 
@@ -136,7 +145,7 @@ export const ConversationProvider = (p) => {
       const newCon = conversation.filter((data) => data.id !== id);
       setConversation(newCon);
     },
-    addMsg: async (params, isBot = false, functionData = [], dataMemo) => {
+    addMsg: async (params, isBot = false, functionData = [], dataMemo, memoStorage) => {
       // Helper function to update messages
       const updateBotMessages = (prevMessages) => {
         const newMessages = [...prevMessages];
@@ -150,6 +159,8 @@ export const ConversationProvider = (p) => {
               functionData.length > 0
                 ? functionData
                 : newMessages[newMessages.length - 1]?.functionData || [],
+            ...(dataMemo && {relatedMemo: JSON.stringify(dataMemo)}),
+            ...(memoStorage && {memoStorage: memoStorage}),
           });
         } else {
           // If the last message is from the bot, merge the new prompt with the old text
@@ -157,11 +168,11 @@ export const ConversationProvider = (p) => {
             ...newMessages[newMessages.length - 1],
             isBot: true,
             text: newMessages[newMessages.length - 1].text + params.prompt,
-            functionData:
-            functionData.length > 0
+            functionData: functionData.length > 0
                 ? functionData
                 : newMessages[newMessages.length - 1]?.functionData || [],
             ...(dataMemo && {relatedMemo: JSON.stringify(dataMemo)}),
+            ...(memoStorage && {memoStorage: memoStorage}),
           };
         }
 
@@ -239,7 +250,7 @@ export const ConversationProvider = (p) => {
         if (!selectedConID) {
           setTimeout(() => {
             navigate(`/chat/${con.conversationID}`);
-          }, 1000);
+          }, 1500);
         }
         
         // get all conversation to update conversation list
