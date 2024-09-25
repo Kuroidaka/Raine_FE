@@ -7,10 +7,11 @@ import ChatBox from "./Box";
 import InputBox from "./input/index";
 import ConversationContext from "../../Context/conversation.context";
 import { useContext } from "react";
+import EmptyBox from "./Box/EmptyBox";
 // import ConversationContext from "../../Context/conversation.context";
 // import { useContext } from "react";
 
-const Interact = () => {
+const EmptyInteract = () => {
   const { selectedConID } = useContext(ConversationContext);
   const navigate = useNavigate();
 
@@ -47,7 +48,7 @@ const Interact = () => {
         </motion.div>
 
         <BoxChatContainer>
-          <ChatBox />
+          <EmptyBox />
         </BoxChatContainer>
 
         <InputContainer>
@@ -59,7 +60,7 @@ const Interact = () => {
   );
 };
 
-export default Interact;
+export default EmptyInteract;
 
 const Container = styled.div`
   height: 100%;

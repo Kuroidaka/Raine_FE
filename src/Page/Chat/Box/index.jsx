@@ -30,7 +30,7 @@ const ChatBox = () => {
     const messages = currentCon?.messages || [];
     return (
         <Conversation ref={pageRef} className='list-chat'>
-            {messages.length > 0 ? (
+            {messages.length > 0 && (
                 <>
                {messages.map((msg) => (
                 <div key={msg.id} >
@@ -53,8 +53,6 @@ const ChatBox = () => {
                 ))}
 
                 </>
-            ) : (
-                <EmptyBox />
             )}
         </Conversation>
     );

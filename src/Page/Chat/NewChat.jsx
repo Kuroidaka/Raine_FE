@@ -1,18 +1,18 @@
 import { ToastContainer } from "react-toastify";
 import { ConversationProvider } from "../../Context/conversation.context";
 
-import Interact from "./interact";
+import EmptyInteract from "./InteractEmpty";
 import History from "./History/History";
 
-const ChatPage = () => {
+const NewChat = () => {
     return ( 
         <ConversationProvider>
             <ToastContainer />
             <History>
-                <Interact/>
+                <EmptyInteract/>
             </History>
         </ConversationProvider>
      );
 }
  
-export default ChatPage;
+export default NewChat;

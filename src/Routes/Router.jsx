@@ -2,7 +2,6 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import DefaultLayout from "../Layout/default";
 import paths from "./path";
-import Loading from "../Component/Loading";
 import AutoRedirect from "../Component/AutoRedirect";
 
 // const Login = lazy(() => import("../Page/Authen/Login"));
@@ -13,6 +12,7 @@ const Planner = lazy(() => import("../Page/Planner/Planner"));
 const NoPage = lazy(() => import("../Page/NoPage"));
 const Setting = lazy(() => import("../Page/Setting/Setting"));
 const ChatPage = lazy(() => import("../Page/Chat"));
+const NewChat = lazy(() => import("../Page/Chat/NewChat"));
 const VideoChat = lazy(() => import("../Page/VideoChat"));
 const StreamTest = lazy(() => import("../Page/Test/Stream"));
 const PhotoCapture = lazy(() => import("../Page/Test/Video"));
@@ -27,7 +27,7 @@ const getDashboardChildrenRoutes = async () => {
 
   const childrenRoutes = [
     { page: "planner", path: paths.planner, element: <SuspenseWrapper><Planner /></SuspenseWrapper> },
-    { page: "chat", path: paths.chat, element: <SuspenseWrapper><ChatPage /></SuspenseWrapper> },
+    { page: "chat", path: paths.chat, element: <SuspenseWrapper><NewChat /></SuspenseWrapper> },
     { page: "chat", path: `${paths.chat}/:id`, element: <SuspenseWrapper><ChatPage /></SuspenseWrapper> },
     { page: "videoChat", path: paths.videoChat, element: <SuspenseWrapper><VideoChat /></SuspenseWrapper> },
     { page: "videoChat", path: `${paths.videoChat}/:id`, element: <SuspenseWrapper><VideoChat /></SuspenseWrapper> },

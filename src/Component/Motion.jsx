@@ -6,8 +6,8 @@ export const FadeIn= (p) => {
       <motion.div
         initial={{ opacity: 0, scale: 1 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 1 }}
-        transition={{ duration: 0.5 }}
+        exit={{ opacity: 0.5, scale: 1 }}
+        transition={{ duration: 1 }}
         className={className}
       >
         {children}

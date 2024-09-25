@@ -10,6 +10,7 @@ import myCursor from '../assets/cursor/Labrador_Retriever.cur';
 import TaskModal from "../Page/Planner/modal/Modal";
 import ToolsDataModal from "../Page/Chat/ToolsDataModal";
 import RelateMemoModal from "../Page/Chat/RelateMemoModal";
+import ResizeAbleModal from "./ResizeableModal";
 
 const Modal = () => {
 
@@ -31,27 +32,7 @@ const Modal = () => {
         };
       }, [device]);
 
-    const modalStyle = {
-        open: () => ({
-            width: device === "desktop" ? "400px" : "100vw",
-            opacity: 1,
-            transition: {
-                type: 'spring',
-                stiffness: 300,
-                damping: 50
-            }
-        }),
-        closed: {
-            width: 0,
-            opacity: 0,
-            transition: {
-                delay: 0,
-                type: 'spring',
-                stiffness: 900,
-                damping: 40
-            }
-        }
-    };
+
 
     const openingModal = () => { // prepare a lazy loading waiting for the animation loaded
         device !== "mobile" && setIsOpenOverlay(true)
@@ -87,17 +68,15 @@ const Modal = () => {
 
     return (   
      <Fragment>
-        <Container
-            initial={"closed"}
-            animate={modal.isOpen ? 'open' : 'closed'}
-            variants={modalStyle}
-            >
-            <Title>
-                <h1>{modal.title}</h1>
-                <Icon.x onClick={hdleToggle}  style={{cursor: `url(${myCursor}), auto`}}/>
-            </Title>
-           {isDataLoaded ? renderModalContent(): <Loading />}
-        </Container> 
+        <ResizeAbleModal modal={modal}>
+            <div style={{width: "100%"}}>
+                <Title>
+                    <h1>{modal.title}</h1>
+                    <Icon.x onClick={hdleToggle}  style={{cursor: `url(${myCursor}), auto`}}/>
+                </Title>
+            {isDataLoaded ? renderModalContent(): <Loading />}
+            </div>
+        </ResizeAbleModal> 
         <Overlay onClick={hdleClickOverLay} 
             isOpen={isOpenOverlay}
             setIsOpen={setIsOpenOverlay}
@@ -108,6 +87,7 @@ const Modal = () => {
 }
  
 export default Modal;
+
 
 const Container = styled(motion.div)` 
     right: 0;
