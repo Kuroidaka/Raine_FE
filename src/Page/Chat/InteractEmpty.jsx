@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-import ChatBox from "./Box";
 import InputBox from "./input/index";
 import ConversationContext from "../../Context/conversation.context";
 import { useContext } from "react";

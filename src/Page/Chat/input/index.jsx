@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
-import { nanoid } from 'nanoid'
+import { useContext, useState } from 'react';
 
 import '../style/index.scss'
 import DocsUploaded from "./Docs";
@@ -11,6 +10,7 @@ import fileApi from '../../../api/file.api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import conversationApi from '../../../api/conversation.api';
 import { useNavigate, useParams } from 'react-router';
+import ClipboardFileReader from './clipboard';
 
 const InputBox = (p) => {
     const { handleProcessAI } = p
@@ -120,6 +120,14 @@ const InputBox = (p) => {
         }
     };
 
+    const handleUploadFileDocs = async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        if(conversationId) formData.append('conversationId', conversationId);
+        uploadFileMutation.mutate({data: formData})
+    }
+
+
     const inputProp = { 
         filesImages,
         uploadFileImg: imageFile.setFileImg,
@@ -129,7 +137,7 @@ const InputBox = (p) => {
 
     const docsProp = { 
         filesData,
-        uploadFileMutation, deleteFileMutation,
+        handleUploadFileDocs, deleteFileMutation,
         isLoading,
         isUploading, setIsUploading
 
@@ -137,6 +145,7 @@ const InputBox = (p) => {
 
     return (
         <div className='Input'>
+            <ClipboardFileReader handleUploadFile={handleUploadFileDocs}/>
             <DocsUploaded {...docsProp}/>
             <Input {...inputProp}/>
         </div>

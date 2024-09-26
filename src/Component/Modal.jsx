@@ -89,15 +89,6 @@ const Modal = () => {
 export default Modal;
 
 
-const Container = styled(motion.div)` 
-    right: 0;
-    height: 100dvh;
-    z-index: 1002;
-    background-color: #ffffff;
-    position: fixed;
-    top: 0;
-`
-
 const Title = styled.div`
     display: flex;
     align-items: center;

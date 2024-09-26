@@ -4,24 +4,18 @@ import {
     Upload, File2_2, Delete2, AttachFile
 } from "../../../assets/Icons/index";
 import Load from "../../../component/Load";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import conversationApi from "../../../api/conversation.api";
-import { useParams } from "react-router";
-import fileApi from "../../../api/file.api";
-import { toast } from "react-toastify";
+
 
 const DocsUploaded = (p) => {
     const { 
         filesData,
-        uploadFileMutation, deleteFileMutation,
+        handleUploadFileDocs, deleteFileMutation,
         isLoading, 
         isUploading
     } = p
-    const { id: conversationId } = useParams();
 
 
     const [hoveredFile, setHoveredFile] = useState(null);
-    const [selectFile, setSelectFile] = useState(null);
 
     const handleMouseEnter = (id) => {
         setHoveredFile(id);
@@ -36,13 +30,6 @@ const DocsUploaded = (p) => {
         deleteFileMutation.mutate({id: id})
     };
 
-    const handleUploadFileDocs = async (e) => {
-        const file = e.target.files[0];
-        const formData = new FormData();
-        formData.append('file', file);
-        if(conversationId) formData.append('conversationId', conversationId);
-        uploadFileMutation.mutate({data: formData})
-    }
 
     const acceptFile = ['.pdf', '.docx', '.txt', '.md']
 
@@ -55,7 +42,7 @@ const DocsUploaded = (p) => {
                 <div className="add_button">
                 <label htmlFor="fileInput">
                     <motion.div
-                        whileHover={{ y: -5 }} // Khi hover, icon sẽ di chuyển lên 5px
+                        whileHover={{ y: -5 }}
                     >
                         <AttachFile />
                         <div>Add</div>
@@ -67,7 +54,7 @@ const DocsUploaded = (p) => {
                     id="fileInput"
                     accept={acceptFile.join(',')}
                     style={{ display: 'none' }}
-                    onChange={(e) => handleUploadFileDocs(e)}
+                    onChange={(e) => handleUploadFileDocs(e.target.files[0])}
                     multiple
                 />
                 </div>
@@ -123,7 +110,7 @@ const DocsUploaded = (p) => {
                     id="fileInput"
                     accept={acceptFile.join(',')}
                     style={{ display: 'none' }}
-                    onChange={(e) => handleUploadFileDocs(e)}
+                    onChange={(e) => handleUploadFileDocs(e.target.files[0])}
                     multiple
                 />
             </label>
