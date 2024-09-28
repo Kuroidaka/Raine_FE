@@ -1,13 +1,6 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import SidebarNav from "./sidebar_nav";
-import { useState } from "react";
-
-// import SidebarNav from "../../../../../FE_TEMp/src/layout/component/sidebar/sidebar_nav";
-// import Load from "../../../../../FE_TEMp/src/component/Load";
-// import { useContext } from "react";
-// import ConversationContext from "../../../../../FE_TEMp/src/context/Conversation.context";
-
 
 const Sidebar = (p) => {
     const { data, selectedConID } = p;

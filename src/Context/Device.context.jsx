@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { useMedia } from "../Hooks/useMedia";
+import { useMedia } from "../hooks/useMedia";
 
 const DeviceContext = createContext()
 

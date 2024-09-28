@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 import userApi from "../../../api/user.api";
-import Loading from "../../../Component/Loading";
+import Loading from "../../../component/Loading";
 
 const ToolSettings = () => {
   const queryClient = useQueryClient();

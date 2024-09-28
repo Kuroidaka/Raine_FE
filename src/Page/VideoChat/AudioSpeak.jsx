@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { WebSocketContext } from "../../Context/socket.context";
+import { WebSocketContext } from "../../context/socket.context";
 import { playAudio } from "./helper";
 
 const AudioSpeak = (p) => {

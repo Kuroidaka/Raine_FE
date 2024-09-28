@@ -4,7 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-toastify";
 import authenApi from "../api/authen.api";
 import { API_BASE_URL, PREFIX } from "../config";
-import { AuthContext } from "../Context/Auth.context";
+import { AuthContext } from "../context/Auth.context";
 
 const GoogleLinkButton = () => {
   const { userData , linkGoogleAccount} = useContext(AuthContext);

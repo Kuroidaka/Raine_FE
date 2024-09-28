@@ -4,16 +4,23 @@ import styled from "styled-components";
 import CamScreen from "./camScreen";
 import LogScreen from "./LogScr";
 import DebugLog from "./DebugLog";
-import { WebSocketContext } from "../../Context/socket.context";
+import { WebSocketContext } from "../../context/socket.context";
 import { ToastContainer } from "react-toastify";
-import { ConversationProvider } from "../../Context/conversation.context";
+import ConversationContext, { ConversationProvider } from "../../context/Conversation.context";
 import conversationApi from "../../api/conversation.api";
 import { COLUMNS, IMAGE_QUALITY, IMAGE_WIDTH, MAX_SCREENSHOTS, SCREEN_COLUMNS, SCREEN_IMAGE_QUALITY, SCREEN_IMAGE_WIDTH, SCREEN_MAX_SCREENSHOTS } from "./constant";
 import { imagesGrid } from "./helper";
-import { base64ToFile } from "../../Util";
-
+import { base64ToFile } from "../../util";
+import { useNavigate } from "react-router";
 
 const VideoChat = () => {
+  return (
+    <ConversationProvider>
+      <VideoChatInner />
+    </ConversationProvider>
+  )
+}
+const VideoChatInner = () => {
   const isBusy = useRef(false);
   const canvasRef = useRef();
   const videoRef = useRef(null);
@@ -24,13 +31,15 @@ const VideoChat = () => {
   const [transcription, setTranscription] = useState("");
   const [imagesGridUrl, setImagesGridUrl] = useState(null);
   const [isWaiting, setIsWaiting] = useState(false);
+  const [progress, setProgress] = useState(null);
 
   const conID = useRef(null);
   const isScreenShare = useRef(false)
   const screenshotsRef = useRef([]);
   
   const socket = useContext(WebSocketContext);
-  
+  const { cacheConversation, selectedConID } = useContext(ConversationContext);
+  const navigate = useNavigate()
   const handleProcessAI = async (message) => { //AI say
     setTranscription(message);
     setIsWaiting(true);
@@ -50,6 +59,7 @@ const VideoChat = () => {
     if(conID.current === null) conID.current = returnedConID 
 
     await handleTTS(content)
+    setProgress(null)
   }
 
   const handleTTS = async (content) => {
@@ -65,34 +75,49 @@ const VideoChat = () => {
         await conversationApi.tts(content);
 
         setPhase("assistant: playing audio");
-
+       
       }
     
     } catch (error) {
       console.log(error)
       throw new error
     }
+    finally {
+      setProgress(null)
+    }
   }
 
   const handleSendClient = async ({ inputValue, file, conversationID }) => {
-    let result 
 
     // API CHAT
     try {
-      result = await conversationApi.createChatVideo({
+      const data = {
+        prompt: inputValue,
+      } 
+      await cacheConversation.addMsg(data, false)
+
+      const result = await conversationApi.createChatVideo({
         prompt: inputValue,
         file,
         conversationID
       }, true);
-      console.log("final response: ", result.content);
-      // setBotText(result.content)
+
+      if (!selectedConID) {
+        setTimeout(() => {
+          navigate(`/chat/cam/${result.conversationID}`);
+        }, 1500);
+      }
+
+      console.log("result", result)
+   
+      return result
       
     } catch (error) {
       // result.content = error.message
       throw new Error
     }
 
-    return result
+
   };
     
   const videoProcess = async () => {
@@ -134,11 +159,19 @@ const VideoChat = () => {
           return prev + content
         });
       });
+
+
+      socket.on("processing", ({ message }) => {
+        console.log("message", message)
+        setProgress(message);
+      })
     }
+
 
     // Clean up the connection on unmount
     return () => {
       if (socket) socket.off("chatResChunk");
+      if (socket) socket.off("processing");
     };
   }, [socket]);
 
@@ -159,7 +192,8 @@ const VideoChat = () => {
     botText,
     setDisplayDebug,
     handleProcessAI,
-    conversationId: conID.current
+    conversationId: conID.current,
+    progress
   };
 
   const debugProp = {
@@ -171,18 +205,16 @@ const VideoChat = () => {
   };
 
   return (
-    <ConversationProvider>
-      <Container>
-        <ToastContainer />
-        <canvas ref={canvasRef} style={{ display: "none" }} />
-        <div className="content">
-          <CamScreen {...camScreenProp} />
-          <LogScreen {...logScreenProp} />
-        </div>
+    <Container>
+      <ToastContainer />
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+      <div className="content">
+        <CamScreen {...camScreenProp} />
+        <LogScreen {...logScreenProp} />
+      </div>
 
-        <DebugLog {...debugProp} />
-      </Container>
-    </ConversationProvider>
+      <DebugLog {...debugProp} />
+    </Container>
   );
 };
 

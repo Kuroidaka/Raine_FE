@@ -1,24 +1,21 @@
 import styled from "styled-components";
 
 import EmptyBox from "../Chat/Box/EmptyBox";
-import MarkDown from "../../Component/MarkDownChat";
-import Loading from "../../Component/Loading";
+import MarkDown from "../../component/MarkDownChat";
 // import { useEffect, useState } from "react";
 // import exampleText from "./test.txt";
 import InputBox from "../Chat/input";
+import AiProgress from "../../component/AiProgress";
 
 const LogScreen = (p) => {
-  const { isWaiting, botText, setDisplayDebug, handleProcessAI, conversationId } = p;
-
-  // const [text, setText] = useState("");
-
-  // useEffect(() => {
-  //   fetch(exampleText)
-  //     .then((response) => response.text())
-  //     .then((text) => {
-  //       setText(text);
-  //     });
-  // }, []);
+  const {
+    isWaiting,
+    botText,
+    setDisplayDebug,
+    handleProcessAI,
+    conversationId,
+    progress,
+  } = p;
 
   return (
     <LogScreenContainer>
@@ -29,16 +26,18 @@ const LogScreen = (p) => {
       </BtnSection>
 
       <AiResponseContainer>
-        
         <div className="ai-text">
-          {isWaiting && <Loading />}
+          <AiProgress progress={progress} />
           <AiResponse>
             {botText.length === 0 && !isWaiting && <EmptyBox />}
             <MarkDown text={botText} />
           </AiResponse>
         </div>
         <InputWrapper>
-          <InputBox handleProcessAI={handleProcessAI} conversationId={conversationId}/>
+          <InputBox
+            handleProcessAI={handleProcessAI}
+            conversationId={conversationId}
+          />
         </InputWrapper>
       </AiResponseContainer>
     </LogScreenContainer>

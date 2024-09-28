@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { User } from 'react-feather';
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 // import ReactMarkdown from "react-markdown";
 // import remarkGfm from "remark-gfm";
 // import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -9,12 +9,20 @@ import Img from "../../../assets/img";
 
 import ImageCom from "../../../component/Image";
 import MarkDown from "../../../component/MarkDownChat";
-import { FadeIn } from "../../../Component/Motion";
+import { FadeIn } from "../../../component/Motion";
+import { AuthContext } from "../../../context/Auth.context";
 
 const UserMsg = (p) => {
 
     const { text, imgList=[] } = p;
     const { imgPlaceHolder } = Img
+
+    const { userData } = useContext(AuthContext) || { username: '' }
+    const [user, setUser] = useState(userData)
+
+    useEffect(() => {
+        setUser(userData)
+    }, [userData])
 
     const scrollToBottom = () => {
         // pageRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
@@ -27,11 +35,11 @@ const UserMsg = (p) => {
     <Container className='chat-msg human-chat'>
         <div className='icon'>
             <div className='human-icon-wrapper'>
-                <User className='human-icon'/>
+                <HumanIconWrapper user={user}/>
             </div>
         </div>
         <div className="chat-content">
-            <p className='chat-person'>{"You"}</p>
+            <p className='chat-person'>{user.username || user.email || "You"}</p>
             <div className="human-text-wrapper">
                 <div className='human-text'>
                    {imgList.length > 0 && 
@@ -62,6 +70,26 @@ const UserMsg = (p) => {
      );
 }
  
+
+const HumanIconWrapper = (p) => {
+    const { user } = p;
+    const [imgError, setImgError] = useState(false);
+
+    return (
+        <div className='human-icon-wrapper'>
+            {imgError || !user.picture ? (
+                <User className='human-icon'/>
+            ) : (
+                <img 
+                    src={user.picture} 
+                    alt={user.username} 
+                    onError={() => setImgError(true)} 
+                />
+            )}
+        </div>
+    );
+};
+
 export default UserMsg;
 
 const Container = styled(FadeIn)`
@@ -77,12 +105,17 @@ const Container = styled(FadeIn)`
             display: flex;
             align-items: center;
             justify-content: center;
-
+            overflow: hidden;
             width: 40px;
             border-radius: 50%;
             background-color: #00a5ff;
             .human-icon {
                 width: 25px;
+            }
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
         }
     }

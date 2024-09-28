@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import myCursor from '../assets/cursor/Labrador_Retriever.cur';
-import { Icon } from "../assets/icon";
+
 /* 
 Example:
     <Button
@@ -14,7 +14,7 @@ Example:
 
 const Button = (p) => {
 
-    const { title="", onClick=() => {}, className="", style={}, name="" } = p
+    const { title="", onClick=() => {}, className="", style={}, name="", Icon } = p
 
     const hleClick = (e) => {
         onClick(e)
@@ -28,7 +28,8 @@ const Button = (p) => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={hleClick}
-            >   
+            >
+                {Icon && <Icon />}
                 {title}
             </motion.button>            
         </Container>
@@ -38,10 +39,12 @@ const Button = (p) => {
 export default Button;
 
 const Container = styled.div`
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
     button{
         width: 150px;
-        height: 29px;
+        padding: 10px;
         transform: none;
         border-radius: 10px;
         border: none;
@@ -49,9 +52,14 @@ const Container = styled.div`
         transform: none;
         color: white;
         font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
     }
 
     svg {
-        color: white
+        color: white;
+        font-size: 3rem;
     }
 `

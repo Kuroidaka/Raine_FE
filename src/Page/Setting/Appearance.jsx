@@ -1,14 +1,14 @@
 import styled from "styled-components";
 import { Icon } from "../../assets/icon";
 import { useContext, useEffect, useState } from "react";
-import AppearanceContext from "../../Context/Appearance.context";
-import DeviceContext from "../../Context/Device.context";
+import AppearanceContext from "../../context/Appearance.context.jsx";
+import DeviceContext from "../../context/Device.context.jsx";
 import { toast } from "react-toastify";
 import fileApi from "../../api/file.api.js";
 import { API_BASE_URL, PREFIX } from "../../config/index.js";
 import userApi from "../../api/user.api.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Loading from "../../Component/Loading.jsx"
+import Loading from "../../component/Loading.jsx"
 
 const Appearance = () => {
 

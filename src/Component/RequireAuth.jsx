@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { AuthContext } from '../Context/Auth.context';
+import { AuthContext } from '../context/Auth.context';
 import authenApi from '../api/authen.api';
 
 const RequireAuth = (p) => {

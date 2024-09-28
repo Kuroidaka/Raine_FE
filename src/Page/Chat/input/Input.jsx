@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { File1, Image, Delete, AttachFile } from "../../../assets/Icons/index";
-import ConversationContext from "../../../Context/conversation.context";
+import ConversationContext from "../../../context/Conversation.context";
 
 const InputCom = (p) => {
     const { filesImages, uploadFileImg, setFilesImages, handleSend } = p;

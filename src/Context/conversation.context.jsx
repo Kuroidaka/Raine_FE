@@ -183,11 +183,13 @@ export const ConversationProvider = (p) => {
       if (isNewConversation) {
         // New conversation
         if (isBot) {
+          console.log("set user msg")
           setCurrenConversation((prev) => ({
             ...prev,
             messages: updateBotMessages(prev.messages),
           }));
         } else {
+          console.log("set user msg")
           setCurrenConversation({
             id: -1,
             name: "New Chat",
@@ -298,6 +300,7 @@ export const ConversationProvider = (p) => {
     deleteConversation,
     addMsg,
     currentCon,
+    cacheConversation
   };
 
   return (

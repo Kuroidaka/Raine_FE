@@ -104,6 +104,8 @@ export const AuthProvider = (p) => {
   const logOut = () => {
     localStorage.removeItem("token");
     window.history.pushState(null, "", "/login");
+    // redirect to login page
+    window.location.href = "/login";
     // setRole({});
     // setPermissionList([]);
   };

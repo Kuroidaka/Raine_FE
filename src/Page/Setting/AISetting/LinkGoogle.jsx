@@ -1,13 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
-import userApi from "../../../api/user.api";
-import Loading from "../../../Component/Loading";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../Context/Auth.context";
-import GoogleLinkButton from "../../../Component/GoogleLinkButton";
-import UserProfileCard from "../../../Component/GoogleAccount";
-import { toast } from "react-toastify";
-import authenApi from "../../../api/authen.api";
+import { AuthContext } from "../../../context/Auth.context";
+import GoogleLinkButton from "../../../component/GoogleLinkButton";
+import UserProfileCard from "../../../component/GoogleAccount";
+
 
 const LinkAccountSetting = () => {
     const { userData, unlinkGoogleAccount } = useContext(AuthContext) || { username: '' }

@@ -3,8 +3,8 @@ import { useContext, useState } from 'react';
 import '../style/index.scss'
 import DocsUploaded from "./Docs";
 import Input from './Input';
-import { filesToBase64, hostImages } from "../../../Util" 
-import ConversationContext from '../../../Context/conversation.context';
+import { filesToBase64, hostImages } from "../../../util" 
+import ConversationContext from '../../../context/Conversation.context';
 import { toast } from 'react-toastify';
 import fileApi from '../../../api/file.api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
