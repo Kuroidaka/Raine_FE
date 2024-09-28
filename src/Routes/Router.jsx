@@ -17,7 +17,7 @@ const VideoChat = lazy(() => import("../Page/VideoChat"));
 const StreamTest = lazy(() => import("../Page/Test/Stream"));
 const PhotoCapture = lazy(() => import("../Page/Test/Video"));
 const AudioPreview = lazy(() => import("../Page/Test/PreviewAudio"));
-
+const VideoRecorder = lazy(() => import("../Page/Test/VideoCapture"));
 
 
 const getDashboardChildrenRoutes = async () => {
@@ -36,6 +36,7 @@ const getDashboardChildrenRoutes = async () => {
     { page: "test", path: paths.test, element: <SuspenseWrapper><StreamTest /></SuspenseWrapper> },
     { page: "test", path: paths.testCam, element: <SuspenseWrapper><PhotoCapture /></SuspenseWrapper> },
     { page: "test", path: paths.testAudio, element: <SuspenseWrapper><AudioPreview /></SuspenseWrapper> },
+    { page: "test", path: "/test/videoCap", element: <SuspenseWrapper><VideoRecorder /></SuspenseWrapper> },
   ];
 
   return childrenRoutes;

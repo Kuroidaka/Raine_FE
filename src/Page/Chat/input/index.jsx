@@ -4,7 +4,7 @@ import '../style/index.scss'
 import DocsUploaded from "./Docs";
 import Input from './Input';
 import { filesToBase64, hostImages } from "../../../util" 
-import ConversationContext from '../../../context/Conversation.context';
+import ConversationContext from '../../../context/conversation.context';
 import { toast } from 'react-toastify';
 import fileApi from '../../../api/file.api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -109,10 +109,7 @@ const InputBox = (p) => {
             dataBody.conversationID = selectedConID || conversationId
         }
         let isStream = true
-        let isVision = false
         if (typeof handleProcessAI === "function") {
-            isVision = true
-            addMsg(dataBody, isStream, isVision)
             await handleProcessAI(inputValue);
         }
         else {

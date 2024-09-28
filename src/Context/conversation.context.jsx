@@ -93,7 +93,6 @@ export const ConversationProvider = (p) => {
       });
 
       socket.on("chatResChunkFunc", async ({ functionData, id }) => {
-        // cacheConversation.addMsg({prompt: content}, true)
         console.log("functionName", functionData);
         const data = { id, ...functionData };
 

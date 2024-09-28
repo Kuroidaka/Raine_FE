@@ -25,7 +25,7 @@ const conversationApi = {
         // Send POST request with query parameters and data body
         return axiosClient.post(url, dataBody, { params });
     },
-    createChatVideo: async ({ prompt, conversationID, file }, isStream = false) => {
+    createChatVideo: async ({ prompt, conversationID, file, fileVideo }, isStream = false) => {
         const url = `/brain/chat/video`;
     
         // Define query parameters
@@ -42,6 +42,9 @@ const conversationApi = {
         }
         if (file) {
             formData.append('file', file);  // Assuming 'file' is a File object
+        }
+        if (fileVideo) {
+            formData.append('fileVideo', fileVideo);  // Assuming 'file' is a File object
         }
     
         console.log("FormData", formData);

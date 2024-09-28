@@ -65,6 +65,7 @@ const RoutineCard = (p) => {
                                                 dataSection={dataSection}
                                                 setDateSection={setDateSection}
                                                 routineDate={data.routineDate}
+                                                routineTime={data.routineTime}
                                                 isActive={data.isActive}
                                                 routineData={data}
                                                 />
@@ -92,6 +93,7 @@ const RoutineCard = (p) => {
                                         dataSection={dataSection}
                                         setDateSection={setDateSection}
                                         routineDate={data.routineDate}
+                                        routineTime={data.routineTime}
                                         isActive={data.isActive}
                                         routineData={data}
                                         />

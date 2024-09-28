@@ -11,7 +11,8 @@ const ActionBox = (p) => {
       recorder,
       video, videoRef,
       screenObject, screenRef, isScreenShare,
-      isOnMic, setIsOnMic
+      isOnMic, setIsOnMic,
+      captureVideo, stopAndSaveCaptureVideo, terminateCaptureVideo
     } = p
   
     const [isOpenCamBtn, setIsOpenCamBtn] = useState(false)
@@ -30,18 +31,21 @@ const ActionBox = (p) => {
     };
   
     const cam = {
-      open: () => {
-          const videoElm = document.querySelector('.video')
-          videoElm.style.display = 'block'
-          setIsOpenCamBtn(true)
-          recorder.video.start(video, videoRef)
+      open: async () => {
+        const videoElm = document.querySelector('.video')
+        videoElm.style.display = 'block'
+        setIsOpenCamBtn(true)
+        recorder.video.start(video, videoRef)
+        await captureVideo()
       },
       close: () => {
-          const videoElm = document.querySelector('.video')
-          videoElm.style.display = 'none'
-          setIsOpenCamBtn(false)
-          console.log("videoRef", videoRef.current.srcObject)
-          recorder.video.stop(video, videoRef)
+        const videoElm = document.querySelector('.video')
+        videoElm.style.display = 'none'
+        setIsOpenCamBtn(false)
+        console.log("videoRef", videoRef.current.srcObject)
+        recorder.video.stop(video, videoRef),
+        // stopCaptureVideo()
+        terminateCaptureVideo()
       },
     }
   
@@ -59,15 +63,18 @@ const ActionBox = (p) => {
     }
   
     const micFunc = {
-      open: () => {
+      open: async () => {
         recorder.voice.start()
         isBusy.current = false
         setIsOnMic(true)
+        await captureVideo()
+
       },
       close: () => {
         recorder.voice.stop()
         isBusy.current = true
         setIsOnMic(false)
+        terminateCaptureVideo()
       },
     }
   

@@ -33,6 +33,14 @@ const fileApi = {
     deleteFileForChat: async (id) => {
         const url = `/file/ask/delete/${id}`;
         return axiosClient.delete(url);
+    },
+    uploadVideoChatRecord: async (formData, messageID) => {
+        const url = `/file/video/record/${messageID}`;
+        return axiosClient.post(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
     }
 }
 

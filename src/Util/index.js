@@ -325,3 +325,30 @@ export function convertToTodayWithSameTime(dateString) {
 
   return result;
 }
+
+
+/**
+ * Utility function to fetch a .webm file from a Blob URL, return it as a File object,
+ * and trigger a download.
+ *
+ * @param {string} blobUrl - The Blob URL that you want to convert into a .webm file.
+ * @param {string} fileName - The name of the file to be returned and downloaded (default is 'video.webm').
+ * @returns {Promise<File>} - A promise that resolves to the .webm File object.
+ */
+export function getWebmFileFromBlobUrl(blobUrl, fileName = new Date().getTime() + '.webm') {
+  return fetch(blobUrl)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Failed to fetch Blob from URL: ${response.statusText}`);
+      }
+      return response.blob();
+    })
+    .then(blob => {
+      const file = new File([blob], fileName, { type: 'video/webm' });
+      return file;
+    })
+    .catch(error => {
+      console.error('Error fetching Blob:', error);
+      throw error;
+    });
+}

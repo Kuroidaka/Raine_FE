@@ -22,7 +22,7 @@ const CamScreen = (p) => {
     videoRef,
     isScreenShare,
     screenshotsRef,
-    
+    captureVideo, stopAndSaveCaptureVideo, terminateCaptureVideo,
     handleProcessAI
   } = p
 
@@ -31,10 +31,11 @@ const CamScreen = (p) => {
     
     const screenRef = useRef(null);
 
+
     const [currentVolume, setCurrentVolume] = useState(-50);
     const [volumePercentage, setVolumePercentage] = useState(0);
     const [isOnMic, setIsOnMic] = useState(false);
-  
+    
 
     const navigate = useNavigate();
 
@@ -171,11 +172,15 @@ const CamScreen = (p) => {
         }
       }
     };
-    
+
+
+
+
   // Process frame capture
   useEffect(() => {
     const captureFrame = () => {
       if (video.status === "recording" || screenObject.status === "recording" && audio.isRecording) {
+
         const targetWidth = isScreenShare.current ? SCREEN_IMAGE_WIDTH : IMAGE_WIDTH;
 
         const videoNode = isScreenShare.current ? screenRef.current : videoRef.current;
@@ -271,14 +276,15 @@ const CamScreen = (p) => {
 
 
   const audioProps= {
-    recorder, isBusy, setIsWaiting, isOnMic
+    recorder, isBusy, setIsWaiting, isOnMic, captureVideo
   }
   const actionProps= {
     isBusy,
     recorder,
     video, videoRef,
     screenObject, screenRef, isScreenShare,
-    isOnMic, setIsOnMic
+    isOnMic, setIsOnMic,
+    captureVideo, stopAndSaveCaptureVideo, terminateCaptureVideo
   }
 
 
