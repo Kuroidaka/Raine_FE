@@ -50,7 +50,8 @@ const TaskModal = () => {
                 isActive: modal?.content?.isActive || false,
                 routineDate: modal?.content?.routineDate || [],
                 target: modal?.content?.target || "0",
-                routineTime:  modal?.content?.routineTime? convertTimeHHmmToDate(modal?.content?.routineTime) : new Date()
+                routineTime:  modal?.content?.routineTime? convertTimeHHmmToDate(modal?.content?.routineTime) : new Date(),
+                taskAttachment: modal?.content?.taskAttachment || []
             })
 
             const relate = modal.content.area.reduce((prev, next) => {

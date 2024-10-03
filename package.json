@@ -65,7 +65,8 @@
     "silence-aware-recorder": "^1.0.4",
     "socket.io-client": "^4.7.5",
     "styled-components": "^6.1.8",
-    "tippy.js": "^6.3.7"
+    "tippy.js": "^6.3.7",
+    "video.js": "^8.17.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

@@ -32,6 +32,8 @@ const VideoChat = () => {
   );
 };
 const VideoChatInner = () => {
+  const { cacheConversation, selectedConID } = useContext(ConversationContext);
+
   const isBusy = useRef(false);
   const canvasRef = useRef();
   const videoRef = useRef(null);
@@ -46,22 +48,24 @@ const VideoChatInner = () => {
   const [isWaiting, setIsWaiting] = useState(false);
   const [progress, setProgress] = useState(null);
 
-  const conID = useRef(null);
+  const conID = useRef(selectedConID);
   const isScreenShare = useRef(false);
   const screenshotsRef = useRef([]);
+  const streamRecordRef = useRef(null);
 
   const socket = useContext(WebSocketContext);
-  const { cacheConversation, selectedConID } = useContext(ConversationContext);
   const navigate = useNavigate();
+
   const handleProcessAI = async (message) => {
     //AI say
     console.log("ProcessAI");
-    const videoUrl = await stopAndSaveCaptureVideo()
+    const videoUrl = await stopAndSaveCaptureVideo();
 
- 
-    const videoFile = videoUrl ? await getWebmFileFromBlobUrl(videoUrl, "my-video.webm") : null
+    const videoFile = videoUrl
+      ? await getWebmFileFromBlobUrl(videoUrl, "my-video.webm")
+      : null;
 
-    console.log("videoFile", videoFile)
+    console.log("videoFile", videoFile);
 
     setTranscription(message);
     setIsWaiting(true);
@@ -76,7 +80,7 @@ const VideoChatInner = () => {
       file: FrameFile,
       inputValue: message,
       conversationID: conID.current,
-      ...(videoFile && {fileVideo: videoFile})
+      ...(videoFile && { fileVideo: videoFile }),
     });
     console.log("returnedConID", returnedConID);
 
@@ -86,10 +90,6 @@ const VideoChatInner = () => {
     await handleTTS(content);
     setProgress(null);
   };
-
-  const convertVideoRecord = async (videoUrl) => {
-    
-  }
 
   const handleTTS = async (content) => {
     try {
@@ -111,7 +111,12 @@ const VideoChatInner = () => {
     }
   };
 
-  const handleSendClient = async ({ inputValue, file, conversationID, fileVideo }) => {
+  const handleSendClient = async ({
+    inputValue,
+    file,
+    conversationID,
+    fileVideo,
+  }) => {
     // API CHAT
     try {
       const data = {
@@ -175,40 +180,31 @@ const VideoChatInner = () => {
 
   const captureVideo = async () => {
     try {
-      let attempts = 0;
-      const maxAttempts = 5;
-      const interval = 1000; 
+      if (mediaRecorderRef.current) return;
 
-      if(mediaRecorderRef.current) return
-      
-      const checkSrcObject = setInterval(async () => {
-        if (videoRef.current && videoRef.current.srcObject) {
-          console.log("Capturing video")
-          clearInterval(checkSrcObject); // Clear the interval once srcObject is valid
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      
-          // Create MediaRecorder
-          const mediaRecorder = new MediaRecorder(stream);
-          mediaRecorderRef.current = mediaRecorder;
-      
-          mediaRecorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-              videoChunksRef.current.push(event.data);
-            }
-          };
-      
-          // Start recording
-          mediaRecorder.start();
-        } else {
-          attempts += 1;
-          if (attempts >= maxAttempts) {
-            clearInterval(checkSrcObject); // Clear the interval after max attempts
-            console.log("Can't get capture video");
+      if (videoRef.current && videoRef.current.srcObject) {
+        console.log("Capturing video");
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        streamRecordRef.current = stream;
+        // Create MediaRecorder
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            videoChunksRef.current.push(event.data);
           }
-        }
-      }, interval);
+        };
 
-      return () => clearInterval(checkSrcObject);
+        // Start recording
+        mediaRecorder.start();
+      }
+      else {
+        console.log("Can't get video source to record")
+      }
     } catch (err) {
       console.error("Error accessing user media", err);
     }
@@ -237,15 +233,20 @@ const VideoChatInner = () => {
       }
     });
   };
-  
 
-  const terminateCaptureVideo = () => {
+  const terminateCaptureVideo = async () => {
     if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.onstop = () => {
+      mediaRecorderRef.current.onstop = async () => {
         console.log("terminateCaptureVideo");
+        const stream = streamRecordRef.current;
+        if (stream) {
+          // Stop all tracks
+          stream.getTracks().forEach((track) => track.stop());
+        }
+        mediaRecorderRef.current = null;
       };
+
       mediaRecorderRef.current.stop(); // Stop recording
-      mediaRecorderRef.current = null
     }
   };
 
@@ -284,7 +285,8 @@ const VideoChatInner = () => {
     handleProcessAI,
     captureVideo,
     stopAndSaveCaptureVideo,
-    terminateCaptureVideo
+    terminateCaptureVideo,
+    conID,
   };
 
   const logScreenProp = {

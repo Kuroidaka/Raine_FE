@@ -23,14 +23,14 @@ const CamScreen = (p) => {
     isScreenShare,
     screenshotsRef,
     captureVideo, stopAndSaveCaptureVideo, terminateCaptureVideo,
-    handleProcessAI
+    handleProcessAI,
+    conID
   } = p
 
     const maxVolumeRef = useRef(0);
     const minVolumeRef = useRef(-100);
     
     const screenRef = useRef(null);
-
 
     const [currentVolume, setCurrentVolume] = useState(-50);
     const [volumePercentage, setVolumePercentage] = useState(0);
@@ -116,12 +116,21 @@ const CamScreen = (p) => {
       minDecibels: -100,
     });
 
+    const stopCall = async () => {
+      await terminateCaptureVideo()
+      recorder.hardStop(video, videoRef);
+      recorder.hardStop(screenObject, screenRef);
+      if(conID.current) {
+        navigate(`/chat/${conID.current}`);  
+      }
+      else {
+        navigate("/chat");
+      }
+    }
 
     const handleClickBack = async () => {
       // camApi.deleteCamChatStream();
-        recorder.hardStop(video, videoRef);
-        recorder.hardStop(screenObject, screenRef);
-        navigate("/chat");
+      stopCall()
     };
   
 
@@ -284,7 +293,8 @@ const CamScreen = (p) => {
     video, videoRef,
     screenObject, screenRef, isScreenShare,
     isOnMic, setIsOnMic,
-    captureVideo, stopAndSaveCaptureVideo, terminateCaptureVideo
+    captureVideo, stopAndSaveCaptureVideo, terminateCaptureVideo,
+    stopCall
   }
 
 
@@ -381,7 +391,7 @@ const RecordDot = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 99999;
+  z-index: 400;
   cursor: ${({ $isRecording }) => ($isRecording === 'true' ? 'default' : 'pointer')};
 
   ${({ $isRecording, $volumePercentage }) =>

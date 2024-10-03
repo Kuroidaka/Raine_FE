@@ -16,7 +16,7 @@ import reminderApi from "../../../api/reminder.api";
 import { toast } from "react-toastify";
 
 const TaskCard = (p) => {
-    const { dataSection, setDateSection, dateZone, setDateZone } = p
+    const { dataSection, dateZone, setDateZone } = p
     // const { task }  = useContext(TaskContext)
     const [dateType, setDateType] = useState({
         overdue: [],
@@ -100,19 +100,7 @@ const TaskCard = (p) => {
                                     <TaskCardList className="mb-30">
                                     {dateType.overdue.map((data, idx) => {
                                         return (
-                                            <Card 
-                                                key={idx}
-                                                status={data.status} 
-                                                id={data.id}
-                                                title={data?.title}
-                                                color={data?.color}
-                                                deadline={data?.deadline}
-                                                area={data.area}
-                                                note={data.note}
-                                                subTask={data.subTask}
-                                                dataSection={dataSection}
-                                                setDateSection={setDateSection}
-                                                />
+                                            <Card key={idx} data={data}/>
                                         )
                                     })}
                                     </TaskCardList>
@@ -123,19 +111,7 @@ const TaskCard = (p) => {
                                 <TaskCardList className="mb-30">
                                 {dateType.today && dateType.today.map((data, idx) => {
                                     return (
-                                        <Card 
-                                            key={idx}
-                                            status={data.status} 
-                                            id={data.id}
-                                            title={data?.title}
-                                            color={data?.color}
-                                            deadline={data?.deadline}
-                                            area={data.area}
-                                            note={data.note}
-                                            subTask={data.subTask}
-                                            dataSection={dataSection}
-                                            setDateSection={setDateSection}
-                                            />
+                                        <Card key={idx} data={data}/>
                                     )
                                 })}
                                 </TaskCardList>
@@ -147,17 +123,7 @@ const TaskCard = (p) => {
                             <DateZoneLabel name="tomorrow" className="mb-10 mt-40" title="Ngày mai" num={dateType.tomorrow.length} />
                             {dateType.tomorrow && dateType.tomorrow.map((data, idx) => {
                                 return (
-                                    <Card 
-                                        key={idx}
-                                        status={data.status} 
-                                        id={data.id}
-                                        title={data?.title}
-                                        color={data?.color}
-                                        deadline={data?.deadline}
-                                        area={data.area}
-                                        note={data.note}
-                                        subTask={data.subTask}
-                                        />
+                                    <Card key={idx} data={data}/>
                             )})}
 
                             {/* DATES AFTER TOMORROW */}
@@ -167,17 +133,7 @@ const TaskCard = (p) => {
                                         <DateZoneLabel name="dateAfterTomorrow" className="mb-10 mt-40" title={dAfterTArr[idx]?.value?.vn} num={date.length} />
                                             {date.map((data, idx) => {
                                                 return (
-                                                    <Card 
-                                                        key={idx}
-                                                        status={data.status} 
-                                                        id={data.id}
-                                                        title={data?.title}
-                                                        color={data?.color}
-                                                        deadline={data?.deadline}
-                                                        area={data.area}
-                                                        note={data.note}
-                                                        subTask={data.subTask}
-                                                        />
+                                                    <Card key={idx} data={data}/>
                                                 )
                                             })}
                                     </Fragment>
@@ -191,19 +147,7 @@ const TaskCard = (p) => {
                             <DateZoneLabel name="tomorrow" className="mb-10 mt-40" title="Ngày mai" num={dateType.tomorrow.length} />
                             {dateType.tomorrow && dateType.tomorrow.map((data, idx) => {
                                 return (
-                                    <Card 
-                                        key={idx}
-                                        status={data.status} 
-                                        id={data.id}
-                                        title={data?.title}
-                                        color={data?.color}
-                                        deadline={data?.deadline}
-                                        area={data.area}
-                                        note={data.note}
-                                        subTask={data.subTask}
-                                        dataSection={dataSection}
-                                        setDateSection={setDateSection}
-                                        />
+                                    <Card key={idx} data={data}/>
                                 )
                             })}
 
@@ -211,19 +155,7 @@ const TaskCard = (p) => {
                             <DateZoneLabel name="dateAfterTomorrow" className="mb-10 mt-40" title={dAfterTArr[0]?.value?.vn} num={dateType.datesAfterTomorrow[0].length} />
                             {dateType.dateAfterTomorrow && dateType.dateAfterTomorrow.map((data, idx) => {
                                 return (
-                                    <Card 
-                                        key={idx}
-                                        status={data.status} 
-                                        id={data.id}
-                                        title={data?.title}
-                                        color={data?.color}
-                                        deadline={data?.deadline}
-                                        area={data.area}
-                                        note={data.note}
-                                        subTask={data.subTask}
-                                        dataSection={dataSection}
-                                        setDateSection={setDateSection}
-                                        />
+                                    <Card key={idx} data={data}/>
                                 )
                             })}
 
@@ -231,19 +163,7 @@ const TaskCard = (p) => {
                             <DateZoneLabel name="someday" className="mb-10 mt-40" title="Ngày nào đó" num={dateType.someDay.length} />
                             {dateType.someDay && dateType.someDay.map((data, idx) => {
                                 return (
-                                    <Card 
-                                        key={idx}
-                                        status={data.status} 
-                                        id={data.id}
-                                        title={data?.title}
-                                        color={data?.color}
-                                        deadline={data?.deadline}
-                                        area={data.area}
-                                        note={data.note}
-                                        subTask={data.subTask}
-                                        dataSection={dataSection}
-                                        setDateSection={setDateSection}
-                                        />
+                                    <Card key={idx} data={data}/>
                                 )
                             })}
                         </Fragment>
@@ -276,15 +196,18 @@ const DateZoneLabel = (p) => {
 }
 
 export const Card = (p) => {
-    const { 
-        title,
-        color = null,
-        deadline = "",
-        area = [],
-        note = "",
-        subTask = [],
-        id,
-        status,
+    const {
+        data: {
+            title,
+            color = null,
+            deadline = "",
+            area = [],
+            note = "",
+            subTask = [],
+            id,
+            status,
+            taskAttachment
+        },
         mode = "edit"
     } = p
 
@@ -330,7 +253,8 @@ export const Card = (p) => {
                 deadline,
                 area,
                 note,
-                id
+                id,
+                taskAttachment
             }
             openModal(title, data, "task", mode)
         },
@@ -387,7 +311,7 @@ export const Card = (p) => {
         open: () => { // Open list subtask
             setSubOpen(!subOpen)
         },
-        async updateSubtask(id, updates) {
+        updateSubtask: async (id, updates) => {
             try {
                 const newSub = [...subs]; // Prevent mutating
     
@@ -403,11 +327,11 @@ export const Card = (p) => {
             }
         },
     
-        async check(id, check) {
+        check: async (id, check) => {
             await subTaskHandle.updateSubtask(id, { status: check });
         },
     
-        async update(id, title) {
+        update: async (id, title) => {
             await subTaskHandle.updateSubtask(id, { title: title });
         }
     }
@@ -475,7 +399,7 @@ export const Card = (p) => {
                 <SubTaskList>
                 {subs.length > 0 && subs.map((sub, idx) => {
                     return <SubTask key={idx} id={sub.id} color={color} title={sub.title} done={sub.status} 
-                    updateSubTitle={subTaskHandle.update}
+                    updateSubTitle={subTaskHandle.updateSubtask}
                     updateSubCheck={subTaskHandle.check} deleteSubTask={subTaskHandle.delete}
                     mode={mode}
                     /> 

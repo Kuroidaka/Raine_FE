@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 
 const AiProgress = (p) => {
-  const { progress } = p;
+  const { progress} = p;
   const [letters, setLetters] = useState([]);
 
   useEffect(() => {
@@ -50,6 +50,9 @@ const AiProgressContainer = styled.div`
   height: auto;
   border-radius: 5px;
   text-align: center;
+  height: 5%;
+
+
 
   .letter-holder {
     padding: 10px;
@@ -60,6 +63,8 @@ const AiProgressContainer = styled.div`
   }
 
   .letter {
+    opacity: 0.5;
+    color: #ffffff;
     animation-name: ${loadingF};
     animation-duration: 1.5s;
     animation-iteration-count: infinite;

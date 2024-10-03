@@ -34,7 +34,12 @@ const AudioSpeak = (p) => {
               recorder.voice.start()
               await captureVideo()
             }, 2000)
+          }else {
+            setTimeout(async () => {
+              await captureVideo()
+            }, 2000)
           }
+
           isBusy.current = false;
           setIsWaiting(false);
         }

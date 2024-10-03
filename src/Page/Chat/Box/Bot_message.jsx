@@ -314,38 +314,26 @@ const FunctionData = ({ agent }) => {
             "FileAskChatService": null
         };
 
-        const sharedProps = (funcData) => ({
-            title: funcData.title,
-            color: funcData.color,
-            note: funcData.note,
-            id: funcData.id,
+        const sharedProps = () => ({
             mode: "view",
         });
 
         const specificProps = {
             "ReminderChatService": (funcData) => ({
                 ...sharedProps(funcData),
-                deadline: funcData.deadline,
-                area: funcData.area,
-                subTask: funcData.subTask,
-                status: funcData.status,
+                data: funcData
             }),
             "RoutineChatService": (funcData) => ({
                 ...sharedProps(funcData),
-                area: funcData.area,
-                routineDate: funcData.routineDate,
-                isActive: funcData.isActive,
-                routineTime: funcData.routineTime,
+                data: funcData
             }),
             "ReminderCreateChatService": (funcData) => ({
                 ...sharedProps(funcData),
-                deadline: funcData.deadline,
-                status: funcData.status,
+                data: funcData
             }),
             "RoutineCreateChatService": (funcData) => ({
                 ...sharedProps(funcData),
-                isActive: funcData.isActive,
-                routineTime: funcData.routineTime,
+                data: funcData
             }),
             "FileAskChatService": (funcData) => ({
                 ...sharedProps(funcData),

@@ -75,6 +75,7 @@ const AiResponseContainer = styled.div`
   .ai-text {
     color: white;
     height: 90%;
+    width: 100%;
     overflow: scroll;
 
     p {

@@ -2,7 +2,7 @@
 import styled from 'styled-components';
 import UserMsg from './User_message';
 import BotMsg from './Bot_message';
-import EmptyBox from './EmptyBox';
+// import EmptyBox from './EmptyBox';
 import { useContext, useRef } from 'react';
 import ConversationContext from '../../../Context/conversation.context';
 
@@ -39,7 +39,8 @@ const ChatBox = () => {
                         pageRef={pageRef} 
                         
                         text={msg.text} 
-                        imgList={msg.imgList} 
+                        imgList={msg.imgList}
+                        videoRecord={msg.videoRecord}
                     />
                 ) : (msg.isBot) && ( 
                     <BotMsg

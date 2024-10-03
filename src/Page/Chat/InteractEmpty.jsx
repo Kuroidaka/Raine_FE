@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 import InputBox from "./input/index";
-import ConversationContext from "../../Context/conversation.context";
+import ConversationContext from "../../context/conversation.context";
 import { useContext } from "react";
 import EmptyBox from "./Box/EmptyBox";
 // import ConversationContext from "../../Context/conversation.context";

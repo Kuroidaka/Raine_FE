@@ -7,7 +7,7 @@ function ResizeAbleModal(p) {
   const { modal, children } = p;
   const sidebarRef = useRef(null);
   const [isResizing, setIsResizing] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(268);
+  const [sidebarWidth, setSidebarWidth] = useState(368);
   const { device } = useContext(DeviceContext);
 
   const startResizing = useCallback((mouseDownEvent) => {
@@ -94,7 +94,7 @@ const ModalWrapper = forwardRef((p, ref) => {
       ref={ref}
       style={{ 
         width: `${sidebarWidth}px!important`, 
-        minWidth: modal.isOpen ? "150px" : "0px",
+        minWidth: modal.isOpen ? "200px" : "0px",
         maxWidth: modal.isOpen ? "600px" : "0px",
       }}
     >
@@ -108,7 +108,7 @@ ModalWrapper.displayName = "ModalWrapper";
 const StyledModalWrapper = styled(motion.div)`
   right: 0;
   height: 100vh;
-  min-width: 150px;
+  min-width: 200px;
   max-width: 600px;
   z-index: 1002;
   background-color: #ffffff;

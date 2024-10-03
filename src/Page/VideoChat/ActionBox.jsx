@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import { Mic, MicOff, Video, VideoOff, Monitor, Phone } from 'react-feather'
 import { useState } from "react";
-import { useNavigate } from "react-router";
+
 
 const ActionBox = (p) => {
 
@@ -12,40 +12,52 @@ const ActionBox = (p) => {
       video, videoRef,
       screenObject, screenRef, isScreenShare,
       isOnMic, setIsOnMic,
-      captureVideo, stopAndSaveCaptureVideo, terminateCaptureVideo
+      captureVideo, stopAndSaveCaptureVideo, terminateCaptureVideo,
+      stopCall
     } = p
   
     const [isOpenCamBtn, setIsOpenCamBtn] = useState(false)
     const [isScreenBtn, setIsScreenBtn] = useState(false)
-    const navigate = useNavigate()
   
     const toggleScreenShare = (toggle) => {
       isScreenShare.current = toggle;
     };
   
     const handleEndCall = async () => {
-      // camApi.deleteCamChatStream();
-        recorder.hardStop(video, videoRef);
-        recorder.hardStop(screenObject, screenRef);
-        navigate("/chat");
+      stopCall()
     };
   
     const cam = {
       open: async () => {
-        const videoElm = document.querySelector('.video')
-        videoElm.style.display = 'block'
-        setIsOpenCamBtn(true)
-        recorder.video.start(video, videoRef)
-        await captureVideo()
+        const videoElm = document.querySelector('.video');
+        videoElm.style.display = 'block';
+        setIsOpenCamBtn(true);
+      
+        await recorder.video.start(video, videoRef);
+      
+        // Wait for videoRef.current.srcObject to be available
+        await new Promise((resolve) => {
+          const checkSrcObject = () => {
+            if (videoRef.current && videoRef.current.srcObject) {
+              resolve();  // srcObject is available, proceed
+            } else {
+              requestAnimationFrame(checkSrcObject);  // Check again on the next animation frame
+            }
+          };
+          checkSrcObject();
+        });
+      
+        // Now that srcObject is available, proceed with capturing the video
+        await captureVideo();
       },
-      close: () => {
+      close: async () => {
+        await terminateCaptureVideo()
         const videoElm = document.querySelector('.video')
         videoElm.style.display = 'none'
         setIsOpenCamBtn(false)
         console.log("videoRef", videoRef.current.srcObject)
-        recorder.video.stop(video, videoRef),
+        recorder.video.stop(video, videoRef)
         // stopCaptureVideo()
-        terminateCaptureVideo()
       },
     }
   
@@ -70,11 +82,11 @@ const ActionBox = (p) => {
         await captureVideo()
 
       },
-      close: () => {
+      close: async () => {
         recorder.voice.stop()
         isBusy.current = true
         setIsOnMic(false)
-        terminateCaptureVideo()
+        await terminateCaptureVideo()
       },
     }
   
