@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import ModalContext from "../../../Context/Modal.context";
 import DOMPurify from "dompurify";
-import { convertDatesRoutine, formatTimeHHmm, isDateString } from "../../../Util";
+import { convertDatesRoutine, formatTimeHHmm } from "../../../Util";
 import { Img } from "../../../assets/svg";
 import Input from "../../../Component/Input";
 import Flatpickr from "react-flatpickr";
@@ -10,7 +10,7 @@ import ReactQuill from 'react-quill';
 import { CirclePicker } from "react-color";
 import Button from "../../../Component/Button";
 
-import RoutineContext from "../../../Context/Routine.context";
+import RoutineContext from "../../../context/Routine.context";
 import SwitchButton from "../../../Component/SwitchButton";
 import myCursor from '../../../assets/cursor/Labrador_Retriever.cur';
 

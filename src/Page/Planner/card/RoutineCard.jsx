@@ -5,7 +5,7 @@ import { Icon } from "../../../assets/icon";
 import { useState, useEffect, Fragment, useContext } from "react";
 import { updateRecentDates } from "../../../Util";
 import ModalContext from "../../../Context/Modal.context";
-import RoutineContext from "../../../Context/Routine.context";
+import RoutineContext from "../../../context/Routine.context";
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur";
 
 const RoutineCard = (p) => {
@@ -58,7 +58,14 @@ const RoutineCard = (p) => {
           <TaskCardList className="mb-30">
             {dateType.mustdo.length > 0 &&
               dateType.mustdo.map((data) => {
-                return <Card key={data.id} data={data} />;
+                return (
+                  <Card
+                    key={data.id}
+                    data={data}
+                    dataSection={dataSection}
+                    setDateSection={setDateSection}
+                  />
+                );
               })}
           </TaskCardList>
         </Fragment>
@@ -79,7 +86,14 @@ const RoutineCard = (p) => {
       <TaskCardList className="mb-30">
         {dateType.doNotNeed.length > 0 &&
           dateType.doNotNeed.map((data) => {
-            return <Card key={data.id} data={data} />;
+            return (
+              <Card
+                key={data.id}
+                data={data}
+                dataSection={dataSection}
+                setDateSection={setDateSection}
+              />
+            );
           })}
       </TaskCardList>
     </Fragment>
@@ -111,18 +125,18 @@ export const Card = (p) => {
       area = [],
       note = "",
       id,
-      dataSection,
-      setDateSection,
       routineDate,
       isActive,
       routineTime,
     },
+    dataSection,
+    setDateSection,
     mode = "edit",
   } = p;
   // const { task, setTask }  = useContext(TaskContext)
   const { openModal } = useContext(ModalContext);
 
-  const { handleUpdateRoutine, handleUpdateRoutineDates } =
+  const { handleUpdateRoutineDates } =
     useContext(RoutineContext);
 
   const [checked, setChecked] = useState(false);
@@ -187,8 +201,9 @@ export const Card = (p) => {
         date1.getDate() === date2.getDate()
       );
     };
-
-    let dateList = dataSection[0].routineDate.map(({ completion_date }) => ({
+    const data = dataSection.find((data) => data.id === id)
+    if(!data) return null
+    let dateList = data.routineDate.map(({ completion_date }) => ({
       completion_date: new Date(completion_date).toString(),
     }));
     dateList = dateList.filter((d) => {
@@ -201,9 +216,10 @@ export const Card = (p) => {
 
   const handleClickCheckDate = async (date) => {
     if (mode === "view") return null;
-    console.log(dataSection);
 
-    const dates = dataSection[0].routineDate.map(({ completion_date }) => ({
+    const data = dataSection.find((data) => data.id === id)
+    if(!data) return null
+    const dates = data.routineDate.map(({ completion_date }) => ({
       completion_date: new Date(completion_date).toString(),
     }));
     dates.push({
@@ -213,14 +229,6 @@ export const Card = (p) => {
     const routineId = id;
 
     await handleUpdateRoutineDates(routineId, dates);
-    // setDateSection(prev => {
-    //     const newRoutine = [...prev]
-    //     const index = newRoutine.map(e => e.id).indexOf(id);
-    //     console.log(date)
-    //     newRoutine[index].routineDate.push({completion_date:date})
-    //     console.log(newRoutine[index])
-    //     return newRoutine
-    // })
   };
 
   return (
