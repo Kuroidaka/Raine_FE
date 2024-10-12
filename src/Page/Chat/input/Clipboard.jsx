@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { toast } from 'react-toastify';
 
 const ClipboardFileReader = (p) => {
   const { handleUploadFile } = p
@@ -18,7 +17,6 @@ const ClipboardFileReader = (p) => {
             return;
           }
         }
-        toast.error('No file found in clipboard');
       }
     };
 

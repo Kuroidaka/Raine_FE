@@ -8,7 +8,7 @@ import { WebSocketContext } from "../../context/socket.context";
 import { ToastContainer } from "react-toastify";
 import ConversationContext, {
   ConversationProvider,
-} from "../../context/conversation.context";
+} from "../../Context/conversation.context";
 import conversationApi from "../../api/conversation.api";
 import {
   COLUMNS,
@@ -21,7 +21,7 @@ import {
   SCREEN_MAX_SCREENSHOTS,
 } from "./constant";
 import { imagesGrid } from "./helper";
-import { base64ToFile, getWebmFileFromBlobUrl } from "../../util";
+import { base64ToFile, getWebmFileFromBlobUrl } from "../../Util";
 import { useNavigate } from "react-router";
 
 const VideoChat = () => {

@@ -167,6 +167,7 @@ const FunctionAgent = (p) => {
     const { agent } = p
     const { openModal }  = useContext(ModalContext)
 
+
     const [listFuncData, setListFuncData] = useState({})
 
     useEffect(() => {
@@ -386,6 +387,7 @@ const Container = styled.div`
     }
     .chat-content{
         max-width: 80%;
+        min-width: 50%;
         width: auto;
         margin-left: 18px;
         p.chat-person {

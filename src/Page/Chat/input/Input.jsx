@@ -1,31 +1,29 @@
-import { useState, useEffect, useContext } from "react";
-import { File1, Image, Delete, AttachFile } from "../../../assets/Icons/index";
-import ConversationContext from "../../../context/conversation.context";
+import { useState, useEffect } from "react";
+import { File1, Image, Delete, AttachFile, Send } from "../../../assets/Icons/index";
 
 const InputCom = (p) => {
     const { filesImages, uploadFileImg, setFilesImages, handleSend } = p;
-    // const { isWaiting, setIsWaiting, selectedConID } = useContext(ConversationContext);
     const [inputValue, setInputValue] = useState('');
+    const [isComposing, setIsComposing] = useState(false); // New state to track IME composing
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
     };
 
     const handleSendButtonClick = () => {
-        if(inputValue !== '') {
-            setInputValue('');
-            handleSend(inputValue)
+        if (inputValue !== '') {
+            handleSend(inputValue);
             setInputValue('');
         }
     };
 
     const handleEnterKeyPress = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
             e.preventDefault();
             document.getElementById('myTextarea').style.height = 'auto';
             handleSendButtonClick();
         } else if (e.key === 'Enter' && e.shiftKey) {
-            setInputValue((prevValue) => prevValue); 
+            setInputValue(prevValue => `${prevValue}\n`);
         }
     };
 
@@ -35,12 +33,21 @@ const InputCom = (p) => {
     };
 
     useEffect(() => {
-        document.getElementById('myTextarea').addEventListener('input', autoResize);
+        const textarea = document.getElementById('myTextarea');
+        textarea.addEventListener('compositionstart', () => setIsComposing(true));
+        textarea.addEventListener('compositionend', () => setIsComposing(false));
+        textarea.addEventListener('input', autoResize);
 
         function autoResize() {
             this.style.height = 'auto';
             this.style.height = this.scrollHeight + 'px';
         }
+
+        return () => {
+            textarea.removeEventListener('compositionstart', () => setIsComposing(true));
+            textarea.removeEventListener('compositionend', () => setIsComposing(false));
+            textarea.removeEventListener('input', autoResize);
+        };
     }, []);
 
     return (
@@ -60,7 +67,7 @@ const InputCom = (p) => {
             </div>
             <div className="Input_area">
                 <label className="attach-btn-wrapper" htmlFor="img_file-Input">
-                    <span ><AttachFile /></span>
+                    <span><AttachFile /></span>
                     <input
                         type="file"
                         id="img_file-Input"
@@ -70,34 +77,20 @@ const InputCom = (p) => {
                         multiple
                     />
                 </label>
-
-                <textarea className="Input_text"
+                <textarea
+                    className="Input_text"
                     rows="1"
                     id="myTextarea"
                     placeholder="Input your prompt..."
                     value={inputValue}
                     onChange={handleInputChange}
                     onKeyDown={handleEnterKeyPress}
-                >
-                </textarea>
-                {/* {(isWaiting.isWait && selectedCon.id === isWaiting.conId)  ? (
-                    <></>
-                ) : (
-                    <span id="send_button" onClick={handleSendButtonClick}>
-                        <Send />
-                    </span>
-                )
-                } */}
-
+                />
+                {/* Uncomment below for send button functionality */}
+                {/* <span id="send_button" onClick={handleSendButtonClick}>
+                    <Send />
+                </span> */}
             </div>
-
-            
-            {/* {(isWaiting.isWait && isWaiting.conId === selectedCon.id) 
-            && 
-            <div className="typing">
-                <Typing who="Bot" text="is typing..." />
-            </div>
-            } */}
         </div>
     );
 }

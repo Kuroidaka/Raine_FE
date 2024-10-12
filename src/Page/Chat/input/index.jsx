@@ -4,7 +4,7 @@ import '../style/index.scss'
 import DocsUploaded from "./Docs";
 import Input from './Input';
 import { filesToBase64, hostImages } from "../../../util" 
-import ConversationContext from '../../../context/conversation.context';
+import ConversationContext from '../../../Context/conversation.context';
 import { toast } from 'react-toastify';
 import fileApi from '../../../api/file.api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -67,16 +67,6 @@ const InputBox = (p) => {
             }
         },
         handleProcess: async () => {
-            // const formData = new FormData();
-            // for (let i = 0; i < filesImages.length; i++) {
-            //     const file = filesImages[i];
-            //     formData.append("files", file);
-            // }
-        // // Log the formData entries for debugging
-        //     for (let entry of formData.entries()) {
-        //         console.log(entry);
-        //     }
-            // const { imgList } = await imageFile.sendToBE(formData)
             setFilesImages([])
             const listBase64 = await filesToBase64(filesImages)
             
@@ -84,20 +74,6 @@ const InputBox = (p) => {
 
             return imgList
         },
-        sendToBE: async (formData) => {
-            // return fileApi.uploadFileImg(formData)
-            // .then((data) => {
-            //     console.log("img list: ",data.data);
-            //     setFilesImages([])
-            //     return {
-            //         imgList: data.data.data
-            //     }
-            // })
-            // .catch((error) => {
-            //     console.error(error);
-            //     throw error
-            // });
-        }
     }
     const handleSend = async (inputValue) => {
         const dataBody = {

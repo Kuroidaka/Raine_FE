@@ -7,8 +7,6 @@ import { useContext, useRef } from 'react';
 import ConversationContext from '../../../Context/conversation.context';
 
 
-
-
 const ChatBox = () => {
     const { currentCon, currenConError } = useContext(ConversationContext);
     // const { id } = useParams();
