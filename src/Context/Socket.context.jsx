@@ -11,7 +11,8 @@ export const WebSocketProvider = (p) => {
   useEffect(() => {
     const newSocket = io(API_BASE_URL, {
       transports: ["websocket", "polling"],
-      timeout: 20000
+      timeout: 20000,
+      auth: { token: localStorage.getItem('token') }
     });
 
     newSocket.on("connect", () => {
