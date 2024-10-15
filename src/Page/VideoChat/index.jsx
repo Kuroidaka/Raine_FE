@@ -21,8 +21,8 @@ import {
   SCREEN_MAX_SCREENSHOTS,
 } from "./constant";
 import { imagesGrid } from "./helper";
-import { base64ToFile, getWebmFileFromBlobUrl } from "../../Util";
-import { useNavigate } from "react-router";
+import { base64ToFile, getWebmFileFromBlobUrl } from "../../util";
+import { useNavigate, useParams } from "react-router";
 
 const VideoChat = () => {
   return (
@@ -32,8 +32,8 @@ const VideoChat = () => {
   );
 };
 const VideoChatInner = () => {
-  const { cacheConversation, selectedConID } = useContext(ConversationContext);
-
+  const { cacheConversation } = useContext(ConversationContext);
+  const { id: selectedConID } = useParams();
   const isBusy = useRef(false);
   const canvasRef = useRef();
   const videoRef = useRef(null);
@@ -59,20 +59,23 @@ const VideoChatInner = () => {
   const handleProcessAI = async (message) => {
     //AI say
     console.log("ProcessAI");
-    const videoUrl = await stopAndSaveCaptureVideo();
 
-    const videoFile = videoUrl
-      ? await getWebmFileFromBlobUrl(videoUrl, "my-video.webm")
-      : null;
+    const isOpenVideo = videoRef.current.srcObject !== null;
+    let videoDataObj = {}
 
-    console.log("videoFile", videoFile);
-
+    if (isOpenVideo) {
+      const videoUrl = await stopAndSaveCaptureVideo();
+      const videoFile = videoUrl
+        ? await getWebmFileFromBlobUrl(videoUrl, "my-video.webm")
+        : null;
+      videoDataObj.fileVideo = videoFile
+      console.log("videoFile", videoFile);
+    }
     setTranscription(message);
     setIsWaiting(true);
     setBotText("");
 
-    const FrameFile =
-      videoRef.current.srcObject !== null ? await videoProcess() : null;
+    const FrameFile = isOpenVideo ? await videoProcess() : null;
     setPhase("user: processing completion");
 
     console.log("conID", conID);
@@ -80,12 +83,12 @@ const VideoChatInner = () => {
       file: FrameFile,
       inputValue: message,
       conversationID: conID.current,
-      ...(videoFile && { fileVideo: videoFile }),
+      ...videoDataObj
     });
     console.log("returnedConID", returnedConID);
 
     setIsWaiting(false);
-    if (conID.current === null) conID.current = returnedConID;
+    conID.current = returnedConID;
 
     await handleTTS(content);
     setProgress(null);
@@ -201,9 +204,8 @@ const VideoChatInner = () => {
 
         // Start recording
         mediaRecorder.start();
-      }
-      else {
-        console.log("Can't get video source to record")
+      } else {
+        console.log("Can't get video source to record");
       }
     } catch (err) {
       console.error("Error accessing user media", err);
@@ -212,6 +214,9 @@ const VideoChatInner = () => {
 
   const stopAndSaveCaptureVideo = () => {
     return new Promise((resolve, reject) => {
+      // Clear previous video chunks history
+      videoChunksRef.current = [];
+
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.onstop = () => {
           try {
@@ -239,10 +244,15 @@ const VideoChatInner = () => {
       mediaRecorderRef.current.onstop = async () => {
         console.log("terminateCaptureVideo");
         const stream = streamRecordRef.current;
+
         if (stream) {
           // Stop all tracks
           stream.getTracks().forEach((track) => track.stop());
         }
+
+        // Clear previous video chunks history
+        videoChunksRef.current = [];
+
         mediaRecorderRef.current = null;
       };
 

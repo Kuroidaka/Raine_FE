@@ -5,12 +5,14 @@ import { Icon } from "../../../assets/icon";
 import { useState, useEffect, Fragment, useContext } from "react";
 import { updateRecentDates } from "../../../Util";
 import ModalContext from "../../../Context/Modal.context";
-import RoutineContext from "../../../context/Routine.context";
+import RoutineContext from "../../../Context/Routine.context";
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur";
+import EmptyData from "../EmptyData";
 
 const RoutineCard = (p) => {
   const { dataSection, setDateSection, dateZone } = p;
   // const { task }  = useContext(TaskContext)
+  const modalContext = useContext(ModalContext)
   const [dateType, setDateType] = useState({
     mustdo: [],
     doNotNeed: [],
@@ -46,7 +48,7 @@ const RoutineCard = (p) => {
 
   const TodayDZ = () => (
     <Fragment>
-      {dateType.mustdo.length > 0 && (
+      {dateType.mustdo.length > 0 ? (
         <Fragment>
           {/* Must Do */}
           <DateZoneLabel
@@ -69,6 +71,8 @@ const RoutineCard = (p) => {
               })}
           </TaskCardList>
         </Fragment>
+      ) : (
+        <EmptyData sec="routine" openModal={modalContext.openModal} />
       )}
     </Fragment>
   );

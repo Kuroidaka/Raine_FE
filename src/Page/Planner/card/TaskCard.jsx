@@ -25,9 +25,11 @@ import myCursor from "../../../assets/cursor/Labrador_Retriever.cur";
 import { motion } from "framer-motion";
 import reminderApi from "../../../api/reminder.api";
 import { toast } from "react-toastify";
+import EmptyData from "../EmptyData";
 
 const TaskCard = (p) => {
   const { dataSection, dateZone, setDateZone } = p;
+  const modalContext = useContext(ModalContext);
   // const { task }  = useContext(TaskContext)
   const [dateType, setDateType] = useState({
     overdue: [],
@@ -164,40 +166,50 @@ const TaskCard = (p) => {
     </Fragment>
   );
 
-  const WeekDZ = () => (
-    <Fragment>
-      <TodayDZ />
-      {/* TOMORROW */}
-      <DateZoneLabel
-        name="tomorrow"
-        className="mb-10 mt-40"
-        title="Ngày mai"
-        num={dateType.tomorrow.length}
-      />
-      {dateType.tomorrow &&
-        dateType.tomorrow.map((data, idx) => {
-          return <Card key={idx} data={data} />;
-        })}
+  const WeekDZ = () => {
 
-      {/* DATES AFTER TOMORROW */}
-      {dateType.datesAfterTomorrow &&
-        dateType.datesAfterTomorrow.map((date, idx) => {
-          return (
-            <Fragment key={idx}>
-              <DateZoneLabel
-                name="dateAfterTomorrow"
-                className="mb-10 mt-40"
-                title={dAfterTArr[idx]?.value?.vn}
-                num={date.length}
-              />
-              {date.map((data, idx) => {
-                return <Card key={idx} data={data} />;
-              })}
-            </Fragment>
-          );
-        })}
-    </Fragment>
-  );
+    const totalTaskAfterTomorrow = dateType.datesAfterTomorrow.reduce((total, item) => total + item.length, 0)
+    const totalTaskTomorrow = dateType.tomorrow.length
+    const totalTaskToday = dateType.today.length
+
+    if((totalTaskAfterTomorrow === 0 && totalTaskTomorrow === 0 && totalTaskToday === 0)) {
+      return <EmptyData sec="task" openModal={modalContext.openModal} />
+    }
+    return (
+      <Fragment>
+        <TodayDZ />
+        {/* TOMORROW */}
+        <DateZoneLabel
+          name="tomorrow"
+          className="mb-10 mt-40"
+          title="Ngày mai"
+          num={dateType.tomorrow.length}
+        />
+        {dateType.tomorrow &&
+          dateType.tomorrow.map((data, idx) => {
+            return <Card key={idx} data={data} />;
+          })}
+
+        {/* DATES AFTER TOMORROW */}
+        {dateType.datesAfterTomorrow &&
+          dateType.datesAfterTomorrow.map((date, idx) => {
+            return (
+              <Fragment key={idx}>
+                <DateZoneLabel
+                  name="dateAfterTomorrow"
+                  className="mb-10 mt-40"
+                  title={dAfterTArr[idx]?.value?.vn}
+                  num={date.length}
+                />
+                {date.map((data, idx) => {
+                  return <Card key={idx} data={data} />;
+                })}
+              </Fragment>
+            );
+          })}
+      </Fragment>
+    );
+  };
 
   const AllDZ = () => (
     <Fragment>

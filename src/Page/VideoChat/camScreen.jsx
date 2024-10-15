@@ -285,7 +285,7 @@ const CamScreen = (p) => {
 
 
   const audioProps= {
-    recorder, isBusy, setIsWaiting, isOnMic, captureVideo
+    recorder, isBusy, setIsWaiting, isOnMic, captureVideo, terminateCaptureVideo
   }
   const actionProps= {
     isBusy,

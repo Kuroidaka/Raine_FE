@@ -10,7 +10,7 @@ import conversationApi from "../api/conversation.api.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router";
-import { WebSocketContext } from "./socket.context.jsx";
+import { WebSocketContext } from "../context/socket.context.jsx";
 
 const ConversationContext = createContext();
 
@@ -28,8 +28,6 @@ export const ConversationProvider = (p) => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
-
-
   
   const { data, error, isLoading } = useQuery({
     queryKey: ["conversations"],

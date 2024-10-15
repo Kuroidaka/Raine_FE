@@ -3,7 +3,7 @@ import { WebSocketContext } from "../../context/socket.context";
 import { playAudio } from "./helper";
 
 const AudioSpeak = (p) => {
-    const { recorder, isBusy, setIsWaiting, isOnMic, captureVideo } = p
+    const { recorder, isBusy, setIsWaiting, isOnMic, captureVideo, terminateCaptureVideo } = p
     const [audioQueue, setAudioQueue] = useState([]);
     const [isPlaying, setIsPlaying] = useState(false);
     const socket = useContext(WebSocketContext);
@@ -30,12 +30,15 @@ const AudioSpeak = (p) => {
           playNextAudio();
         }else if(!isPlaying && audioQueue.length === 0) {
           if(isOnMic) {
+            
             setTimeout(async () => {
               recorder.voice.start()
+              await terminateCaptureVideo()
               await captureVideo()
             }, 2000)
           }else {
             setTimeout(async () => {
+              await terminateCaptureVideo()
               await captureVideo()
             }, 2000)
           }
