@@ -254,7 +254,7 @@ const MemoStorageAgent = (p) => {
     openModal(title, content, type, mode);
   };
 
-  console.log("memoStorage", memoStorage);
+  // console.log("memoStorage", memoStorage);
   return (
     <FadeIn className="bot-text-wrapper function-agent memo-storage-agent">
       <div className="bot-text">

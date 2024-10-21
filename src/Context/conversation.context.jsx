@@ -134,22 +134,26 @@ export const ConversationProvider = (p) => {
           const existingMessageIds = new Set(prevCon.messages.map(msg => msg.id));
           const newMessages = messages.pages.flatMap(page => 
             page.messages.filter(msg => !existingMessageIds.has(msg.id))
-          );
+          )
+
   
           // Only update the state if there are new messages to add
           if (newMessages.length > 0) {
+            const newMsgList = [...newMessages, ...prevCon.messages].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            console.log("newMsgList", newMsgList)
             return {
               ...prevCon,
-              messages: [...newMessages, ...prevCon.messages],
+              messages: newMsgList,
             };
           } else {
             return prevCon; // Return the previous state if no new messages
           }
         } else {
           // Initialize messages if they don't exist
+          console.log("no new messages", messages.pages)
           return {
             ...prevCon,
-            messages: messages.pages.flatMap(page => page.messages),
+            messages: messages.pages.flatMap(page => page.messages).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)),
           };
         }
       });
