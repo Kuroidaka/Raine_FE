@@ -5,6 +5,9 @@ import DeviceContext from "../../Context/Device.context";
 import PlannerMobile from "./Planner.mobile";
 import PlannerDesktop from "./Planner.desktop";
 import myCursor from "../../assets/cursor/Labrador_Retriever.cur";
+import { TaskProvider } from "../../context/Task.context";
+import { RoutineProvider } from "../../context/Routine.context";
+import { GoalProvider } from "../../context/Goal.context";
 
 const Planner = () => {
   // const [modalData, setModalData] = useState("")
@@ -39,8 +42,13 @@ const Planner = () => {
         initial={{ opacity: 0, scale: 0.75, transition: { duration: 0.5 } }}
         animate={{ opacity: 1, scale: 1, transition: { duration: 0.25 } }}
       >
-        {/* <TaskModal /> */}
-        {device === "desktop" ? <Desktop /> : <Mobile />}
+        <TaskProvider>
+          <RoutineProvider>
+            <GoalProvider>
+              {device === "desktop" ? <Desktop /> : <Mobile />}
+            </GoalProvider>
+          </RoutineProvider>
+        </TaskProvider>
       </motion.div>
     </AnimatePresence>
   );

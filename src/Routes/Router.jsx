@@ -26,7 +26,7 @@ const getDashboardChildrenRoutes = async () => {
   const SuspenseWrapper = ({ children }) => (<Suspense fallback={ <OverlayDimLoading />}>{children}</Suspense>);
 
   const childrenRoutes = [
-    { page: "planner", path: paths.planner, element: <SuspenseWrapper><Planner /></SuspenseWrapper> },
+    { index: true, page: "planner", path: paths.planner, element: <SuspenseWrapper><Planner /></SuspenseWrapper> },
     { page: "chat", path: paths.chat, element: <SuspenseWrapper><ChatPage /></SuspenseWrapper> },
     { page: "chat", path: `${paths.chat}/:id`, element: <SuspenseWrapper><ChatPage /></SuspenseWrapper> },
     { page: "videoChat", path: paths.videoChat, element: <SuspenseWrapper><VideoChat /></SuspenseWrapper> },

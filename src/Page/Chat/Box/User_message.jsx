@@ -26,13 +26,6 @@ const UserMsg = (p) => {
   }, [userData]);
 
 
-  const scrollToBottom = () => {
-    // pageRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
-    const div = document.querySelector(".list-chat");
-    div.scrollTop = div.scrollHeight - div.clientHeight + 1000;
-  };
-  useEffect(scrollToBottom, [text]);
-
   return (
     <Container className="chat-msg human-chat">
       <div className="icon">

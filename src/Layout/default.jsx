@@ -6,13 +6,9 @@ import Header from "./Component/Header";
 import { OverlayProvider } from "../Context/Overlay.context";
 import AppearanceContext, {
   AppearanceProvider,
-} from "../Context/Appearance.context";
-import { WebSocketProvider } from "../Context/socket.context";
-import { AuthContext, AuthProvider } from "../Context/Auth.context";
-import Loading from "../Component/Loading";
-import TaskContext, { TaskProvider } from "../Context/Task.context";
-import { RoutineProvider } from "../Context/Routine.context";
-import { GoalProvider } from "../Context/Goal.context";
+} from "../context/Appearance.context";
+import { WebSocketProvider } from "../context/socket.context";
+import { AuthContext, AuthProvider } from "../context/Auth.context";
 import { ModalProvider } from "../Context/Modal.context";
 import Modal from "../Component/Modal";
 import { Outlet } from "react-router";
@@ -25,15 +21,9 @@ const DefaultLayout = () => {
         <OverlayProvider>
           <WebSocketProvider>
             <ModalProvider>
-              <TaskProvider>
-                <RoutineProvider>
-                  <GoalProvider>
-                    <DefaultLayoutComponent>
-                      <Outlet />
-                    </DefaultLayoutComponent>
-                  </GoalProvider>
-                </RoutineProvider>
-              </TaskProvider>
+              <DefaultLayoutComponent>
+                <Outlet />
+              </DefaultLayoutComponent>
             </ModalProvider>
           </WebSocketProvider>
         </OverlayProvider>
@@ -48,7 +38,6 @@ const DefaultLayoutComponent = (p) => {
   const { device } = useContext(DeviceContext);
   const { appearance } = useContext(AppearanceContext) || { url: "", name: "" };
   const { isLoad } = useContext(AuthContext);
-  const { isLoading } = useContext(TaskContext);
 
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [isOpenOvelay, setIsOpenOverlay] = useState(false);

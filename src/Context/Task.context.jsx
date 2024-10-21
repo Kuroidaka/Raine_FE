@@ -11,7 +11,6 @@ const TaskContext = createContext()
 export const TaskProvider = (p) => {
     const { children } = p
 
-
     const [task, setTask] = useState([]);
 
     const queryClient = useQueryClient();

@@ -7,12 +7,26 @@ import {
   useState,
 } from "react";
 import conversationApi from "../api/conversation.api.js";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useInfiniteQuery, useQueryClient, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router";
 import { WebSocketContext } from "../context/socket.context.jsx";
 
 const ConversationContext = createContext();
+
+// Custom hook to fetch messages by conversationId using useInfiniteQuery
+const useFetchMessages = (conversationId) => {
+  return useInfiniteQuery({
+    queryKey: ['messages', conversationId],   // Unique key for the query
+    queryFn: ({ pageParam = 1 }) => conversationApi.getMessagesByConversationId(conversationId, pageParam, 4),  // API call
+    getNextPageParam: (lastPage) => {
+      if(lastPage.currentPage < lastPage.totalPages){
+        return lastPage.currentPage + 1;
+      }
+      return undefined;
+    },
+  });
+};
 
 export const ConversationProvider = (p) => {
   const { children } = p;
@@ -29,11 +43,38 @@ export const ConversationProvider = (p) => {
 
   const queryClient = useQueryClient();
   
-  const { data, error, isLoading } = useQuery({
+  // Using `useInfiniteQuery` for paginated conversation history
+  const {
+    data, 
+    error, 
+    isLoading, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage
+  } = useInfiniteQuery({
     queryKey: ["conversations"],
-    queryFn: () => conversationApi.getConversationHistory(),
+    queryFn: ({ pageParam = 1 }) => {
+      
+      return conversationApi.getConversationHistory(null, pageParam)
+    },
+    getNextPageParam: (lastPage) => {
+      // Check if there are more pages to load
+      if(lastPage.currentPage < lastPage.totalPages){
+        return lastPage.currentPage + 1;
+      }
+      return undefined;
+    },
     cacheTime: 0,
   });
+
+  const {
+    data: messages,                 // All the paginated data
+    fetchNextPage: fetchNextMessages,        // Function to fetch the next page
+    hasNextPage: hasNextMessages,          // Whether there are more pages to fetch
+    isFetchingNextPage: isFetchingNextMessages,   // Loading state for fetching more
+    isLoading: messagesLoading,            // Loading state for the initial fetch
+    error: messagesError,                // Error state
+  } = useFetchMessages(selectedConID);
   
   const {
     data: currentConData,
@@ -56,33 +97,64 @@ export const ConversationProvider = (p) => {
     const existingIndex = list.findIndex((item) => item.id === newData.id);
 
     if (existingIndex !== -1) {
-      // If it exists, replace the old data with the new data
       const updatedState = [...list];
       updatedState[existingIndex] = newData;
       updatedDataList = updatedState;
       return updatedState;
     } else {
-      // If it doesn't exist, add the new data to the state
       updatedDataList = [...list, newData];
       return updatedDataList;
     }
   };
 
   useEffect(() => {
-    if (data && data.length > 0) {
-      setConversation(data);
+    if (data?.pages) {
+      // Flatten and set conversations from all pages
+      console.log("data", data)
+      setConversation(data.pages.flatMap((page) => page.conversations));
     }
-    listFuncData.current = [];
-    listMemoData.current = [];
-    listMemoStorage.current = [];
+    cacheConversation.rsMsgAttach();
   }, [data]);
 
   useEffect(() => {
-    if (!selectedConID) setCurrenConversation([]);
-    else if (currentConData) {
+    // If no selected conversation, reset the current conversation
+    if (!selectedConID) {
+      setCurrenConversation([]);
+    } else if (currentConData) {
+      // If conversation data is available, set it
       setCurrenConversation(currentConData);
     }
   }, [selectedConID, currentConData]);
+  
+  useEffect(() => {
+    if (messages && messages.pages && currentCon) {
+      setCurrenConversation((prevCon) => {
+        // If there's no change in the messages, avoid updating the state to prevent re-rendering
+        if (prevCon && prevCon.messages) {
+          const existingMessageIds = new Set(prevCon.messages.map(msg => msg.id));
+          const newMessages = messages.pages.flatMap(page => 
+            page.messages.filter(msg => !existingMessageIds.has(msg.id))
+          );
+  
+          // Only update the state if there are new messages to add
+          if (newMessages.length > 0) {
+            return {
+              ...prevCon,
+              messages: [...newMessages, ...prevCon.messages],
+            };
+          } else {
+            return prevCon; // Return the previous state if no new messages
+          }
+        } else {
+          // Initialize messages if they don't exist
+          return {
+            ...prevCon,
+            messages: messages.pages.flatMap(page => page.messages),
+          };
+        }
+      });
+    }
+  }, [messages]); 
 
   useEffect(() => {
     if (socket) {
@@ -124,7 +196,6 @@ export const ConversationProvider = (p) => {
       })
     }
 
-    // Clean up the connection on unmount
     return () => {
       if (socket) socket.off("chatResChunk");
       if (socket) socket.off("chatResChunkFunc");
@@ -133,22 +204,16 @@ export const ConversationProvider = (p) => {
     };
   }, [socket]);
 
-  // useEffect(() => {
-  //     console.log("error", error)
-  // }, [error]);
-
   const cacheConversation = {
     del: async (id) => {
       const newCon = conversation.filter((data) => data.id !== id);
       setConversation(newCon);
     },
     addMsg: async (params, isBot = false, functionData = [], dataMemo, memoStorage) => {
-      // Helper function to update messages
       const updateBotMessages = (prevMessages) => {
         const newMessages = [...prevMessages];
 
         if (newMessages[newMessages.length - 1]?.isBot === false) {
-          // If the last message is not from the bot, add a new bot message
           newMessages.push({
             isBot: true,
             text: params.prompt,
@@ -160,7 +225,6 @@ export const ConversationProvider = (p) => {
             ...(memoStorage && {memoStorage: memoStorage}),
           });
         } else {
-          // If the last message is from the bot, merge the new prompt with the old text
           newMessages[newMessages.length - 1] = {
             ...newMessages[newMessages.length - 1],
             isBot: true,
@@ -178,15 +242,12 @@ export const ConversationProvider = (p) => {
 
       const isNewConversation = !selectedConID || selectedConID == -1;
       if (isNewConversation) {
-        // New conversation
         if (isBot) {
-          console.log("set user msg")
           setCurrenConversation((prev) => ({
             ...prev,
             messages: updateBotMessages(prev.messages),
           }));
         } else {
-          console.log("set user msg")
           setCurrenConversation({
             id: -1,
             name: "New Chat",
@@ -197,7 +258,6 @@ export const ConversationProvider = (p) => {
         return;
       }
 
-      // Existing conversation
       if (isBot) {
         setCurrenConversation((prev) => ({
           ...prev,
@@ -208,23 +268,25 @@ export const ConversationProvider = (p) => {
           (data) => data.id === selectedConID
         );
         if (index !== -1) {
-          const newConversations = [...conversation];
-          newConversations[index] = {
-            ...newConversations[index],
-            messages: [
-              ...newConversations[index].messages,
+          const newConversation ={
+             ...currentCon,
+             messages: [
+              ...currentCon.messages,
               { text: params.prompt, isBot: false },
             ],
           };
 
-          setConversation(newConversations);
-          setCurrenConversation(newConversations[index]);
+          setCurrenConversation(newConversation);
         }
       }
     },
+    rsMsgAttach: async () => {
+      listFuncData.current = [];
+      listMemoData.current = [];
+      listMemoStorage.current = [];
+    }
   };
 
-  // Mutation for deleting a conversation
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
       await conversationApi.deleteConversation(id);
@@ -239,31 +301,20 @@ export const ConversationProvider = (p) => {
     },
   });
 
-  // Mutation for adding a new conversation
   const addMutation = useMutation({
-    mutationFn: async ({ data, isStream, isVision }) => {
+    mutationFn: async ({ data, isStream }) => {
       await cacheConversation.addMsg(data);
-
-      if (!isVision) {
-        const con = await conversationApi.createChat(data, isStream);
-        if (!selectedConID) {
-          setTimeout(() => {
-            navigate(`/chat/${con.conversationID}`);
-          }, 1500);
-        }
-        
-        // get all conversation to update conversation list
-        queryClient.invalidateQueries(["conversations"]);
-      } else if (data.conversationID) {
-        navigate(`/chat/cam/${data.conversationID}`);
-      }
+      return conversationApi.createChat(data, isStream);
     },
-    onSuccess: () =>{
-      if(!selectedConID){
-        queryClient.invalidateQueries(["conversations"]);
-      } else {
-        queryClient.invalidateQueries(["conversations", selectedConID])
+    onSuccess: (data) =>{
+      if (!selectedConID) {
+        setTimeout(() => {
+          navigate(`/chat/${data.id}`);
+        }, 1500);
+        const { messages, ...rest } = data
+        setConversation(prev => [rest, ...prev])
       }
+      cacheConversation.rsMsgAttach();
     },
     onError: (error) => {
       toast.error(`Something went wrong`);
@@ -271,7 +322,6 @@ export const ConversationProvider = (p) => {
     },
   });
 
-  // Function to delete a conversation
   const deleteConversation = useCallback(
     (id) => {
       deleteMutation.mutate(id);
@@ -279,7 +329,6 @@ export const ConversationProvider = (p) => {
     [deleteMutation]
   );
 
-  // Function to add a new conversation
   const addMsg = useCallback(
     (data, isStream, isVision = false) => {
       addMutation.mutate({ data, isStream, isVision });
@@ -297,7 +346,12 @@ export const ConversationProvider = (p) => {
     deleteConversation,
     addMsg,
     currentCon,
-    cacheConversation
+    cacheConversation,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextMessages,
+    isFetchingNextMessages,
   };
 
   return (

@@ -670,18 +670,6 @@ const Option = (p) => {
       },
     },
     {
-      name: "someDay",
-      value: "Ngày nào đó",
-      icon: "deadline",
-      handleClick: async () => {
-        const task = findTask(taskId);
-        await handleUpdateTask(taskId, {
-          deadline: "someday",
-          area: task.area,
-        });
-      },
-    },
-    {
       name: "edit",
       value: "Sửa",
       icon: "edit",

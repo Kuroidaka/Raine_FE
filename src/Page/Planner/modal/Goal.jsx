@@ -13,7 +13,7 @@ import Button from "../../../Component/Button";
 import 'react-quill/dist/quill.snow.css';
 import "flatpickr/dist/themes/light.css";
 import "flatpickr/dist/flatpickr.css";
-import GoalContext from "../../../Context/Goal.context";
+import GoalContext from "../../../context/Goal.context";
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur"
 
 import { radioData, relatedArea } from "./constants";

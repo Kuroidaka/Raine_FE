@@ -25,6 +25,10 @@ const conversationApi = {
         // Send POST request with query parameters and data body
         return axiosClient.post(url, dataBody, { params });
     },
+    getMessagesByConversationId: async (conversationId, page = 1, pageSize = 40) => {
+        const url = `/conversation/messages/${conversationId}`;
+        return axiosClient.get(url, { params: { page, pageSize } });
+    },
     createChatVideo: async ({ prompt, conversationID, file, fileVideo }, isStream = false) => {
         const url = `/brain/chat/video`;
     
@@ -57,13 +61,19 @@ const conversationApi = {
             },
         });
     },
-    getConversationHistory: async(id) => {
-        const url = id
-            ? `/conversation/get/${id}`
-            : `/conversation/get`;
+    getConversationHistory: async(id, page = 1) => {
 
-        // Send POST request with query parameters and data body
-        return axiosClient.get(url);
+        if(id) {
+            const url = `/conversation/get/${id}`
+            return axiosClient.get(url);
+        } else {
+            const url = `/conversation/get`
+
+            const params = {
+                page: page
+            }
+            return axiosClient.get(url, { params });
+        }
     },
     deleteConversation: async(id) => {
         const url = `/conversation/delete/${id}`;

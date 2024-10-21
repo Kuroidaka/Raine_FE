@@ -196,12 +196,19 @@ const Task = (p) => {
     <Content>
       {/* TITLE */}
       <ModalSectionContent title="Tiêu đề" Icon={Img.pen}>
+       {
+       (mode === "edit" || mode === "add") ? (
         <Input
           name="title"
           inputStyle={{ width: "80%" }}
           value={dataInput.title}
-          onInput={handleInput}
-        />
+            onInput={handleInput}
+          />
+        ) : (
+          <div className="title-input">
+            <p className="text-dark">{dataInput.title}</p>
+          </div>
+        )}
       </ModalSectionContent>
       {!valid && <Validate>Bắt buộc phải có tiêu đề</Validate>}
       {/* COLOR */}
