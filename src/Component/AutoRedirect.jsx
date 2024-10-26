@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 import Loading from './Loading';
 import authenApi from '../api/authen.api';
-import OverlayDimLoading from './Overlay';
+import OverlayDimLoading from './OverlayDimLoading';
 
 const AutoRedirect = (p) => {
   const { children } = p;

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import SidebarNav from "./sidebar_nav";
 import { useContext, useEffect, useRef } from "react";
-import ConversationContext from "../../../Context/conversation.context";
+import ConversationContext from "../../../context/conversation.context";
 import Load from "../../../component/Load";
 
 const Sidebar = () => {

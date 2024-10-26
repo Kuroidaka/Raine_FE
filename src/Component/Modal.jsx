@@ -1,16 +1,15 @@
-import { motion } from "framer-motion";
 import styled from "styled-components";
 import { Icon } from "/src/assets/icon.js";
 import { Fragment, useEffect, useState, useContext } from "react";
-import DeviceContext from "../Context/Device.context";
-import ModalContext from "../Context/Modal.context";
+import DeviceContext from "../context/Device.context";
+import ModalContext from "../context/Modal.context";
 import Loading from "./Loading"
 import Overlay from "../Layout/Component/Overlay";
 import myCursor from '../assets/cursor/Labrador_Retriever.cur';
-import TaskModal from "../Page/Planner/modal/Modal";
 import ToolsDataModal from "../Page/Chat/ToolsDataModal";
 import RelateMemoModal from "../Page/Chat/RelateMemoModal";
 import ResizeAbleModal from "./ResizeableModal";
+import ReminderModal from "../page/Planner/modal/Modal";
 
 const Modal = () => {
 
@@ -54,7 +53,7 @@ const Modal = () => {
     const renderModalContent = () => {
 
         if(["task", "goal", "routine"].indexOf(modal.type) !== -1) {
-            return <TaskModal />
+            return <ReminderModal />
         }
 
         if(modal.type === "tool") {

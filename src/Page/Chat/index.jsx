@@ -1,5 +1,5 @@
 import { ToastContainer } from "react-toastify";
-import { ConversationProvider } from "../../Context/conversation.context";
+import { ConversationProvider } from "../../context/conversation.context";
 
 import Interact from "./interact";
 import History from "./History/History";

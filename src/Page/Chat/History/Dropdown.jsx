@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import styled from "styled-components";
-import ConversationContext from "../../../Context/conversation.context";
+import ConversationContext from "../../../context/conversation.context";
 // import ConversationContext from "../../../context/Conversation.Context";
 
 const Menu = (p) => {

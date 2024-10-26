@@ -1,7 +1,7 @@
 import GlobalStyles from "./GlobalStyle";
 // import { Routes, Route } from "react-router-dom";
 // import { routes } from "./Routes/route";
-import { DeviceProvider } from "./Context/Device.context";
+import { DeviceProvider } from "./context/Device.context";
 import { useEffect } from "react";
 
 import "react-quill/dist/quill.snow.css";
@@ -10,7 +10,7 @@ import "flatpickr/dist/flatpickr.css";
 import "react-json-pretty/themes/acai.css";
 
 import myCursor from "./assets/cursor/Labradoodle.cur";
-import RouterWrapper from "./Routes/Router";
+import RouterWrapper from "./routes/Router";
 const App = () => {
   useEffect(() => {
     document.body.style.cursor = `url(${myCursor}), auto`;

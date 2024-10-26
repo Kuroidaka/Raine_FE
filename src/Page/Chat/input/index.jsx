@@ -4,7 +4,7 @@ import '../style/index.scss'
 import DocsUploaded from "./Docs";
 import Input from './Input';
 import { filesToBase64, hostImages } from "../../../util" 
-import ConversationContext from '../../../Context/conversation.context';
+import ConversationContext from '../../../context/conversation.context';
 import { toast } from 'react-toastify';
 import fileApi from '../../../api/file.api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';

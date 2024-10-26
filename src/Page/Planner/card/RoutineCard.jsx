@@ -4,8 +4,8 @@ import { Img } from "../../../assets/svg";
 import { Icon } from "../../../assets/icon";
 import { useState, useEffect, Fragment, useContext } from "react";
 import { updateRecentDates } from "../../../Util";
-import ModalContext from "../../../Context/Modal.context";
-import RoutineContext from "../../../Context/Routine.context";
+import ModalContext from "../../../context/Modal.context";
+import RoutineContext from "../../../context/Routine.context";
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur";
 import EmptyData from "../EmptyData";
 

@@ -3,14 +3,14 @@ import {  Fragment, useContext, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion"
 import TaskSection from "./TaskSection";
 import plannerData from "./Planner.json";
-import Button from "../../Component/Button";
-import TaskCard from "./card/TaskCard";
-import TaskContext from "../../Context/Task.context";
-import Loading from "../../Component/Loading";
-import ModalContext from "../../Context/Modal.context";
-import RoutineContext from "../../Context/Routine.context";
+import Button from "../../component/Button";
+import TaskList from "./card/Task/TaskList";
+import TaskContext from "../../context/Task.context";
+import Loading from "../../component/Loading";
+import ModalContext from "../../context/Modal.context";
+import RoutineContext from "../../context/Routine.context";
 import RoutineCard from "./card/RoutineCard";
-import GoalContext from "../../Context/Goal.context";
+import GoalContext from "../../context/Goal.context";
 import GoalCard from "./card/GoalCard";
 import { ToastContainer } from "react-toastify";
 
@@ -125,7 +125,7 @@ const TaskSectionMobile = (p) => {
                 dateZone={dateZone}
                 >
             {data && data.length > 0 &&
-                tab === "task" ?<TaskCard dataSection={data} setDateSection={setDateSection} dateZone={dateZone} setDateZone={setDateZone}/> :
+                tab === "task" ?<TaskList dataSection={data} setDateSection={setDateSection} dateZone={dateZone} setDateZone={setDateZone}/> :
                 tab === "routine" ?<RoutineCard dataSection={data} setDateSection={setDateSection} dateZone={dateZone} setDateZone={setDateZone}/> :
                 tab === "goal" ?<GoalCard dataSection={data} setDateSection={setDateSection} dateZone={dateZone} setDateZone={setDateZone}/> 
                 :<Fragment>

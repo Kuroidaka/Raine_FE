@@ -3,12 +3,12 @@ import { Icon } from "../../assets/icon";
 import { useContext, useCallback, useMemo } from "react";
 import { VscTools } from "react-icons/vsc";
 import { useNavigate, useParams } from "react-router";
-import DeviceContext from "../../Context/Device.context";
+import DeviceContext from "../../context/Device.context";
 import Appearance from "./Appearance";
 import AISetting from "./AISetting/AI";
 import Loading from "../../component/Loading";
 import { Suspense } from "react";
-import Button from "../../Component/Button";
+import Button from "../../component/Button";
 import { AuthContext } from "../../context/Auth.context";
 import { TbLogout2 } from "react-icons/tb";
 

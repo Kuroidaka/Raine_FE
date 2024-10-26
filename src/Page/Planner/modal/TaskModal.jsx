@@ -1,15 +1,15 @@
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import ModalContext from "../../../Context/Modal.context";
-import TaskContext from "../../../Context/Task.context";
+import ModalContext from "../../../context/Modal.context";
+import TaskContext from "../../../context/Task.context";
 import DOMPurify from "dompurify";
 import { dateConvert, isDateString, isISODateString } from "../../../Util";
 import { Img } from "../../../assets/svg";
-import Input from "../../../Component/Input";
+import Input from "../../../component/Input";
 import Flatpickr from "react-flatpickr";
 import ReactQuill from "react-quill";
 import { CirclePicker } from "react-color";
-import Button from "../../../Component/Button";
+import Button from "../../../component/Button";
 
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur";
 import { toast } from "react-toastify";
@@ -17,12 +17,13 @@ import { colorList, radioData, relatedArea } from "./constants";
 import { API_BASE_URL, PREFIX } from "../../../config";
 import VideoChatPreview from "../../Chat/Box/VideoPreview";
 import { motion } from "framer-motion";
+import { ReminderModalContext } from "./Modal";
 
-const Task = (p) => {
-  const { dataInput, setDataInput, mode, areaData } = p;
+const TaskModal = () => {
+  const { dataInput, setDataInput, mode, areaData } = useContext(ReminderModalContext);
 
   const { modal, closeModal } = useContext(ModalContext);
-  const { handleAddTask, handleUpdateTask } = useContext(TaskContext);
+  const taskContext = useContext(TaskContext);
   const [valid, setValid] = useState(true);
   const fp = useRef(null);
   const QuillRef = useRef(null);
@@ -158,13 +159,13 @@ const Task = (p) => {
     try {
       if (valid) {
         setValid(true);
-
+        console.log(mode, modal);
         if (mode === "edit") {
           const taskId = modal.content.id;
           console.log("dataInput", dataInput);
-          await handleUpdateTask(taskId, dataInput);
+          await taskContext?.handleUpdateTask(taskId, dataInput);
         } else {
-          await handleAddTask(dataInput);
+          await taskContext?.handleAddTask(dataInput);
         }
 
         closeModal();
@@ -196,12 +197,11 @@ const Task = (p) => {
     <Content>
       {/* TITLE */}
       <ModalSectionContent title="Tiêu đề" Icon={Img.pen}>
-       {
-       (mode === "edit" || mode === "add") ? (
-        <Input
-          name="title"
-          inputStyle={{ width: "80%" }}
-          value={dataInput.title}
+        {mode === "edit" || mode === "add" ? (
+          <Input
+            name="title"
+            inputStyle={{ width: "80%" }}
+            value={dataInput.title}
             onInput={handleInput}
           />
         ) : (
@@ -405,18 +405,18 @@ const Task = (p) => {
         openSec={openSec}
       >
         {(mode === "edit" || mode === "view") && secOpen.attachment ? (
-            <VideoPreviewWrapper>
-              {dataInput.taskAttachment.map((item) => {
-                return (
-                  <VideoChat
-                    key={item.id}
-                    id={item.id}
-                    videoSrc={`${API_BASE_URL}${PREFIX}file/stream/${item.name}?type=video`}
-                    name={item.name}
-                  />
-                );
-              })}
-            </VideoPreviewWrapper>
+          <VideoPreviewWrapper>
+            {dataInput.taskAttachment.map((item) => {
+              return (
+                <VideoChat
+                  key={item.id}
+                  id={item.id}
+                  videoSrc={`${API_BASE_URL}${PREFIX}file/stream/${item.name}?type=video`}
+                  name={item.name}
+                />
+              );
+            })}
+          </VideoPreviewWrapper>
         ) : (
           <div>
             {/* <input type="file" accept="video/*" onChange={handleFileChange} />
@@ -479,43 +479,43 @@ const EditSection = (p) => {
   );
 };
 
-
 const VideoChat = (p) => {
-    const { videoSrc, id, name } = p;
-    const [showVideo, setShowVideo] = useState(false);
-  
-    const handleMouseEnter = () => {
-      setShowVideo(true);
-    };
-  
-    const handleMouseLeave = () => {
-      setShowVideo(false);
-    };
-  
-    return (
-      <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        <motion.div
-          initial={{ opacity: 1 }}
-          animate={{ opacity: 1 }}
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.2 }}
-        >
-          <VideoChatPreviewName>{name}</VideoChatPreviewName>
-        </motion.div>
-        {showVideo && (
-            <VideoChatPreview id={id} videoSrc={videoSrc} 
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -50 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-            />
-          )}
+  const { videoSrc, id, name } = p;
+  const [showVideo, setShowVideo] = useState(false);
 
-      </div>
-    );
+  const handleMouseEnter = () => {
+    setShowVideo(true);
   };
 
-export default Task;
+  const handleMouseLeave = () => {
+    setShowVideo(false);
+  };
+
+  return (
+    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <motion.div
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 1 }}
+        whileHover={{ scale: 1.1 }}
+        transition={{ duration: 0.2 }}
+      >
+        <VideoChatPreviewName>{name}</VideoChatPreviewName>
+      </motion.div>
+      {showVideo && (
+        <VideoChatPreview
+          id={id}
+          videoSrc={videoSrc}
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -50 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        />
+      )}
+    </div>
+  );
+};
+
+export default TaskModal;
 
 const EditSectionContainer = styled.div`
   display: flex;

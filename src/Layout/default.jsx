@@ -1,18 +1,18 @@
 import styled from "styled-components";
 import Sidebar from "./Component/Sidebar";
 import { Fragment, Suspense, useContext, useState } from "react";
-import DeviceContext from "../Context/Device.context";
+import DeviceContext from "../context/Device.context";
 import Header from "./Component/Header";
-import { OverlayProvider } from "../Context/Overlay.context";
+import { OverlayProvider } from "../context/Overlay.context";
 import AppearanceContext, {
   AppearanceProvider,
 } from "../context/Appearance.context";
 import { WebSocketProvider } from "../context/socket.context";
 import { AuthContext, AuthProvider } from "../context/Auth.context";
-import { ModalProvider } from "../Context/Modal.context";
-import Modal from "../Component/Modal";
+import { ModalProvider } from "../context/Modal.context";
+import Modal from "../component/Modal";
 import { Outlet } from "react-router";
-import OverlayDimLoading from "../Component/Overlay";
+import OverlayDimLoading from "../component/OverlayDimLoading";
 
 const DefaultLayout = () => {
   return (

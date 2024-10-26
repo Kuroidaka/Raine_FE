@@ -8,7 +8,7 @@ import { WebSocketContext } from "../../context/socket.context";
 import { ToastContainer } from "react-toastify";
 import ConversationContext, {
   ConversationProvider,
-} from "../../Context/conversation.context";
+} from "../../context/conversation.context";
 import conversationApi from "../../api/conversation.api";
 import {
   COLUMNS,

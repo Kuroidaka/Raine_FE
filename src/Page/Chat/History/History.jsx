@@ -2,10 +2,10 @@ import { useContext, useState } from "react";
 
 import Sidebar from "./Sidebar";
 import styled from "styled-components";
-import ConversationContext from "../../../Context/conversation.context";
+import ConversationContext from "../../../context/conversation.context";
 import { toast } from "react-toastify";
-import OverlayDimLoading from "../../../Component/Overlay";
-import DeviceContext from "../../../Context/Device.context";
+import OverlayDimLoading from "../../../component/OverlayDimLoading";
+import DeviceContext from "../../../context/Device.context";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const History = (p) => {

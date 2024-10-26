@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import DeviceContext from "../../Context/Device.context";
+import DeviceContext from "../../context/Device.context";
 import paths from "../../Routes/path";
 import Overlay from "./Overlay";
 import myCursor from "../../assets/cursor/Labrador_Retriever.cur";

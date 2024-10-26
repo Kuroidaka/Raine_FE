@@ -3,7 +3,7 @@ import UserMsg from "./User_message";
 import BotMsg from "./Bot_message";
 // import EmptyBox from './EmptyBox';
 import { useContext, useEffect, useRef, useState } from "react";
-import ConversationContext from "../../../Context/conversation.context";
+import ConversationContext from "../../../context/conversation.context";
 import Load from "../../../component/Load";
 
 const ChatBox = () => {

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Icon } from "../../assets/icon";
 import { useContext, useEffect, useState } from "react";
 import AppearanceContext from "../../context/Appearance.context.jsx";
-import DeviceContext from "../../Context/Device.context.jsx";
+import DeviceContext from "../../context/Device.context.jsx";
 import { toast } from "react-toastify";
 import fileApi from "../../api/file.api.js";
 import { API_BASE_URL, PREFIX } from "../../config/index.js";

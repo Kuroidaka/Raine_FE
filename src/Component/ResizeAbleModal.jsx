@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useCallback, useContext, useEffect, useState, useRef, forwardRef } from "react";
 import styled from "styled-components";
-import DeviceContext from "../Context/Device.context";
+import DeviceContext from "../context/Device.context";
 
 function ResizeAbleModal(p) {
   const { modal, children } = p;

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 import ChatBox from "./Box";
 import InputBox from "./input/index";
-import ConversationContext from "../../Context/conversation.context";
+import ConversationContext from "../../context/conversation.context";
 import { useContext } from "react";
 // import ConversationContext from "../../Context/conversation.context";
 // import { useContext } from "react";

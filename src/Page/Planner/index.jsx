@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
-import DeviceContext from "../../Context/Device.context";
+import DeviceContext from "../../context/Device.context";
 import PlannerMobile from "./Planner.mobile";
 import PlannerDesktop from "./Planner.desktop";
 import myCursor from "../../assets/cursor/Labrador_Retriever.cur";

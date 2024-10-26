@@ -4,7 +4,7 @@ import task from "../../assets/svg/task.svg";
 import routine from "../../assets/svg/routine.svg";
 import goal from "../../assets/svg/goal.svg";
 import plannerData from "./Planner.json";
-import Button from "../../Component/Button";
+import Button from "../../component/Button";
 
 const EmptyData = (p) => {
   const { sec, openModal } = p;

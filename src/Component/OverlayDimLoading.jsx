@@ -1,6 +1,18 @@
-import React from 'react';
 import styled from 'styled-components';
 import Loading from './Loading';
+
+
+
+const OverlayDimLoading = (p) => {
+    const { isActive= true } = p
+    return (
+        <Overlay className={isActive ? 'active' : ''}>
+            <Loading />
+        </Overlay>
+    );
+};
+
+export default OverlayDimLoading;
 
 const Overlay = styled.div`
     position: fixed;
@@ -22,14 +34,3 @@ const Overlay = styled.div`
         visibility: visible;
     }
 `;
-
-const OverlayDimLoading = (p) => {
-    const { isActive= true } = p
-    return (
-        <Overlay className={isActive ? 'active' : ''}>
-            <Loading />
-        </Overlay>
-    );
-};
-
-export default OverlayDimLoading;

@@ -1,28 +1,29 @@
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import ModalContext from "../../../Context/Modal.context";
+import ModalContext from "../../../context/Modal.context";
 import DOMPurify from "dompurify";
 import { convertDatesRoutine, formatTimeHHmm } from "../../../Util";
 import { Img } from "../../../assets/svg";
-import Input from "../../../Component/Input";
+import Input from "../../../component/Input";
 import Flatpickr from "react-flatpickr";
 import ReactQuill from 'react-quill';
 import { CirclePicker } from "react-color";
-import Button from "../../../Component/Button";
+import Button from "../../../component/Button";
 
 import RoutineContext from "../../../context/Routine.context";
-import SwitchButton from "../../../Component/SwitchButton";
+import SwitchButton from "../../../component/SwitchButton";
 import myCursor from '../../../assets/cursor/Labrador_Retriever.cur';
 
 import { colorList, relatedArea } from "./constants";
 import { toast } from "react-toastify";
+import { ReminderModalContext } from "./Modal";
 
-const Routine = (p) => {
+const RoutineModal = () => {
 
-    const { dataInput, setDataInput, mode, areaData } = p
+    const { dataInput, setDataInput, mode, areaData } = useContext(ReminderModalContext)
     
     const { modal, closeModal }  = useContext(ModalContext)
-    const { handleAddRoutine, handleUpdateRoutine } = useContext(RoutineContext)
+    const routineContext = useContext(RoutineContext)
     const [valid, setValid] = useState(true)
     const fp = useRef(null);
 
@@ -118,6 +119,7 @@ const Routine = (p) => {
             if (valid) {
                 setValid(true);
                 const newData = {...dataInput, routineTime : formatTimeHHmm(new Date(dataInput.routineTime))}
+                const { handleUpdateRoutine, handleAddRoutine } = routineContext
                 if (mode === "edit") {
                     const taskId = modal.content.id
                     console.log("dataInput", newData)
@@ -382,7 +384,7 @@ const EditSection = (p) => {
         </EditSectionContainer>
     )
 }
-export default Routine;
+export default RoutineModal;
 
 
 
@@ -542,20 +544,6 @@ const RelateAres = styled.div `
     }
 
 `
-const Deadline = styled.div`
-    text-align: center;
-    
-    .flat-picker-wrapper {
-        display: none;
-        justify-content: center;
-
-    }
-
-    input.flatpickr-input {
-        display: none!important;
-    }
-`
-
 const ModalSectionContentStyle = styled.div `
         margin-top: 18px;
 

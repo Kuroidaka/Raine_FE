@@ -1,20 +1,16 @@
 import styled from "styled-components";
-// import DOMPurify from "dompurify";
-// import ReactMarkdown from "react-markdown";
-// import remarkGfm from "remark-gfm";
-// import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-// import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
+
 import IconCustom from "../../../assets/Icons/svg";
 import { useContext, useEffect, useState } from "react";
 import Logo from "../../../assets/img/Logo";
 import MarkDown from "../../../component/MarkDownChat";
-import { Card as TaskCard } from "../../Planner/card/TaskCard";
+import { Card as TaskCard } from "../../Planner/card/Task/TaskCard";
 import { Card as RoutineCard } from "../../Planner/card/RoutineCard";
-import ModalContext from "../../../Context/Modal.context";
+import ModalContext from "../../../context/Modal.context";
 import { FiTerminal } from "react-icons/fi";
 import { FadeIn } from "../../../component/Motion";
-import { TaskProvider } from "../../../Context/Task.context";
-import { RoutineProvider } from "../../../Context/Routine.context";
+import { TaskProvider } from "../../../context/Task.context";
+import { RoutineProvider } from "../../../context/Routine.context";
 
 const functionIcon = {
   create_reminder: {

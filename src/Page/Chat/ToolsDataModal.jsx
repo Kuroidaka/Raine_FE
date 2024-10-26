@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import ModalContext from "../../Context/Modal.context";
+import ModalContext from "../../context/Modal.context";
 import MarkDown from "../../component/MarkDownChat";
 import JSONPretty from 'react-json-pretty';
 import styled from "styled-components";

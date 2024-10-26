@@ -1,14 +1,11 @@
-import React, { useContext, useEffect } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
 import { FcGoogle } from "react-icons/fc";
-import { toast } from "react-toastify";
-import authenApi from "../api/authen.api";
-import { API_BASE_URL, PREFIX } from "../config";
 import { AuthContext } from "../context/Auth.context";
 
 const GoogleLinkButton = () => {
-  const { userData , linkGoogleAccount} = useContext(AuthContext);
-  console.log("userData", userData);
+  const authContext  = useContext(AuthContext);
+
   // const handleLinkGoogle = async () => {
   //   if (userData?.id) {
   //     window.open(
@@ -19,7 +16,7 @@ const GoogleLinkButton = () => {
 
   return (
     <BtnWrapper>
-      <Button onClick={linkGoogleAccount}>
+      <Button onClick={authContext?.linkGoogleAccount}>
         <FcGoogle></FcGoogle>
         Connect with Google
       </Button>

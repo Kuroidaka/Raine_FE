@@ -1,21 +1,12 @@
-import styled from "styled-components";
-
-import plannerData from "./Planner.json";
 import TaskSection from "./TaskSection";
-import Button from "../../Component/Button";
-import { Fragment, useContext, useEffect, useState } from "react";
-import TaskContext from "../../Context/Task.context";
-import RoutineContext from "../../Context/Routine.context";
-import TaskCard from "./card/TaskCard";
+import { useContext, useEffect, useState } from "react";
+import TaskContext from "../../context/Task.context";
+import RoutineContext from "../../context/Routine.context";
+import TaskList from "./card/Task/TaskList";
 import RoutineCard from "./card/RoutineCard";
-import ModalContext from "../../Context/Modal.context";
-// import GoalContext from "../../Context/Goal.context";
-// import GoalCard from "./card/GoalCard";
 
-import task from '../../assets/svg/task.svg'
-import routine from '../../assets/svg/routine.svg'
-import goal from '../../assets/svg/goal.svg'
-import Loading from "../../Component/Loading";
+
+import Loading from "../../component/Loading";
 import { ToastContainer } from "react-toastify";
 
 const PlannerDesktop = () => {
@@ -36,7 +27,7 @@ const PlannerDesktop = () => {
             <SectionContent sec="task" loading={taskLoad} dateZone={taskDateZone} 
                             dataSection={task} setDateSection={setTask} 
                             setDateZone={setTaskDateZone}>
-               <TaskCard dataSection={task} setDateSection={setTask} dateZone={taskDateZone} setDateZone={setTaskDateZone}/>
+               <TaskList dataSection={task} setDateSection={setTask} dateZone={taskDateZone} setDateZone={setTaskDateZone}/>
             </SectionContent>
 
             <SectionContent sec="routine" loading={routineLoad} dateZone={routineDateZone}

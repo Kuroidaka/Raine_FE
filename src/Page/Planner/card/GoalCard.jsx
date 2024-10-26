@@ -4,7 +4,7 @@ import { Img } from "../../../assets/svg";
 import { Icon } from "../../../assets/icon";
 import { useState, useEffect, Fragment, useContext } from "react";
 import { dateConvert } from "../../../Util"
-import ModalContext from "../../../Context/Modal.context";
+import ModalContext from "../../../context/Modal.context";
 // import GoalContext from "../../../Context/Goal.context";
 import myCursor from '../../../assets/cursor/Labrador_Retriever.cur';
 

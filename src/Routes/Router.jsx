@@ -1,23 +1,21 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import DefaultLayout from "../Layout/default";
+import DefaultLayout from "../layout/Default";
 import paths from "./path";
-import AutoRedirect from "../Component/AutoRedirect";
+import AutoRedirect from "../component/AutoRedirect";
 
-// const Login = lazy(() => import("../Page/Authen/Login"));
-import Login from "../Page/Authen/Login";
-import HomeLayout from "../Layout/HomeLayout";
-import OverlayDimLoading from "../Component/Overlay";
-const Planner = lazy(() => import("../Page/Planner/Planner"));
-const NoPage = lazy(() => import("../Page/NoPage"));
-const Setting = lazy(() => import("../Page/Setting/Setting"));
+import Login from "../page/Authen/Login";
+import HomeLayout from "../layout/HomeLayout";
+import OverlayDimLoading from "../component/OverlayDimLoading";
+const Planner = lazy(() => import("../page/Planner"));
+const NoPage = lazy(() => import("../page/NoPage"));
+const Setting = lazy(() => import("../page/Setting"));
 const ChatPage = lazy(() => import("../Page/Chat"));
 // const NewChat = lazy(() => import("../Page/Chat/NewChat"));
 const VideoChat = lazy(() => import("../Page/VideoChat"));
 const StreamTest = lazy(() => import("../Page/Test/Stream"));
 const PhotoCapture = lazy(() => import("../Page/Test/Video"));
 const AudioPreview = lazy(() => import("../Page/Test/PreviewAudio"));
-const VideoRecorder = lazy(() => import("../Page/Test/VideoCapture"));
 
 
 const getDashboardChildrenRoutes = async () => {
@@ -36,7 +34,6 @@ const getDashboardChildrenRoutes = async () => {
     { page: "test", path: paths.test, element: <SuspenseWrapper><StreamTest /></SuspenseWrapper> },
     { page: "test", path: paths.testCam, element: <SuspenseWrapper><PhotoCapture /></SuspenseWrapper> },
     { page: "test", path: paths.testAudio, element: <SuspenseWrapper><AudioPreview /></SuspenseWrapper> },
-    { page: "test", path: "/test/videoCap", element: <SuspenseWrapper><VideoRecorder /></SuspenseWrapper> },
   ];
 
   return childrenRoutes;

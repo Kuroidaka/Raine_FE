@@ -10,7 +10,7 @@ import conversationApi from "../api/conversation.api.js";
 import { useMutation, useInfiniteQuery, useQueryClient, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router";
-import { WebSocketContext } from "../context/socket.context.jsx";
+import { WebSocketContext } from "./socket.context.jsx";
 
 const ConversationContext = createContext();
 
@@ -136,11 +136,9 @@ export const ConversationProvider = (p) => {
             page.messages.filter(msg => !existingMessageIds.has(msg.id))
           )
 
-  
           // Only update the state if there are new messages to add
           if (newMessages.length > 0) {
             const newMsgList = [...newMessages, ...prevCon.messages].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            console.log("newMsgList", newMsgList)
             return {
               ...prevCon,
               messages: newMsgList,
@@ -150,7 +148,6 @@ export const ConversationProvider = (p) => {
           }
         } else {
           // Initialize messages if they don't exist
-          console.log("no new messages", messages.pages)
           return {
             ...prevCon,
             messages: messages.pages.flatMap(page => page.messages).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)),

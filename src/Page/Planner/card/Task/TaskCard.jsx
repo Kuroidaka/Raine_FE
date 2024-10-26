@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Tippy from "@tippyjs/react/headless";
-import { Img } from "../../../assets/svg";
-import Input from "../../../Component/Input";
+import { Img } from "../../../../assets/svg";
+import Input from "../../../../component/Input";
 import {
   useState,
   useEffect,
@@ -14,270 +14,16 @@ import {
   convertDates,
   convertToTodayWithSameTime,
   dateConvert,
-} from "../../../Util";
+} from "../../../../Util";
 
-import plannerData from "../Planner.json";
-import ModalContext from "../../../Context/Modal.context";
-import TaskContext from "../../../Context/Task.context";
-import SubTask from "./SubTask";
-import language from "../../../Util/language";
-import myCursor from "../../../assets/cursor/Labrador_Retriever.cur";
+import ModalContext from "../../../../context/Modal.context";
+import TaskContext from "../../../../context/Task.context";
+import SubTask from "../SubTask";
+
+import myCursor from "../../../../assets/cursor/Labrador_Retriever.cur";
 import { motion } from "framer-motion";
-import reminderApi from "../../../api/reminder.api";
+import reminderApi from "../../../../api/reminder.api";
 import { toast } from "react-toastify";
-import EmptyData from "../EmptyData";
-
-const TaskCard = (p) => {
-  const { dataSection, dateZone, setDateZone } = p;
-  const modalContext = useContext(ModalContext);
-  // const { task }  = useContext(TaskContext)
-  const [dateType, setDateType] = useState({
-    overdue: [],
-    today: [],
-    tomorrow: [],
-    someDay: [],
-    dateAfterTomorrow: [],
-    done: [],
-  });
-  const [dAfterTArr, setDAfterTArr] = useState();
-
-  useEffect(() => {
-    const options = {
-      weekday: "short",
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-      timeZoneName: "short",
-    };
-
-    const filterTasksByDeadline = (tasks, deadline) => {
-      const deadlineDate = new Date(deadline);
-      return tasks.filter((task) => {
-        const taskDeadline = new Date(task.deadline);
-        return (
-          taskDeadline.toLocaleString("en-US", options) ===
-          deadlineDate.toLocaleString("en-US", options)
-        );
-      });
-    };
-
-    const setupDate = () => {
-      const today = new Date();
-
-      const overDueTasks = dataSection.filter((task) => {
-        if (task.deadline !== null && task.status === false) {
-          const deadline = new Date(task.deadline);
-          return convertDates([deadline])[0] < convertDates([today])[0];
-        }
-      });
-
-      const todayTasks = filterTasksByDeadline(dataSection, today);
-
-      let tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowTasks = filterTasksByDeadline(dataSection, tomorrow);
-
-      const newDateArr = [];
-      const dATTasksArr = [];
-      let dateAfterTomorrow = new Date();
-      dateAfterTomorrow.setDate(dateAfterTomorrow.getDate() + 2);
-
-      for (let i = 0; i < 5; i++) {
-        let dateAfter = new Date();
-        dateAfter.setDate(dateAfter.getDate() + 2 + i);
-        newDateArr.push(
-          language.date.find(
-            (item) =>
-              item.name ===
-              dateAfter.toLocaleString("en-US", options).split(",")[0]
-          )
-        );
-        setDAfterTArr(newDateArr);
-        const dATTasks = filterTasksByDeadline(dataSection, dateAfter);
-        dATTasksArr.push(dATTasks);
-      }
-
-      const someDayTasks = dataSection.filter((task) => {
-        return task.deadline === null;
-      });
-
-      const doneTasks = dataSection.filter((task) => {
-        return task.status === true;
-      });
-
-      setDateType({
-        overdue: overDueTasks,
-        today: todayTasks,
-        tomorrow: tomorrowTasks,
-        datesAfterTomorrow: dATTasksArr,
-        someDay: someDayTasks,
-        done: doneTasks,
-      });
-
-      if (
-        overDueTasks.length + todayTasks.length === 0 &&
-        tomorrowTasks.length + dATTasksArr.length > 0
-      ) {
-        const zone = "week" || plannerData["task"].dateZone[1].name;
-        setDateZone(zone);
-      } else if (
-        tomorrowTasks.length + dATTasksArr.length === 0 &&
-        someDayTasks.length > 0
-      ) {
-        const zone = "all" || plannerData["task"].dateZone[2].name;
-        setDateZone(zone);
-      }
-    };
-
-    setupDate();
-  }, [dataSection]);
-
-  const TodayDZ = () => (
-    <Fragment>
-      {dateType.overdue.length > 0 && (
-        <Fragment>
-          {/* OVERDUE */}
-          <DateZoneLabel
-            name="overdue"
-            className="mb-10 overdue"
-            title="Quá hạn"
-            num={dateType.overdue.length}
-          />
-          <TaskCardList className="mb-30">
-            {dateType.overdue.map((data, idx) => {
-              return <Card key={idx} data={data} />;
-            })}
-          </TaskCardList>
-        </Fragment>
-      )}
-      {/* TODAY */}
-      <DateZoneLabel
-        name="today"
-        className="mb-10"
-        title="Hôm nay"
-        num={dateType.today.length}
-      />
-      <TaskCardList className="mb-30">
-        {dateType.today &&
-          dateType.today.map((data, idx) => {
-            return <Card key={idx} data={data} />;
-          })}
-      </TaskCardList>
-    </Fragment>
-  );
-
-  const WeekDZ = () => {
-
-    const totalTaskAfterTomorrow = dateType.datesAfterTomorrow.reduce((total, item) => total + item.length, 0)
-    const totalTaskTomorrow = dateType.tomorrow.length
-    const totalTaskToday = dateType.today.length
-
-    if((totalTaskAfterTomorrow === 0 && totalTaskTomorrow === 0 && totalTaskToday === 0)) {
-      return <EmptyData sec="task" openModal={modalContext.openModal} />
-    }
-    return (
-      <Fragment>
-        <TodayDZ />
-        {/* TOMORROW */}
-        <DateZoneLabel
-          name="tomorrow"
-          className="mb-10 mt-40"
-          title="Ngày mai"
-          num={dateType.tomorrow.length}
-        />
-        {dateType.tomorrow &&
-          dateType.tomorrow.map((data, idx) => {
-            return <Card key={idx} data={data} />;
-          })}
-
-        {/* DATES AFTER TOMORROW */}
-        {dateType.datesAfterTomorrow &&
-          dateType.datesAfterTomorrow.map((date, idx) => {
-            return (
-              <Fragment key={idx}>
-                <DateZoneLabel
-                  name="dateAfterTomorrow"
-                  className="mb-10 mt-40"
-                  title={dAfterTArr[idx]?.value?.vn}
-                  num={date.length}
-                />
-                {date.map((data, idx) => {
-                  return <Card key={idx} data={data} />;
-                })}
-              </Fragment>
-            );
-          })}
-      </Fragment>
-    );
-  };
-
-  const AllDZ = () => (
-    <Fragment>
-      <TodayDZ />
-
-      {/* TOMORROW */}
-      <DateZoneLabel
-        name="tomorrow"
-        className="mb-10 mt-40"
-        title="Ngày mai"
-        num={dateType.tomorrow.length}
-      />
-      {dateType.tomorrow &&
-        dateType.tomorrow.map((data, idx) => {
-          return <Card key={idx} data={data} />;
-        })}
-
-      {/* DATE AFTER TOMORROW */}
-      <DateZoneLabel
-        name="dateAfterTomorrow"
-        className="mb-10 mt-40"
-        title={dAfterTArr[0]?.value?.vn}
-        num={dateType.datesAfterTomorrow[0].length}
-      />
-      {dateType.dateAfterTomorrow &&
-        dateType.dateAfterTomorrow.map((data, idx) => {
-          return <Card key={idx} data={data} />;
-        })}
-
-      {/* Done */}
-      <DateZoneLabel
-        name="done"
-        className="mb-10 mt-40"
-        title="Đã hoàn thành"
-        num={dateType.done.length}
-      />
-      {dateType.done &&
-        dateType.done.map((data, idx) => {
-          return <Card key={idx} data={data} />;
-        })}
-    </Fragment>
-  );
-
-  return (
-    <Container>
-      {dateZone === "today" ? (
-        <TodayDZ />
-      ) : dateZone === "week" ? (
-        <WeekDZ />
-      ) : (
-        dateZone === "all" && <AllDZ />
-      )}
-    </Container>
-  );
-};
-
-const DateZoneLabel = (p) => {
-  const { title, num, className } = p;
-
-  return (
-    <DateZoneLabelContainer className={className}>
-      <div className="label text-dark">
-        <span>{title}</span>
-        <span> ({num})</span>
-      </div>
-    </DateZoneLabelContainer>
-  );
-};
 
 export const Card = (p) => {
   const {
@@ -436,17 +182,17 @@ export const Card = (p) => {
       style={
         color !== ""
           ? { backgroundColor: color }
-          : { backgroundColor: "#FFFFF" }
+          : { backgroundColor: "#FFFFF", color: "#000" }
       }
       className={`task-card text-dark `}
     >
       <MainTask>
         <div
           className={`card-title ${
-            color === "" ? "text-white" : "text-dark"
+            color === "" ? "text-dark" : "text-white"
           }  ${checked ? "blur" : ""}`}
         >
-          <Title>
+          <Title className={`${color === "" ? "text-dark" : "text-white"}`}>
             <span onClick={taskHandle.check}>
               {checked ? <Img.checkboxChecked /> : <Img.checkbox />}
             </span>
@@ -455,19 +201,21 @@ export const Card = (p) => {
             </div>
           </Title>
 
-          <Deadline>
+          <Deadline className={`${color === "" ? "text-dark" : "text-white"}`}>
             <Img.deadline />
             <span>{dateConvert(deadline)}</span>
           </Deadline>
 
-          <RelateArea>
+          <RelateArea
+            className={`${color === "" ? "text-dark" : "text-white"}`}
+          >
             {area.length > 0 &&
               area.map((item, idx) => <Area key={idx} data={item} />)}
           </RelateArea>
         </div>
 
         <div
-          className={`card-sub ${color === "" ? "text-white" : ""}`}
+          className={`card-sub ${color === "" ? "text-dark" : "text-white"}`}
           onClick={subTaskHandle.open}
         >
           {subs.length > 0 && (
@@ -480,7 +228,9 @@ export const Card = (p) => {
           </span>
         </div>
 
-        <div className={`card-option ${color === "" ? "text-white" : ""}`}>
+        <div
+          className={`card-option ${color === "" ? "text-dark" : "text-white"}`}
+        >
           <Tippy
             interactive
             content="Tooltip"
@@ -725,55 +475,6 @@ const Option = (p) => {
   );
 };
 
-export default TaskCard;
-
-const Container = styled.div`
-  padding-top: 20px;
-  height: 70dvh;
-  overflow-y: scroll;
-  scrollbar-width: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  &::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
-  }
-`;
-
-const DateZoneLabelContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  &.overdue {
-    .label span {
-      color: rgba(234, 84, 85, 1);
-    }
-  }
-
-  .label {
-    font-weight: 700;
-
-    span {
-      font-size: 1.5rem;
-
-      &:nth-child(2) {
-        padding: 0 5px;
-      }
-      &:nth-child(3) {
-        font-size: 18px;
-        font-weight: 900;
-      }
-    }
-  }
-`;
-const TaskCardList = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-`;
 const TaskCardContainer = styled(motion.div)`
   max-width: 50rem;
   width: 100%;

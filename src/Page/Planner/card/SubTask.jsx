@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
-import Input from "../../../Component/Input"
+import Input from "../../../component/Input"
 import { Img } from "../../../assets/svg";
 import myCursor from '../../../assets/cursor/Labrador_Retriever.cur';
 

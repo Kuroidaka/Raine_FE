@@ -1,12 +1,11 @@
-import React, { useEffect, useState, useRef, Fragment } from "react";
+import { useState, useRef, Fragment } from "react";
 import styled from "styled-components";
 
 import FaceSVG from "./face";
 import authenApi from "../../api/authen.api";
-import Loading from "../../Component/Loading";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router";
-import OverlayDimLoading from "../../Component/Overlay";
+import OverlayDimLoading from "../../component/OverlayDimLoading";
 
 const Login = () => {
   const emailRef = useRef(null);
@@ -126,20 +125,6 @@ const Login = () => {
 };
 
 export default Login;
-
-
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000; // Ensure it's on top
-`;
 
 
 const StyledForm = styled.form`

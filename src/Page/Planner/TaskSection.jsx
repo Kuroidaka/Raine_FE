@@ -2,7 +2,7 @@ import { motion } from "framer-motion"
 import { useContext, useEffect, useState } from "react"
 import styled from "styled-components"
 import plannerData from "./Planner.json";
-import ModalContext from "../../Context/Modal.context";
+import ModalContext from "../../context/Modal.context";
 import myCursor from '../../assets/cursor/Labrador_Retriever.cur';
 import { Icon } from "../../assets/icon"
 
