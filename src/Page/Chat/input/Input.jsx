@@ -66,7 +66,7 @@ const InputCom = (p) => {
                 ))}
             </div>
             <div className="Input_area">
-                <label className="attach-btn-wrapper" htmlFor="img_file-Input">
+                {/* <label className="attach-btn-wrapper" htmlFor="img_file-Input">
                     <span><AttachFile /></span>
                     <input
                         type="file"
@@ -76,7 +76,7 @@ const InputCom = (p) => {
                         onChange={(e) => uploadFileImg(e)}
                         multiple
                     />
-                </label>
+                </label> */}
                 <textarea
                     className="Input_text"
                     rows="1"

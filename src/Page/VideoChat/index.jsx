@@ -61,21 +61,23 @@ const VideoChatInner = () => {
     console.log("ProcessAI");
 
     const isOpenVideo = videoRef.current.srcObject !== null;
-    let videoDataObj = {}
+    const isOpenScreen = isScreenShare.current;
+    let videoDataObj = {};
 
     if (isOpenVideo) {
       const videoUrl = await stopAndSaveCaptureVideo();
       const videoFile = videoUrl
         ? await getWebmFileFromBlobUrl(videoUrl, "my-video.webm")
         : null;
-      videoDataObj.fileVideo = videoFile
+      videoDataObj.fileVideo = videoFile;
       console.log("videoFile", videoFile);
     }
+
     setTranscription(message);
     setIsWaiting(true);
     setBotText("");
 
-    const FrameFile = isOpenVideo ? await videoProcess() : null;
+    const FrameFile = isOpenVideo || isOpenScreen ? await videoProcess() : null;
     setPhase("user: processing completion");
 
     console.log("conID", conID);
@@ -83,7 +85,7 @@ const VideoChatInner = () => {
       file: FrameFile,
       inputValue: message,
       conversationID: conID.current,
-      ...videoDataObj
+      ...videoDataObj,
     });
     console.log("returnedConID", returnedConID);
 
@@ -127,6 +129,7 @@ const VideoChatInner = () => {
       };
       await cacheConversation.addMsg(data, false);
 
+      console.log("isScreenShare.current", isScreenShare.current);
       const result = await conversationApi.createChatVideo(
         {
           prompt: inputValue,
@@ -134,7 +137,8 @@ const VideoChatInner = () => {
           conversationID,
           fileVideo,
         },
-        true
+        true,
+        isScreenShare.current
       );
 
       if (!selectedConID) {
@@ -152,10 +156,7 @@ const VideoChatInner = () => {
     }
   };
 
-  const videoProcess = async () => {
-    setImagesGridUrl(null);
-    setPhase("user: uploading video captures");
-
+  const processGridFrames = async () => {
     // gen img grid
     const maxScreenshots = isScreenShare.current
       ? SCREEN_MAX_SCREENSHOTS
@@ -171,16 +172,24 @@ const VideoChatInner = () => {
       quality: isScreenShare.current ? SCREEN_IMAGE_QUALITY : IMAGE_QUALITY,
     });
 
-    screenshotsRef.current = [];
+    return imageUrl;
+  };
+
+  const videoProcess = async () => {
+    setImagesGridUrl(null);
+    setPhase("user: uploading video captures");
+
+    const imageUrl = await processGridFrames();
     // downloadImageFromBase64(imageUrl)
     const file = base64ToFile(imageUrl);
     // const uploadUrls = await hostImages([imageUrl]);
-
+    screenshotsRef.current = [];
     setImagesGridUrl(imageUrl);
 
     return file;
   };
 
+  // Video capture for storing
   const captureVideo = async () => {
     try {
       if (mediaRecorderRef.current) return;
@@ -311,6 +320,7 @@ const VideoChatInner = () => {
   const debugProp = {
     displayDebug,
     setDisplayDebug,
+    processGridFrames,
     imagesGridUrl,
     transcription,
     phase,

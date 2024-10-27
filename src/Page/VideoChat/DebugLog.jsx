@@ -1,13 +1,34 @@
 import styled, { css } from "styled-components";
 import { transparentPixel } from "./helper";
+import { useEffect, useState } from "react";
 
 const DebugLog = (p) => {
   const {
     imagesGridUrl,
     transcription,
     phase,
-    displayDebug, setDisplayDebug
+    displayDebug, setDisplayDebug,
+    processGridFrames
   } = p;
+
+  const [gridImageUrl, setGridImageUrl] = useState(transparentPixel);
+
+
+  const getGridImageUrl = async () => {
+    const imageUrl = await processGridFrames();
+    // console.log("imageUrl", imageUrl)
+    if (imageUrl) {
+      setGridImageUrl(imageUrl);
+    }
+    else {
+      setGridImageUrl(transparentPixel);
+    }
+  }
+
+  useEffect(() => {
+    getGridImageUrl();
+  });
+
   return (
     <DebugContainer $displayDebug={displayDebug.toString()}>
       <CloseButton onClick={() => setDisplayDebug(false)}>⛌</CloseButton>
@@ -22,7 +43,7 @@ const DebugLog = (p) => {
         </DebugItem>
         <DebugImg>
           <div>Captures:</div>
-          <img alt="Grid" src={imagesGridUrl || transparentPixel} />
+          <img alt="Grid" src={gridImageUrl || transparentPixel} />
         </DebugImg>
       </div>
     </DebugContainer>

@@ -188,7 +188,7 @@ const CamScreen = (p) => {
   // Process frame capture
   useEffect(() => {
     const captureFrame = () => {
-      if (video.status === "recording" || screenObject.status === "recording" && audio.isRecording) {
+      if (video.status === "recording" || screenObject.status === "recording") {
 
         const targetWidth = isScreenShare.current ? SCREEN_IMAGE_WIDTH : IMAGE_WIDTH;
 
@@ -229,7 +229,7 @@ const CamScreen = (p) => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [video.status, screenObject.status, audio.isRecording, isScreenShare, canvasRef, videoRef]);
+  }, [video.status, screenObject.status, audio.isRecording, isScreenShare, canvasRef, videoRef, screenRef]);
 
   // Initialize video and screen streams
   useEffect(() => {

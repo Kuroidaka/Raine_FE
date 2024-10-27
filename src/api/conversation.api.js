@@ -29,12 +29,13 @@ const conversationApi = {
         const url = `/conversation/messages/${conversationId}`;
         return axiosClient.get(url, { params: { page, pageSize } });
     },
-    createChatVideo: async ({ prompt, conversationID, file, fileVideo }, isStream = false) => {
+    createChatVideo: async ({ prompt, conversationID, file, fileVideo }, isStream = false, isScreen = false) => {
         const url = `/brain/chat/video`;
     
         // Define query parameters
         const params = {
             isStream: isStream,
+            isScreen: isScreen
         };
     
         // Create a FormData object

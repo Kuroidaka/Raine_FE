@@ -30,18 +30,12 @@ const AudioSpeak = (p) => {
           playNextAudio();
         }else if(!isPlaying && audioQueue.length === 0) {
           if(isOnMic) {
-            
-            setTimeout(async () => {
-              recorder.voice.start()
-              await terminateCaptureVideo()
-              await captureVideo()
-            }, 2000)
-          }else {
-            setTimeout(async () => {
-              await terminateCaptureVideo()
-              await captureVideo()
-            }, 2000)
+            recorder.voice.start()
           }
+          setTimeout(async () => {
+            await terminateCaptureVideo()
+            await captureVideo()
+          }, 2000)
 
           isBusy.current = false;
           setIsWaiting(false);
