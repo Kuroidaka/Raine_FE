@@ -1,6 +1,6 @@
 .Input {
     display: flex;
-    align-items: end;
+    align-items: center;
     height: 100%;
     // justify-content: space-around;
     color: white;
@@ -250,12 +250,12 @@
         .Input_area {
             display: flex;
             gap: 10px;
+            height: 100%;
             justify-content: space-between;
-            // border: 1px solid white;
             align-items: center;
             border-radius: 20px;
-            padding: 9px 10px;
-            height: auto;
+            padding: 10px 15px;
+            /* height: auto; */
             background-color: #2A2A38;
 
             .attach-btn-wrapper {

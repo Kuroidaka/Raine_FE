@@ -25,7 +25,7 @@ import { motion } from "framer-motion";
 import reminderApi from "../../../../api/reminder.api";
 import { toast } from "react-toastify";
 
-export const Card = (p) => {
+const TaskCard = (p) => {
   const {
     data: {
       title,
@@ -299,6 +299,7 @@ export const Card = (p) => {
   );
 };
 
+export default TaskCard;
 const AddSubTask = (p) => {
   const { id, color, AddSub, placeholder } = p;
   console.log("p", p);

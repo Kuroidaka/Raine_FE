@@ -5,7 +5,7 @@ import TaskContext from "../../../../context/Task.context";
 import EmptyData from "../../EmptyData";
 import ModalContext from "../../../../context/Modal.context";
 import DateZoneLabel from "./DateZoneLabel";
-import { Card } from "./TaskCard";
+import TaskCard from "./TaskCard";
 
 const SelectTaskDate = () => {
   // State to store the selected date range
@@ -40,7 +40,7 @@ const SelectTaskDate = () => {
               num={groupedTasks[date].length}
             />
             {groupedTasks[date].map((data, idx) => {
-              return <Card key={idx} data={data} />;
+              return <TaskCard key={idx} data={data} />;
             })}
           </Fragment>
         );

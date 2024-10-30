@@ -4,7 +4,7 @@ import IconCustom from "../../../assets/Icons/svg";
 import { useContext, useEffect, useState } from "react";
 import Logo from "../../../assets/img/Logo";
 import MarkDown from "../../../component/MarkDownChat";
-import { Card as TaskCard } from "../../Planner/card/Task/TaskCard";
+import TaskCard from "../../Planner/card/Task/TaskCard";
 import { Card as RoutineCard } from "../../Planner/card/RoutineCard";
 import ModalContext from "../../../context/Modal.context";
 import { FiTerminal } from "react-icons/fi";
@@ -134,19 +134,9 @@ const BotMsg = (p) => {
         {(text || functionList.length > 0) && (
           <div className="bot-text-wrapper">
             {
-              // checkIsImgLink(text) ? (
-              //     <div className='bot-text'>
-              //         <ImageCom
-              //             src={text}
-              //             imgPlaceHolder={imgPlaceHolder}
-              //             imgsize={'423px' }
-              //         />
-              //     </div>
-              // ) : (
               <div className="bot-text">
                 <MarkDown text={text} />
               </div>
-              // )
             }
           </div>
         )}
@@ -156,7 +146,7 @@ const BotMsg = (p) => {
   );
 };
 
-const FunctionAgent = (p) => {
+export const FunctionAgent = (p) => {
   const { agent } = p;
   const { openModal } = useContext(ModalContext);
 
@@ -207,7 +197,7 @@ const FunctionAgent = (p) => {
   );
 };
 
-const MemoAgent = (p) => {
+export const MemoAgent = (p) => {
   const { memo } = p;
   const { openModal } = useContext(ModalContext);
 
@@ -238,7 +228,7 @@ const MemoAgent = (p) => {
   );
 };
 
-const MemoStorageAgent = (p) => {
+export const MemoStorageAgent = (p) => {
   const { memoStorage } = p;
   const { openModal } = useContext(ModalContext);
 
@@ -270,7 +260,7 @@ const MemoStorageAgent = (p) => {
   );
 };
 
-const FunctionData = ({ agent }) => {
+export const FunctionData = ({ agent }) => {
     const [listFuncData, setListFuncData] = useState([]);
     const [funcName, setFuncName] = useState("");
   

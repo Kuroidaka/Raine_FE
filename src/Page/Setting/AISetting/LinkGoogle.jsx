@@ -21,7 +21,7 @@ const LinkAccountSetting = () => {
         <TitleWrapper>
             <Title>
             <h2>Link Account</h2>
-            <p>Connect a Google account for <strong>@{ggUser.username || userData.username}</strong> to sponsor maintainers with. Get recognition on GitHub for sponsorships made on Patreon when the sponsored person has linked Patreon and GitHub, too, and has a public GitHub Sponsors profile.</p>
+            <p>Connect a Google account for <strong>@{ggUser.username || userData.username}</strong> to easily sync your tasks and routines across devices. With this feature, all updates and changes will automatically save to your Google account, keeping everything up-to-date and accessible anytime, anywhere.</p>
             </Title>
         </TitleWrapper>
 

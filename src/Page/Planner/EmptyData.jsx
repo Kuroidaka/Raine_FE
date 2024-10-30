@@ -9,23 +9,27 @@ import Button from "../../component/Button";
 const EmptyData = (p) => {
   const { sec, openModal } = p;
 
-  const onClickCreateTaskbtn = e => {
-      const name = e.target.getAttribute("name")
-      openModal(name, null, name, "add")
-  }
+  const onClickCreateTaskbtn = (e) => {
+    const name = e.target.getAttribute("name");
+    openModal(name, null, name, "add");
+  };
   return (
     <Fragment>
       <ImgMotivation>
         <img
           src={
-            sec === "task" ? task :
-            sec === "routine" ? routine :
-            sec === "goal" && goal
+            sec === "task"
+              ? task
+              : sec === "routine"
+              ? routine
+              : sec === "goal" && goal
           }
           alt={
-            sec === "task" ? "task-management" :
-            sec === "routine" ? "routine-management" :
-            sec === "goal" && "goal-management"
+            sec === "task"
+              ? "task-management"
+              : sec === "routine"
+              ? "routine-management"
+              : sec === "goal" && "goal-management"
           }
         />
       </ImgMotivation>

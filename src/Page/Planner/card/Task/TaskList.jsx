@@ -9,11 +9,11 @@ import {
   convertDates,
 } from "../../../../Util";
 
-import plannerData from "../../Planner.json";
+import plannerData from "../../../../Page/Planner/Planner.json";
 import ModalContext from "../../../../context/Modal.context";
 import language from "../../../../Util/language";
 import EmptyData from "../../EmptyData";
-import { Card } from "./TaskCard";
+import TaskCard from "./TaskCard";
 import SelectTaskDate from "./SelectDateZone";
 import DateZoneLabel from "./DateZoneLabel";
 
@@ -135,7 +135,7 @@ const TaskList = (p) => {
           />
           <TaskCardList className="mb-30">
             {dateType.overdue.map((data, idx) => {
-              return <Card key={idx} data={data} />;
+              return <TaskCard key={idx} data={data} />;
             })}
           </TaskCardList>
         </Fragment>
@@ -150,7 +150,7 @@ const TaskList = (p) => {
       <TaskCardList className="mb-30">
         {dateType.today &&
           dateType.today.map((data, idx) => {
-            return <Card key={idx} data={data} />;
+            return <TaskCard key={idx} data={data} />;
           })}
       </TaskCardList>
     </Fragment>
@@ -177,7 +177,7 @@ const TaskList = (p) => {
         />
         {dateType.tomorrow &&
           dateType.tomorrow.map((data, idx) => {
-            return <Card key={idx} data={data} />;
+            return <TaskCard key={idx} data={data} />;
           })}
 
         {/* DATES AFTER TOMORROW */}
@@ -192,7 +192,7 @@ const TaskList = (p) => {
                   num={date.length}
                 />
                 {date.map((data, idx) => {
-                  return <Card key={idx} data={data} />;
+                  return <TaskCard key={idx} data={data} />;
                 })}
               </Fragment>
             );
