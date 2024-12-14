@@ -18,40 +18,10 @@ const functionIcon = {
     process: "Reminder Creating",
     done: "Reminder Created",
   },
-  get_current_weather: {
-    icon: "☁️",
-    process: "Weather Getting",
-    done: "Weather",
-  },
-  browse: {
-    icon: "🔍",
-    process: "Google Browsing",
-    done: "Google Browsed",
-  },
-  ask_about_document: {
-    icon: "📁",
-    process: "Document Finding",
-    done: "Document Found",
-  },
-  database_chat: {
-    icon: "🛢️",
-    process: "Database Chatting",
-    done: "Database Chat",
-  },
   generate_image: {
     icon: "🖼️",
     process: "Image Generating",
     done: "Image Generated",
-  },
-  follow_up_image_in_chat: {
-    icon: "👁️",
-    process: "Looking up Image",
-    done: "Image answered",
-  },
-  scrape_website: {
-    icon: "🔗",
-    process: "Website Scraping",
-    done: "Website Scraped",
   },
   ReminderChatService: {
     icon: "⏱️",
@@ -72,6 +42,11 @@ const functionIcon = {
   FileAskChatService: {
     icon: "📁",
     process: "File Search",
+  },
+  BrowseChatService: {
+    icon: "🔍",
+    process: "Searching Google",
+    done: "Google Browsed",
   },
 };
 

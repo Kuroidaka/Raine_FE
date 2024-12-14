@@ -22,8 +22,8 @@ const fileApi = {
             },
         });
     },
-    uploadFileForChat: async (formData) => {
-        const url = `/file/ask/upload`;
+    uploadFileForChat: async (formData, chunkingService) => {
+        const url = `/file/ask/upload?method=${chunkingService}`;
         return axiosClient.post(url, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',

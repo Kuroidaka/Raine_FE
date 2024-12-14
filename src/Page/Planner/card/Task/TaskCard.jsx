@@ -25,6 +25,20 @@ import { motion } from "framer-motion";
 import reminderApi from "../../../../api/reminder.api";
 import { toast } from "react-toastify";
 
+
+const getStyle = (color) => {
+  if (color !== "") {
+    return color === "1"
+      ? { backgroundColor: "#FFFFF", color: "#000" }
+      : { backgroundColor: color };
+  }
+  return { backgroundColor: "#000", color: "#FFFFF" };
+};
+
+const getColorClass = (color) => {
+  return color === "" ?  "text-white" : "text-dark"
+}
+
 const TaskCard = (p) => {
   const {
     data: {
@@ -40,6 +54,8 @@ const TaskCard = (p) => {
     },
     mode = "edit",
   } = p;
+
+  console.log("color", color);
 
   const { handleCheckTask, handleDeleteTask } = useContext(TaskContext);
   const { openModal } = useContext(ModalContext);
@@ -175,24 +191,19 @@ const TaskCard = (p) => {
     if (Image) return <Image />;
   };
 
+
   return (
     <TaskCardContainer
       // onClick={() => taskHandle.selectWhenClick(id)}
       name={id}
-      style={
-        color !== ""
-          ? { backgroundColor: color }
-          : { backgroundColor: "#FFFFF", color: "#000" }
-      }
-      className={`task-card text-dark `}
+      style={getStyle(color)}
+      className={`task-card text-dark`}
     >
       <MainTask>
         <div
-          className={`card-title ${
-            color === "" ? "text-dark" : "text-white"
-          }  ${checked ? "blur" : ""}`}
+          className={`card-title ${getColorClass(color)}  ${checked ? "blur" : ""}`}
         >
-          <Title className={`${color === "" ? "text-dark" : "text-white"}`}>
+          <Title className={getColorClass(color)}>
             <span onClick={taskHandle.check}>
               {checked ? <Img.checkboxChecked /> : <Img.checkbox />}
             </span>
@@ -201,13 +212,13 @@ const TaskCard = (p) => {
             </div>
           </Title>
 
-          <Deadline className={`${color === "" ? "text-dark" : "text-white"}`}>
+          <Deadline className={getColorClass(color)}>
             <Img.deadline />
             <span>{dateConvert(deadline)}</span>
           </Deadline>
 
           <RelateArea
-            className={`${color === "" ? "text-dark" : "text-white"}`}
+            className={getColorClass(color)}
           >
             {area.length > 0 &&
               area.map((item, idx) => <Area key={idx} data={item} />)}
@@ -215,7 +226,7 @@ const TaskCard = (p) => {
         </div>
 
         <div
-          className={`card-sub ${color === "" ? "text-dark" : "text-white"}`}
+          className={`card-sub ${getColorClass(color)}`}
           onClick={subTaskHandle.open}
         >
           {subs.length > 0 && (
@@ -229,7 +240,7 @@ const TaskCard = (p) => {
         </div>
 
         <div
-          className={`card-option ${color === "" ? "text-dark" : "text-white"}`}
+          className={`card-option ${getColorClass(color)}`}
         >
           <Tippy
             interactive
@@ -353,7 +364,9 @@ const AddSubTask = (p) => {
   // }, [id]);
 
   return (
-    <AddSubTaskContainer className={`${color === "" ? "text-white" : ""}`}>
+    <AddSubTaskContainer
+      className={getColorClass(color)}
+    >
       {value === "" ? (
         <span className={`${id} plus`}>
           <Img.plus />
@@ -370,11 +383,11 @@ const AddSubTask = (p) => {
         onKeyDown={handleAddSubTask}
         ref={inputRef}
         name="title"
-        className={`${color !== "" ? "text-white" : ""} subtask-input ${id}`}
+        className={`${getColorClass(color)} subtask-input ${id}`}
         inputStyle={inputStyle}
         placeholder={placeholder}
         plhdercolor={`${
-          color !== "" ? "var(--white-text)" : "var(--black-text)"
+          color !== "" ? "var(--black-text)" : "var(--white-text)"
         }`}
         focusborder="false"
       />
@@ -480,7 +493,7 @@ const TaskCardContainer = styled(motion.div)`
   max-width: 50rem;
   width: 100%;
   height: auto;
-  background-color: #fff;
+  /* background-color: #fff; */
   border-radius: 16px;
   margin-bottom: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.12), 0 2px 4px 0 rgba(0, 0, 0, 0.08);
