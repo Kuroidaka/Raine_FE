@@ -29,7 +29,7 @@ export const TaskProvider = (p) => {
 
 
     const getTaskDateRangeMutation = useMutation({
-        mutationFn: ({startDate, endDate}) => reminderApi.getTasks(startDate, endDate),
+        mutationFn: ({startDate, endDate, areaKeyword}) => reminderApi.getTasks(startDate, endDate, areaKeyword),
         onSuccess: (data) => {
             const groupedTasks = groupTasksByDate(data)
             setGroupedTasks(groupedTasks)
@@ -103,9 +103,9 @@ export const TaskProvider = (p) => {
         }
     }
 
-    const handleGetTaskDateRange = async ({startDate, endDate}) => {
+    const handleGetTaskDateRange = async ({startDate, endDate, areaKeyword}) => {
         try {
-            getTaskDateRangeMutation.mutate({startDate, endDate});
+            getTaskDateRangeMutation.mutate({startDate, endDate, areaKeyword});
         } catch (error) {
             console.log(error)
             toast.error("something went wrong")

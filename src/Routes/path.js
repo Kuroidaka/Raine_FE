@@ -1,5 +1,6 @@
 const paths = {
     login: "/login",
+    register: "/register",
     planner: "/planner",
     chat: "/chat",
     videoChat: "/chat/cam",

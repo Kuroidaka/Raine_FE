@@ -19,6 +19,12 @@ import VideoChatPreview from "../../Chat/Box/VideoPreview";
 import { motion } from "framer-motion";
 import { ReminderModalContext } from "./Modal";
 
+export const Area = (p) => {
+  const { data } = p;
+  const Image = Img[data];
+  if (Image) return <Image />;
+};
+
 const TaskModal = () => {
   const { dataInput, setDataInput, mode, areaData } = useContext(ReminderModalContext);
 
@@ -176,11 +182,6 @@ const TaskModal = () => {
     }
   };
 
-  const Area = (p) => {
-    const { data } = p;
-    const Image = Img[data];
-    if (Image) return <Image />;
-  };
 
   const checkValid = () => {
     if (

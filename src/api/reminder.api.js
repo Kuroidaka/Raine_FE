@@ -12,13 +12,14 @@ const reminderApi = {
       });
     },
   
-    getTasks: async (startDate, endDate) => {
+    getTasks: async (startDate, endDate, areaKeyword) => {
       // startDate, endDate is optional
       const url = `/reminder/get`;
 
       const data = {
         startDate,
-        endDate
+        endDate,
+        areaKeyword
       }
 
       return axiosClient.get(url, { params: data });

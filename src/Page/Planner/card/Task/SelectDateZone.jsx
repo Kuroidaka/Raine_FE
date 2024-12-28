@@ -1,4 +1,4 @@
-import { Fragment, useContext } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import Flatpickr from "react-flatpickr";
 import TaskContext from "../../../../context/Task.context";
@@ -6,61 +6,88 @@ import EmptyData from "../../EmptyData";
 import ModalContext from "../../../../context/Modal.context";
 import DateZoneLabel from "./DateZoneLabel";
 import TaskCard from "./TaskCard";
+import SelectComponent from "../../../../component/SelectOption";
+
+const options = [
+  { label: 'health', value: 'health' },
+  { label: 'play', value: 'play' },
+  { label: 'spirituality', value: 'spirituality' },
+  { label: 'environment', value: 'environment' },
+  { label: 'work', value: 'work' },
+  { label: 'finance', value: 'finance' },
+  { label: 'development', value: 'development' },
+  { label: 'relationships', value: 'relationships' },
+]
+
 
 const SelectTaskDate = () => {
   // State to store the selected date range
-  const { handleGetTaskDateRange, setDateRange, dateRange, groupedTasks } = useContext(TaskContext)
-  const modalContext = useContext(ModalContext)
+  const { handleGetTaskDateRange, setDateRange, dateRange, groupedTasks } =
+    useContext(TaskContext);
+  const modalContext = useContext(ModalContext);
+  const [areaKeyword, setAreaKeyword] = useState(null)
+  const [selectedDates, setSelectedDates] = useState([])
 
   const onSelectDate = (selectedDates) => {
-    // (selectedDates) => setDateRange(selectedDates)
-    console.log("selectedDates", selectedDates)
-    setDateRange(selectedDates)
-    
-    console.log("selectedDates.length", selectedDates.length)
-    if(selectedDates.length === 2) {
-      handleGetTaskDateRange({startDate: selectedDates[0], endDate: selectedDates[1]})
+    setDateRange(selectedDates);
+    setSelectedDates(selectedDates)
+  };
+
+  useEffect(() => {
+    const fetchFilter = async () => {
+      console.log("areaKeyword", areaKeyword)
+      if (selectedDates.length === 2 || areaKeyword) {
+        await handleGetTaskDateRange({
+          startDate: selectedDates[0],
+          endDate: selectedDates[1],
+          areaKeyword: areaKeyword
+        });
+      }
     }
-  }
 
-
-
+    fetchFilter()
+  }, [selectedDates, areaKeyword]);
   const renderTaskDateRange = () => {
-    if(Object.keys(groupedTasks).length === 0) {
-      return <EmptyData sec="task" openModal={modalContext.openModal} />
+    if (Object.keys(groupedTasks).length === 0) {
+      return <EmptyData sec="task" openModal={modalContext.openModal} />;
     }
 
     return Object.keys(groupedTasks).map((date, idx) => {
-        return (
-          <Fragment key={idx}>
-            <DateZoneLabel
-              name="dateAfterTomorrow"
-              className="mb-10 mt-40"
-              title={date}
-              num={groupedTasks[date].length}
-            />
-            {groupedTasks[date].map((data, idx) => {
-              return <TaskCard key={idx} data={data} />;
-            })}
-          </Fragment>
-        );
-      })
-  }
+      return (
+        <Fragment key={idx}>
+          <DateZoneLabel
+            name="dateAfterTomorrow"
+            className="mb-10 mt-40"
+            title={date}
+            num={groupedTasks[date].length}
+          />
+          {groupedTasks[date].map((data, idx) => {
+            return <TaskCard key={idx} data={data} />;
+          })}
+        </Fragment>
+      );
+    });
+  };
 
   return (
     <Container>
-      <StyledFlatpickr
-        value={dateRange}
-        onChange={onSelectDate}
-        options={{
-          mode: "range", // Enables range selection
-          dateFormat: "Y-m-d", // Date format
-        }}
-        placeholder="Select date range"
-      />
+      <FilterMethod>
+        <SelectComponent
+          options={options}
+          onChange={(value) => setAreaKeyword(value)}
+        />
+        <StyledFlatpickr
+          value={dateRange}
+          onChange={onSelectDate}
+          options={{
+            mode: "range", // Enables range selection
+            dateFormat: "Y-m-d", // Date format
+          }}
+          placeholder="Select date range"
+        />
+      </FilterMethod>
 
       {renderTaskDateRange()}
-      
     </Container>
   );
 };
@@ -68,7 +95,6 @@ const SelectTaskDate = () => {
 export default SelectTaskDate;
 
 const Container = styled.div`
-  display: flex;
   flex-direction: column;
   border-radius: 8px;
   width: 100%;
@@ -91,3 +117,8 @@ const StyledFlatpickr = styled(Flatpickr)`
   }
 `;
 
+const FilterMethod = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  gap:10px;
+`;

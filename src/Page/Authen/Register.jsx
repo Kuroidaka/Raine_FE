@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router";
 import OverlayDimLoading from "../../component/OverlayDimLoading";
 
-const Login = () => {
+const Register = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const checkBoxRef = useRef(null);
@@ -102,25 +102,41 @@ const Login = () => {
             ref={passwordRef}
             onInput={handleInput}
           />
-          <div id="showPasswordToggle">
-            <label className="checkbox_wrapper">
-              <span>Show</span>
-              <input
-                type="checkbox"
-                ref={checkBoxRef}
-                id="showPasswordCheck"
-                onChange={handleShowPassword}
-              />
-            </label>
+        </div>
 
-            <div className="signUpBtn" onClick={() => {navigate("/register")}}>
-              <p>Sign up now</p>
+        <div className="inputGroup inputGroup3">
+          <label htmlFor="loginPassword">Confirm Password</label>
+          <input
+            type="password"
+            name="password"
+            id="loginPassword"
+            ref={passwordRef}
+            onInput={handleInput}
+          />
+          <div id="showPasswordToggle">
+            <label className="checkbox_wrapper" style={{display: 'none' }}>
+                <span>Show</span>
+                <input
+                  type="checkbox"
+                  ref={checkBoxRef}
+                  id="showPasswordCheck"
+                  onChange={handleShowPassword}
+                />
+              </label>
+
+            <div
+              className="backToLogin"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              <p>Back to Login</p>
             </div>
           </div>
         </div>
-        <div className="inputGroup inputGroup3">
+        <div className="inputGroup inputGroup4">
           <button id="login" onClick={onSubmit}>
-            Login
+            Sign Up
           </button>
         </div>
       </StyledForm>
@@ -128,7 +144,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
 
 const StyledForm = styled.form`
   position: absolute;
@@ -190,28 +206,15 @@ const StyledForm = styled.form`
     padding: 0;
     position: relative;
 
-    &:last-of-type {
-      margin-bottom: 0;
-    }
-
-    #showPasswordToggle {
-      display: flex;
-      justify-content: space-between;
-      
-
-      .signUpBtn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        p {
+    .backToLogin {
+      margin-top: 10px;
+      p {
           color: var(--main-gradient);
           font-weight: 700;
         }
-        /* transition: all;/ */
-        &:hover {
-          opacity: 0.7;
-        }
-      }
+    }
+    &:last-of-type {
+      margin-bottom: 0;
     }
   }
 

@@ -4,7 +4,7 @@ export const SILENCE_DURATION = 2500
 export const SILENT_THRESHOLD = -30
 
 export const SCREEN_IMAGE_WIDTH = 512
-export const SCREEN_MAX_SCREENSHOTS = 2
+export const SCREEN_MAX_SCREENSHOTS = 1
 export const SCREEN_IMAGE_QUALITY = 1
 export const SCREEN_COLUMNS = 1
 

@@ -9,6 +9,7 @@ import paths from "../Routes/path";
 import AutoRedirect from "../component/AutoRedirect";
 
 import Login from "../page/Authen/Login";
+import Register from "../page/Authen/Register";
 import HomeLayout from "../layout/HomeLayout";
 import OverlayDimLoading from "../component/OverlayDimLoading";
 import NoPage from "../page/NoPage";
@@ -146,6 +147,14 @@ const RouterWrapper = () => {
               element: (
                 <AutoRedirect>
                   <Login />
+                </AutoRedirect>
+              ),
+            },
+            {
+              path: paths.register,
+              element: (
+                <AutoRedirect>
+                  <Register />
                 </AutoRedirect>
               ),
             },
