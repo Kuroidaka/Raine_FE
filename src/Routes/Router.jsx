@@ -18,7 +18,6 @@ const Setting = lazy(() => import("../page/Setting"));
 const ChatPage = lazy(() => import("../Page/Chat"));
 // const NewChat = lazy(() => import("../Page/Chat/NewChat"));
 const VideoChat = lazy(() => import("../Page/VideoChat"));
-const StreamTest = lazy(() => import("../Page/Test/Stream"));
 const PhotoCapture = lazy(() => import("../Page/Test/Video"));
 const AudioPreview = lazy(() => import("../Page/Test/PreviewAudio"));
 
@@ -93,16 +92,6 @@ const getDashboardChildrenRoutes = async () => {
       element: (
         <SuspenseWrapper>
           <Setting />
-        </SuspenseWrapper>
-      ),
-    },
-
-    {
-      page: "test",
-      path: paths.test,
-      element: (
-        <SuspenseWrapper>
-          <StreamTest />
         </SuspenseWrapper>
       ),
     },

@@ -9,6 +9,15 @@ import RoutineContext from "../../../context/Routine.context";
 import myCursor from "../../../assets/cursor/Labrador_Retriever.cur";
 import EmptyData from "../EmptyData";
 
+const getStyle = (color) => {
+  if (color !== "") {
+    return color === "1"
+      ? { backgroundColor: "#FFFFF", color: "#000" }
+      : { backgroundColor: color };
+  }
+  return { backgroundColor: "#000", color: "#FFFFF" };
+};
+
 const RoutineCard = (p) => {
   const { dataSection, setDateSection, dateZone } = p;
   // const { task }  = useContext(TaskContext)
@@ -235,24 +244,25 @@ export const Card = (p) => {
     await handleUpdateRoutineDates(routineId, dates);
   };
 
+
+const getColorClass = (color) => {
+  return color === "" ?  "text-white" : "text-dark"
+}
+
   return (
     <TaskCardContainer
       name={id}
-      style={
-        color !== ""
-          ? { backgroundColor: color }
-          : { backgroundColor: "#FFFFF" }
-      }
+      style={getStyle(color)}
       className="text-dark"
     >
       <MainTask>
         <div
-          className={`card-title ${
-            color === "" ? "text-white" : "text-dark"
-          }  ${checked ? "blur" : ""}`}
+          className={`card-title ${checked ? "blur" : ""}`}
         >
-          <Title>
-            <RoutineChecked>
+          <Title 
+            className={getColorClass(color)}>
+            <RoutineChecked 
+            className={getColorClass(color)}>
               {routineDate &&
                 updateRecentDates(routineDate)
                   .reverse()
@@ -282,13 +292,14 @@ export const Card = (p) => {
             </div>
           </Title>
 
-          <RelateArea>
+          <RelateArea 
+            className={getColorClass(color)}>
             {area.length > 0 &&
               area.map((item, idx) => <Area key={idx} data={item.area} />)}
           </RelateArea>
         </div>
 
-        <div className={`card-option ${color === "" ? "text-white" : ""}`}>
+        <div className={`card-option ${getColorClass(color)}`} style={getStyle(color)}>
           <Tippy
             interactive
             render={(attrs) => (

@@ -134,14 +134,14 @@ const InputBox = (p) => {
               color="#007bff"
               hoverColor="#0056b3"
             >
-              Agentic
+              Chunk 1
             </Button>
             <Button
               onClick={() => handleChunkingChoice("semantic")}
               color="#28a745"
               hoverColor="#218838"
             >
-              Semantic
+              Chunk 2
             </Button>
             <CloseButton onClick={() => setShowPopup(false)}>
               Cancel
